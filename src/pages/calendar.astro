@@ -1,0 +1,41 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import NextRace from '../components/NextRace.astro';
+import Icon from '../components/Icon.astro';
+// Season rounds. ISO dates. Past rounds are greyed out automatically at build time.
+const rounds: { round: string; circuit: string; date: string; series: string }[] = [];
+const now = Date.now();
+---
+<Base title="Calendar" description="Race calendar for Lewis Smart #32.">
+  <PageHeader kicker="Calendar" title="Race" accent="weekends" intro="Where to see #32 on track this season." />
+  <section class="section">
+    <div class="container">
+      <NextRace />
+      <div class="rounds">
+        {rounds.length
+          ? rounds.map((r) => {
+              const past = new Date(r.date).getTime() < now;
+              return (
+                <article class:list={['card card--chamfer round', { 'round--past': past }]}>
+                  <span class="chip">{r.round}</span>
+                  <h2 class="h-md">{r.circuit}</h2>
+                  <p class="muted"><Icon name="calendar" size={16} /> {new Date(r.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                  <span class="label">{past ? 'Completed' : r.series}</span>
+                </article>
+              );
+            })
+          : <p class="tbc">The full season calendar will be published here once confirmed.</p>}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .rounds { display: grid; gap: var(--gutter); margin-top: 3rem; }
+  .round { display: grid; gap: .75rem; justify-items: start; padding: 1.75rem; }
+  .round p { margin: 0; display: flex; align-items: center; gap: .5rem; }
+  .round--past { opacity: .4; filter: grayscale(1); }
+  @media (min-width: 768px) { .rounds { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1100px) { .rounds { grid-template-columns: repeat(3, 1fr); } }
+</style>

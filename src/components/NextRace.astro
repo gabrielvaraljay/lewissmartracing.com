@@ -1,0 +1,48 @@
+---
+import { nextRace } from '../data/site';
+import Icon from './Icon.astro';
+const date = nextRace ? new Date(nextRace.date) : null;
+const nice = date?.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' });
+---
+<div class="nr card card--chamfer" data-reveal>
+  <span class="nr__slash" aria-hidden="true"></span>
+  <div class="nr__info">
+    <div class="btn-row" style="gap:.5rem">
+      <span class="chip chip--accent"><span class="dot"></span> Next race</span>
+      {nextRace && <span class="chip">{nextRace.round}</span>}
+    </div>
+    <h2 class="h-lg">{nextRace ? nextRace.circuit : 'Calendar coming soon'}</h2>
+    <p class="muted" style="margin:0">{nextRace ? `${nextRace.series} · ${nice}` : 'The next round will appear here as soon as the season calendar is confirmed.'}</p>
+    <a class="link-arrow" href="/calendar/">Full calendar <Icon name="arrow" size={16} /></a>
+  </div>
+  <div class="nr__clock" data-countdown={nextRace?.date ?? ''}>
+    {['Days', 'Hrs', 'Min', 'Sec'].map((u) => (
+      <div class="nr__cell"><span class="num" data-u={u}>--</span><span class="label">{u}</span></div>
+    ))}
+  </div>
+</div>
+
+<script>
+  const el = document.querySelector<HTMLElement>('[data-countdown]');
+  const target = el?.dataset.countdown ? new Date(el.dataset.countdown).getTime() : NaN;
+  if (el && !Number.isNaN(target)) {
+    const cells = ['Days', 'Hrs', 'Min', 'Sec'].map((u) => el.querySelector<HTMLElement>(`[data-u="${u}"]`)!);
+    const tick = () => {
+      let s = Math.max(0, Math.floor((target - Date.now()) / 1000));
+      const v = [Math.floor(s / 86400), Math.floor((s %= 86400) / 3600), Math.floor((s %= 3600) / 60), s % 60];
+      v.forEach((n, i) => (cells[i].textContent = String(n).padStart(2, '0')));
+    };
+    tick();
+    setInterval(tick, 1000);
+  }
+</script>
+
+<style>
+  .nr { overflow: hidden; display: grid; gap: 2rem; padding: clamp(1.75rem, 4vw, 3rem); }
+  .nr__slash { position: absolute; top: 0; bottom: 0; right: 18%; width: 30%; background: linear-gradient(90deg, transparent, var(--accent-wash)); transform: skewX(-14deg); pointer-events: none; }
+  .nr__info { position: relative; display: grid; gap: 1rem; justify-items: start; }
+  .nr__clock { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: .5rem; }
+  .nr__cell { display: grid; justify-items: center; gap: .4rem; padding: 1rem .25rem; background: var(--surface-inset); border: 1px solid var(--hairline); }
+  .nr__cell .num { font-size: clamp(2rem, 6vw, 3.25rem); }
+  @media (min-width: 900px) { .nr { grid-template-columns: 1.2fr 1fr; align-items: center; } }
+</style>

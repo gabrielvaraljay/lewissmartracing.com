@@ -1,0 +1,44 @@
+---
+import { site } from '../data/site';
+import Icon from './Icon.astro';
+interface Props { topic?: 'general' | 'sponsorship' | 'media' }
+const { topic = 'general' } = Astro.props;
+---
+<form class="form" method="post" action={site.formEndpoint ?? undefined} data-form>
+  <div class="form__row">
+    <label class="field"><span class="label">Name</span><input name="name" required autocomplete="name" placeholder="Your name" /></label>
+    <label class="field"><span class="label">Email</span><input name="email" type="email" required autocomplete="email" placeholder="you@company.com" /></label>
+  </div>
+  <div class="form__row">
+    <label class="field"><span class="label">Company</span><input name="company" autocomplete="organization" placeholder="Optional" /></label>
+    <label class="field"><span class="label">Topic</span>
+      <select name="topic" data-topic>
+        <option value="general" selected={topic === 'general'}>General enquiry</option>
+        <option value="sponsorship" selected={topic === 'sponsorship'}>Sponsorship</option>
+        <option value="media" selected={topic === 'media'}>Media</option>
+      </select>
+    </label>
+  </div>
+  <label class="field"><span class="label">Message</span><textarea name="message" required placeholder="Tell us a bit about what you have in mind"></textarea></label>
+  <div class="form__foot">
+    <button class="btn btn--primary" type="submit">Send message <span class="arrow"><Icon name="arrow" size={18} /></span></button>
+    {!site.formEndpoint && <p class="tbc form__note">Form delivery is being connected. In the meantime, message Lewis on Instagram.</p>}
+  </div>
+</form>
+
+<script>
+  // Preselect topic from ?topic=sponsorship
+  const t = new URLSearchParams(location.search).get('topic');
+  const sel = document.querySelector<HTMLSelectElement>('[data-topic]');
+  if (t && sel && [...sel.options].some((o) => o.value === t)) sel.value = t;
+  const form = document.querySelector<HTMLFormElement>('[data-form]');
+  form?.addEventListener('submit', (e) => { if (!form.getAttribute('action')) e.preventDefault(); });
+</script>
+
+<style>
+  .form { display: grid; gap: 1.5rem; background: var(--surface); border: 1px solid var(--hairline); padding: clamp(1.5rem, 4vw, 2.5rem); }
+  .form__row { display: grid; gap: 1.5rem; }
+  .form__foot { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
+  .form__note { margin: 0; font-size: 13px; }
+  @media (min-width: 700px) { .form__row { grid-template-columns: 1fr 1fr; } }
+</style>

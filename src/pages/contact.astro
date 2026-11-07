@@ -1,0 +1,28 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import EnquiryForm from '../components/EnquiryForm.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../data/site';
+---
+<Base title="Contact" description="Get in touch with Lewis Smart #32 for sponsorship, media and general enquiries.">
+  <PageHeader kicker="Contact" title="Get in" accent="touch" intro="Sponsorship, media or just want to say hello. Drop a message and Lewis will get back to you." />
+  <section class="section">
+    <div class="container contact">
+      <EnquiryForm />
+      <aside class="side">
+        <div class="side__block"><span class="label">Social</span>
+          <a class="btn btn--ghost" href={site.instagram} target="_blank" rel="noopener"><Icon name="instagram" size={18} /> @lewis.smart32</a>
+          <a class="btn btn--ghost" href={site.facebook} target="_blank" rel="noopener"><Icon name="facebook" size={18} /> Lewis Smart 32</a>
+        </div>
+        {site.email && <div class="side__block"><span class="label">Email</span><a class="h-sm" href={`mailto:${site.email}`}>{site.email}</a></div>}
+      </aside>
+    </div>
+  </section>
+</Base>
+<style>
+  .contact { display: grid; gap: 2.5rem; }
+  .side { display: grid; gap: 2rem; align-content: start; }
+  .side__block { display: grid; gap: .75rem; justify-items: start; }
+  @media (min-width: 1000px) { .contact { grid-template-columns: 2fr 1fr; } }
+</style>

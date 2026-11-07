@@ -1,0 +1,47 @@
+---
+import { nav, site } from '../data/site';
+import Icon from './Icon.astro';
+const year = new Date().getFullYear();
+---
+<footer class="ftr">
+  <span class="watermark" style="font-size: min(48vw, 640px); right: -2vw; bottom: -6vw;">32</span>
+  <div class="container ftr__grid">
+    <div class="ftr__brand">
+      <p class="h-lg">Lewis Smart <span class="accent">#32</span></p>
+      <p class="muted">British motorcycle road racer. Electrician by day, racer by weekend.</p>
+      <div class="btn-row">
+        <a class="btn btn--primary" href="/sponsors/">Become a sponsor <span class="arrow"><Icon name="arrow" size={18} /></span></a>
+      </div>
+    </div>
+    <div>
+      <p class="label">Explore</p>
+      <ul class="ftr__list">
+        {nav.map((n) => <li><a href={n.href}>{n.label}</a></li>)}
+      </ul>
+    </div>
+    <div>
+      <p class="label">Follow</p>
+      <ul class="ftr__list">
+        <li><a href={site.instagram} target="_blank" rel="noopener"><Icon name="instagram" size={16} /> Instagram</a></li>
+        <li><a href={site.facebook} target="_blank" rel="noopener"><Icon name="facebook" size={16} /> Facebook</a></li>
+        {site.email && <li><a href={`mailto:${site.email}`}><Icon name="mail" size={16} /> {site.email}</a></li>}
+      </ul>
+    </div>
+  </div>
+  <div class="container ftr__base">
+    <span>&copy; {year} Lewis Smart Racing</span>
+    <span class="label">#32 // Built for speed</span>
+  </div>
+</footer>
+
+<style>
+  .ftr { position: relative; overflow: hidden; background: var(--surface-inset); border-top: 1px solid var(--hairline); padding-top: clamp(3.5rem, 8vw, 6rem); }
+  .ftr__grid { position: relative; display: grid; gap: 2.5rem; }
+  .ftr__brand { display: grid; gap: 1rem; max-width: 34rem; }
+  .ftr__brand p { margin: 0; }
+  .ftr__list { list-style: none; margin: 1rem 0 0; padding: 0; display: grid; gap: .55rem; }
+  .ftr__list a { display: inline-flex; align-items: center; gap: .5rem; color: var(--text-2); }
+  .ftr__list a:hover { color: var(--accent); }
+  .ftr__base { position: relative; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; margin-top: 3.5rem; padding-block: 1.5rem; border-top: 1px solid var(--hairline); font-size: 13px; color: var(--text-3); }
+  @media (min-width: 768px) { .ftr__grid { grid-template-columns: 2fr 1fr 1fr; } }
+</style>

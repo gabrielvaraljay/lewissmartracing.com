@@ -1,0 +1,56 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+// Fill once confirmed with Lewis.
+const specs: { label: string; value: string }[] = [
+  { label: 'Manufacturer', value: 'Triumph' },
+  { label: 'Model', value: 'TBC' },
+  { label: 'Engine', value: 'TBC' },
+  { label: 'Class', value: 'TBC' },
+];
+const team: { name: string; role: string; photo?: string }[] = [
+  { name: 'Lewis Smart', role: 'Rider #32' },
+];
+---
+<Base title="Bike & Team" description="The bike and the people behind Lewis Smart #32.">
+  <PageHeader kicker="Bike & Team" title="The" accent="machine" intro="The bike, the spec and the crew that get #32 to the grid." />
+  <section class="section">
+    <div class="container bike">
+      <div class="placeholder-img bike__img" data-reveal><span>Bike photo</span><span class="watermark" style="font-size: 22rem; left: 1rem; bottom: -5rem;">32</span></div>
+      <dl class="specs" data-reveal>
+        {specs.map((s) => (
+          <div class="spec"><dt class="label">{s.label}</dt><dd class:list={['h-md', { tbc: s.value === 'TBC' }]}>{s.value}</dd></div>
+        ))}
+      </dl>
+    </div>
+  </section>
+  <section class="section section--panel slant-top">
+    <div class="container">
+      <div class="section-head"><div><div class="kicker"><span class="label">Crew</span></div><h2 class="h-xl">The team</h2></div></div>
+      <div class="team">
+        {team.map((m) => (
+          <article class="card card--chamfer member" data-reveal>
+            <div class="placeholder-img member__img"><span>Photo</span></div>
+            <div class="member__body"><h3 class="h-sm">{m.name}</h3><span class="label">{m.role}</span></div>
+          </article>
+        ))}
+        <article class="card card--chamfer member member--tbc"><p class="tbc">More team members to be added.</p></article>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .bike { display: grid; gap: 2rem; }
+  .bike__img { aspect-ratio: 16 / 10; border: 1px solid var(--hairline); }
+  .specs { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--hairline); border: 1px solid var(--hairline); align-self: start; }
+  .spec { background: var(--surface); padding: 1.25rem; display: grid; gap: .4rem; border-left: 3px solid transparent; transition: border-color .2s; }
+  .spec:hover { border-left-color: var(--accent); }
+  .spec dd { margin: 0; }
+  .team { display: grid; gap: var(--gutter); grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+  .member { overflow: hidden; }
+  .member__img { aspect-ratio: 4 / 5; }
+  .member__body { padding: 1.25rem; display: grid; gap: .35rem; }
+  .member--tbc { display: grid; place-items: center; padding: 2rem; min-height: 200px; }
+  @media (min-width: 1000px) { .bike { grid-template-columns: 1.6fr 1fr; } }
+</style>

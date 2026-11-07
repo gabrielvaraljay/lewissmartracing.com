@@ -1,0 +1,153 @@
+---
+import { heroFrameCount, site } from '../data/site';
+import Icon from './Icon.astro';
+// Static image shown before frames load, on mobile, and with prefers-reduced-motion.
+const fallback = heroFrameCount > 0 ? '/frames/frame-01.webp' : null;
+---
+<section class="hero" data-hero data-frames={heroFrameCount}>
+  <div class="hero__sticky">
+    <div class="hero__media">
+      {fallback
+        ? <img class="hero__fallback" src={fallback} alt="Lewis Smart racing his number 32 bike" fetchpriority="high" decoding="async" />
+        : <div class="hero__fallback hero__fallback--empty" aria-hidden="true"></div>}
+      <canvas class="hero__canvas" aria-hidden="true"></canvas>
+      <div class="hero__scrim"></div>
+      <div class="grid-lines"></div>
+      <span class="watermark hero__wm" aria-hidden="true">32</span>
+    </div>
+
+    <div class="hero__top container">
+      <span class="chip"><span class="dot"></span> Season 2025</span>
+      <span class="label">Racing with Triumph</span>
+    </div>
+
+    <div class="hero__copy container">
+      <h1 class="h-hero hero__title">
+        <span class="hero__line">Lewis</span>
+        <span class="hero__line">Smart</span>
+      </h1>
+      <div class="hero__sub">
+        <span class="hero__num num">#{site.number}</span>
+        <span class="hero__tag">{site.tagline}</span>
+      </div>
+    </div>
+
+    <div class="hero__bottom container">
+      <a href="#about" class="hero__scroll"><Icon name="down" size={18} /> <span class="label">Scroll</span></a>
+      <div class="hero__bar" aria-hidden="true"><span></span></div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const hero = document.querySelector<HTMLElement>('[data-hero]');
+  const count = Number(hero?.dataset.frames || 0);
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const wide = matchMedia('(min-width: 768px)').matches;
+
+  if (hero) {
+    // Lightweight progress for overlay motion, always on (cheap).
+    const setP = () => {
+      const r = hero.getBoundingClientRect();
+      const span = Math.max(1, hero.offsetHeight - innerHeight);
+      const p = Math.min(1, Math.max(0, -r.top / span));
+      hero.style.setProperty('--p', p.toFixed(4));
+      return p;
+    };
+
+    if (count > 0 && !reduce && wide) {
+      hero.dataset.mode = 'scrub';
+      const canvas = hero.querySelector('canvas')!;
+      const ctx = canvas.getContext('2d')!;
+      const frames: HTMLImageElement[] = [];
+      let current = -1;
+
+      const size = () => {
+        const dpr = Math.min(devicePixelRatio || 1, 2);
+        canvas.width = innerWidth * dpr;
+        canvas.height = innerHeight * dpr;
+        current = -1;
+        draw();
+      };
+      const drawFrame = (i: number) => {
+        // nearest already-loaded frame so scrubbing never shows a blank
+        let img = frames[i];
+        for (let k = i; (!img || !img.complete || !img.naturalWidth) && k >= 0; k--) img = frames[k];
+        if (!img || !img.naturalWidth) return;
+        const cw = canvas.width, ch = canvas.height;
+        const s = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
+        const w = img.naturalWidth * s, h = img.naturalHeight * s;
+        ctx.drawImage(img, (cw - w) / 2, (ch - h) / 2, w, h);
+        hero.classList.add('has-canvas');
+      };
+      const draw = () => {
+        const p = setP();
+        const i = Math.min(count - 1, Math.floor(p * count));
+        if (i !== current) { current = i; drawFrame(i); }
+      };
+
+      for (let i = 1; i <= count; i++) {
+        const img = new Image();
+        img.decoding = 'async';
+        img.src = `/frames/frame-${String(i).padStart(2, '0')}.webp`;
+        if (i === 1) img.onload = () => { current = -1; draw(); };
+        frames.push(img);
+      }
+
+      let ticking = false;
+      addEventListener('scroll', () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => { draw(); ticking = false; });
+      }, { passive: true });
+      addEventListener('resize', size);
+      size();
+    } else {
+      setP();
+      addEventListener('scroll', () => requestAnimationFrame(setP), { passive: true });
+    }
+  }
+</script>
+
+<style>
+  .hero { --p: 0; position: relative; height: 100svh; min-height: 560px; }
+  .hero[data-mode='scrub'] { height: 300vh; }
+  .hero__sticky { position: sticky; top: 0; height: 100svh; min-height: 560px; overflow: hidden; display: grid; grid-template-rows: auto 1fr auto; padding-top: var(--header-h); }
+
+  .hero__media { position: absolute; inset: 0; background: var(--surface-inset); }
+  .hero__fallback, .hero__canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .hero__fallback--empty {
+    background:
+      radial-gradient(60% 70% at 70% 45%, var(--accent-wash), transparent 70%),
+      repeating-linear-gradient(-72deg, rgb(255 255 255 / .03) 0 1px, transparent 1px 22px),
+      linear-gradient(160deg, #15151b, var(--surface-inset) 70%);
+  }
+  .hero__canvas { opacity: 0; transition: opacity .4s; }
+  .has-canvas .hero__canvas { opacity: 1; }
+  .hero__scrim { position: absolute; inset: 0; background:
+    linear-gradient(to top, var(--bg) 0%, rgb(11 11 13 / .55) 35%, rgb(11 11 13 / .1) 65%, rgb(11 11 13 / .55) 100%),
+    linear-gradient(90deg, rgb(11 11 13 / .7), transparent 60%); }
+  .hero__wm { font-size: min(70vw, 900px); right: -4vw; top: 50%; transform: translateY(-50%) translateX(calc(var(--p) * -8vw)); opacity: .06; }
+
+  .hero__top { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-top: 1.25rem; }
+  .hero__top .label { display: none; }
+
+  .hero__copy { position: relative; align-self: end; padding-bottom: 1.5rem; }
+  .hero__title { display: grid; transform: translateX(calc(var(--p) * -3vw)); }
+  .hero__line:last-child { color: transparent; -webkit-text-stroke: 2px var(--text); }
+  .hero__sub { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.25rem; margin-top: 1rem; }
+  .hero__num { font-size: clamp(2.5rem, 7vw, 4.5rem); color: var(--accent); text-shadow: 0 0 30px var(--accent-glow); }
+  .hero__tag { font-family: var(--font-display); font-weight: 700; font-style: italic; text-transform: uppercase; letter-spacing: .08em; font-size: clamp(1.1rem, 2.4vw, 1.6rem); border-left: 3px solid var(--accent); padding-left: 1rem; }
+
+  .hero__bottom { position: relative; display: flex; align-items: center; gap: 1.5rem; padding-bottom: 1.5rem; }
+  .hero__scroll { display: inline-flex; align-items: center; gap: .5rem; color: var(--text-2); animation: nudge 2s infinite; }
+  @keyframes nudge { 50% { transform: translateY(4px); } }
+  .hero__bar { flex: 1; height: 2px; background: var(--hairline); max-width: 420px; margin-left: auto; }
+  .hero__bar span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(var(--p)); box-shadow: 0 0 10px var(--accent-glow); }
+
+  @media (min-width: 768px) {
+    .hero__top .label { display: block; }
+    .hero__line:last-child { -webkit-text-stroke-width: 3px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .hero__scroll { animation: none; } }
+</style>

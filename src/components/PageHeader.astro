@@ -1,0 +1,22 @@
+---
+interface Props { kicker: string; title: string; accent?: string; intro?: string }
+const { kicker, title, accent, intro } = Astro.props;
+---
+<section class="ph page-top">
+  <div class="grid-lines"></div>
+  <span class="watermark" style="font-size: min(55vw, 720px); right: -3vw; top: 0;">32</span>
+  <div class="container ph__in">
+    <div class="kicker"><span class="label">{kicker}</span></div>
+    <h1 class="h-hero ph__title">{title}{accent && <> <span class="accent">{accent}</span></>}</h1>
+    {intro && <p class="lead">{intro}</p>}
+    <slot />
+  </div>
+</section>
+
+<style>
+  .ph { position: relative; overflow: hidden; padding-bottom: clamp(3rem, 7vw, 5rem); border-bottom: 1px solid var(--hairline); }
+  .ph__in { position: relative; display: grid; gap: 1.25rem; }
+  .ph__title { font-size: clamp(3rem, 10vw, 7rem); }
+  .ph .kicker { margin: 0; }
+  .ph .lead { margin: 0; }
+</style>

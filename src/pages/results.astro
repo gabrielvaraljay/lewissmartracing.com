@@ -1,0 +1,76 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { timeline } from '../data/site';
+// Race-by-race results per season. Fill rows as Lewis supplies them.
+const seasons: { year: string; series: string; rows: { round: string; circuit: string; race: string; pos: string }[] }[] =
+  [...timeline].reverse().map((t) => ({ year: t.year, series: t.series, rows: [] }));
+---
+<Base title="Results" description="Season-by-season race results for Lewis Smart #32.">
+  <PageHeader kicker="Results" title="Every" accent="lap counts" intro="Season-by-season results. Detailed race tables are being added." />
+  <section class="section">
+    <div class="container">
+      <div class="tabs" role="tablist" aria-label="Season">
+        {seasons.map((s, i) => (
+          <button role="tab" class="tab" id={`tab-${s.year}`} aria-controls={`panel-${s.year}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1}>{s.year}</button>
+        ))}
+      </div>
+      {seasons.map((s, i) => (
+        <div role="tabpanel" id={`panel-${s.year}`} aria-labelledby={`tab-${s.year}`} hidden={i !== 0} class="panel">
+          <div class="panel__head">
+            <h2 class="h-lg">{s.year} <span class="accent">Season</span></h2>
+            <span class="chip">{s.series}</span>
+          </div>
+          <div class="tbl-wrap">
+            <table class="tbl">
+              <thead><tr><th>Round</th><th>Circuit</th><th>Race</th><th class="r">Pos</th></tr></thead>
+              <tbody>
+                {s.rows.length
+                  ? s.rows.map((r) => <tr><td>{r.round}</td><td>{r.circuit}</td><td>{r.race}</td><td class="r num pos">{r.pos}</td></tr>)
+                  : <tr><td colspan="4" class="tbc">Race-by-race results for {s.year} coming soon.</td></tr>}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+</Base>
+
+<script>
+  const tabs = [...document.querySelectorAll<HTMLButtonElement>('[role=tab]')];
+  const select = (t: HTMLButtonElement) => {
+    tabs.forEach((x) => {
+      const on = x === t;
+      x.setAttribute('aria-selected', String(on));
+      x.tabIndex = on ? 0 : -1;
+      document.getElementById(x.getAttribute('aria-controls')!)!.hidden = !on;
+    });
+    t.focus();
+  };
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => select(t));
+    t.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') select(tabs[(i + 1) % tabs.length]);
+      if (e.key === 'ArrowLeft') select(tabs[(i - 1 + tabs.length) % tabs.length]);
+    });
+  });
+</script>
+
+<style>
+  .tabs { display: flex; gap: .25rem; overflow-x: auto; border-bottom: 1px solid var(--hairline); margin-bottom: 2.5rem; scrollbar-width: none; }
+  .tab { flex: none; background: none; border: 0; cursor: pointer; padding: .9rem 1.25rem; font-family: var(--font-display); font-weight: 800; font-style: italic; font-size: 1.5rem; color: var(--text-3); position: relative; }
+  .tab[aria-selected='true'] { color: var(--text); }
+  .tab[aria-selected='true']::after { content: ''; position: absolute; left: .75rem; right: .75rem; bottom: -1px; height: 3px; background: var(--accent); transform: skewX(-20deg); }
+  .panel__head { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+  .tbl-wrap { overflow-x: auto; border: 1px solid var(--hairline); }
+  .tbl { width: 100%; border-collapse: collapse; min-width: 520px; }
+  .tbl th { text-align: left; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--text-2); padding: 1rem 1.25rem; background: var(--surface-inset); }
+  .tbl td { padding: 1rem 1.25rem; border-top: 1px solid rgb(255 255 255 / .06); font-variant-numeric: tabular-nums; }
+  .tbl tbody tr:nth-child(odd) { background: var(--surface); }
+  .tbl tbody tr:nth-child(even) { background: var(--row-alt); }
+  .tbl tbody tr { box-shadow: inset 0 0 0 transparent; transition: box-shadow .2s; }
+  .tbl tbody tr:hover { box-shadow: inset 3px 0 0 var(--accent); }
+  .tbl .r { text-align: right; }
+  .pos { font-size: 1.5rem; }
+</style>

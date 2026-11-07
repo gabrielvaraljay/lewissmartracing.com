@@ -1,0 +1,168 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import NextRace from '../components/NextRace.astro';
+import SponsorCta from '../components/SponsorCta.astro';
+import Icon from '../components/Icon.astro';
+import { milestones, site, sponsors, stats } from '../data/site';
+---
+<Base>
+  <Hero />
+
+  <!-- About teaser -->
+  <section class="section about" id="about">
+    <div class="container about__grid">
+      <div class="about__media" data-reveal>
+        <div class="about__slab" aria-hidden="true"></div>
+        <div class="placeholder-img about__img"><span>Portrait photo</span></div>
+        <div class="about__ribbon">
+          <span class="label">Day job</span>
+          <span class="h-sm">Electrician</span>
+        </div>
+      </div>
+      <div class="about__copy" data-reveal>
+        <div class="kicker"><span class="label">About Lewis</span></div>
+        <h2 class="h-xl">Full-time electrician. <span class="accent">Full-throttle</span> racer.</h2>
+        <p class="lead">Lewis trained as a race technician at Silverstone Motorsport College, where a racing classmate got him hooked. Five seasons later he has gone from a Honda CB500 in the Freshman Championship to racing with Triumph.</p>
+        <p class="lead">He still works full-time as an electrician and trains in the gym five days a week after work. Nothing about this was handed to him.</p>
+        <div class="btn-row">
+          <a class="btn btn--primary" href="/my-story/">Read my story <span class="arrow"><Icon name="arrow" size={18} /></span></a>
+          <a class="btn btn--ghost" href="/bike-and-team/">The bike</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Milestones -->
+  <section class="section section--panel slant-top">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="kicker"><span class="label">The rise</span></div>
+          <h2 class="h-xl">Milestones</h2>
+        </div>
+        <a class="link-arrow" href="/my-story/">Full story <Icon name="arrow" size={16} /></a>
+      </div>
+      <div class="ms">
+        {milestones.map((m, i) => (
+          <article class:list={['card card--chamfer ms__card', { 'ms__card--now': i === milestones.length - 1 }]} data-reveal style={`transition-delay:${i * 90}ms`}>
+            <span class="ms__yr num" aria-hidden="true">{m.year.slice(2)}</span>
+            <div class="btn-row" style="gap:.5rem"><span class="chip chip--accent">{m.year}</span><span class="chip">{m.tag}</span></div>
+            <h3 class="h-md">{m.title}</h3>
+            <p class="muted">{m.body}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats strip -->
+  <section class="stats section--inset">
+    <div class="container stats__grid">
+      {stats.map((s) => (
+        <div class="stats__item" data-reveal>
+          <span class="num stats__val">{s.value ?? <span class="tbc">TBC</span>}</span>
+          <span class="label">{s.label}</span>
+          <span class="stats__note">{s.note}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Next race -->
+  <section class="section">
+    <div class="container"><NextRace /></div>
+  </section>
+
+  <!-- Sponsors -->
+  <section class="section section--panel slant-top">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="kicker"><span class="label">Partners</span></div>
+          <h2 class="h-xl">Backed by</h2>
+        </div>
+        <a class="link-arrow" href="/sponsors/">All partners <Icon name="arrow" size={16} /></a>
+      </div>
+      <div class="logos" data-reveal>
+        {sponsors.length
+          ? sponsors.map((s) => <a class="logos__item" href={s.url} target="_blank" rel="noopener"><img src={s.logo} alt={s.name} loading="lazy" /></a>)
+          : Array.from({ length: 6 }, () => <div class="logos__item logos__item--empty"><span class="label">Your logo here</span></div>)}
+      </div>
+      <SponsorCta />
+    </div>
+  </section>
+
+  <!-- Social -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="kicker"><span class="label">@lewis.smart32</span></div>
+          <h2 class="h-xl">Follow the season</h2>
+        </div>
+        <div class="btn-row">
+          <a class="btn btn--primary" href={site.instagram} target="_blank" rel="noopener"><Icon name="instagram" size={18} /> Instagram</a>
+          <a class="btn btn--ghost" href={site.facebook} target="_blank" rel="noopener"><Icon name="facebook" size={18} /> Facebook</a>
+        </div>
+      </div>
+      <div class="ig">
+        {Array.from({ length: 6 }, (_, i) => (
+          <a class="ig__item placeholder-img" href={site.instagram} target="_blank" rel="noopener" data-reveal style={`transition-delay:${i * 60}ms`}>
+            <span>Post {i + 1}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .about__grid { display: grid; gap: clamp(2.5rem, 6vw, 5rem); align-items: center; }
+  .about__media { position: relative; max-width: 520px; }
+  .about__slab { position: absolute; inset: 8% -6% -6% 10%; background: var(--accent); transform: skewX(-8deg); opacity: .9; }
+  .about__img { position: relative; aspect-ratio: 4 / 5; clip-path: polygon(0 0, calc(100% - 28px) 0, 100% 28px, 100% 100%, 0 100%); }
+  .about__ribbon { position: absolute; left: -.5rem; bottom: 1.5rem; display: grid; gap: .15rem; background: var(--bg); border-left: 4px solid var(--accent); padding: .75rem 1.1rem; }
+  .about__copy { display: grid; gap: 1.25rem; }
+  .about__copy .kicker, .about__copy .lead { margin: 0; }
+
+  .ms { display: grid; gap: var(--gutter); }
+  .ms__card { overflow: hidden; display: grid; gap: 1rem; align-content: start; padding: 2rem 1.75rem 2.25rem; min-height: 300px; }
+  .ms__card p { margin: 0; }
+  .ms__card--now { border-color: var(--accent-line); background: linear-gradient(160deg, var(--surface-hi), var(--surface)); }
+  .ms__yr { position: absolute; right: -.5rem; bottom: -1.5rem; font-size: 9rem; color: #fff; opacity: .05; }
+  .ms__card--now .ms__yr { color: var(--accent); opacity: .14; }
+
+  .stats { border-block: 1px solid var(--hairline); }
+  .stats__grid { display: grid; grid-template-columns: repeat(2, 1fr); }
+  .stats__item { display: grid; gap: .35rem; padding: 2rem 1rem; border-left: 1px solid var(--hairline); }
+  .stats__item:nth-child(odd) { border-left: 0; }
+  .stats__val { font-size: clamp(3rem, 8vw, 5rem); color: var(--text); }
+  .stats__item:first-child .stats__val { color: var(--accent); }
+  .stats__note { font-size: 13px; color: var(--text-3); }
+
+  .logos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--hairline); border: 1px solid var(--hairline); margin-bottom: clamp(2.5rem, 6vw, 4rem); }
+  .logos__item { display: grid; place-items: center; aspect-ratio: 16 / 7; background: var(--surface); padding: 1.25rem; }
+  .logos__item img { max-height: 56px; width: auto; filter: grayscale(1) brightness(1.6); opacity: .8; transition: filter .3s, opacity .3s; }
+  .logos__item:hover img { filter: none; opacity: 1; }
+  .logos__item--empty .label { color: var(--text-3); }
+
+  .ig { display: grid; grid-template-columns: repeat(2, 1fr); gap: .5rem; }
+  .ig__item { aspect-ratio: 1; transition: outline-color .2s; outline: 1px solid transparent; }
+  .ig__item:hover { outline-color: var(--accent); }
+
+  @media (min-width: 768px) {
+    .about__grid { grid-template-columns: 5fr 7fr; }
+    .stats__grid { grid-template-columns: repeat(4, 1fr); }
+    .stats__item, .stats__item:nth-child(odd) { border-left: 1px solid var(--hairline); padding: 3rem 1.75rem; }
+    .stats__item:first-child { border-left: 0; }
+    .logos { grid-template-columns: repeat(3, 1fr); }
+    .ig { grid-template-columns: repeat(3, 1fr); gap: var(--gutter); }
+  }
+  @media (min-width: 1000px) {
+    .ms { grid-template-columns: repeat(3, 1fr); }
+    .ms__card:nth-child(2) { margin-top: 2.5rem; margin-bottom: -2.5rem; }
+    .logos { grid-template-columns: repeat(6, 1fr); }
+    .ig { grid-template-columns: repeat(6, 1fr); }
+  }
+</style>
