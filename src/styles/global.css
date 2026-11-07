@@ -1,16 +1,21 @@
 /* ------------------------------------------------------------------
    Lewis Smart #32 - design tokens
-   The accent colour lives in ONE place: --accent (+ its glow/dim).
-   It is a placeholder lime until the bike livery photos set the exact hue.
+   Colours taken from the 2025 bike / leathers livery:
+   fluorescent yellow-green (main accent), purple (secondary), black.
+   The main accent lives in ONE place: --accent (+ its glow/line/wash).
 ------------------------------------------------------------------- */
 :root {
-  --accent: #a6ff00;
-  --accent-hover: #c2ff4d;
-  --accent-deep: #4d7a00;
+  --accent: #d6f20a;
+  --accent-hover: #e8ff4a;
+  --accent-deep: #8fa300;
   --on-accent: #0b0b0d;
-  --accent-glow: rgb(166 255 0 / 0.35);
-  --accent-line: rgb(166 255 0 / 0.6);
-  --accent-wash: rgb(166 255 0 / 0.1);
+  --accent-glow: rgb(214 242 10 / 0.35);
+  --accent-line: rgb(214 242 10 / 0.6);
+  --accent-wash: rgb(214 242 10 / 0.1);
+
+  --purple: #6d4bc9;
+  --purple-deep: #3d1d71;
+  --purple-wash: rgb(109 75 201 / 0.22);
 
   --bg: #0b0b0d;
   --surface: #121216;
@@ -96,7 +101,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   color: var(--text-2);
 }
 .kicker { display: inline-flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
-.kicker::before { content: ''; width: 28px; height: 3px; background: var(--accent); transform: skewX(-20deg); }
+.kicker::before { content: ''; width: 28px; height: 3px; background: linear-gradient(90deg, var(--accent) 70%, var(--purple) 70%); transform: skewX(-20deg); }
 .kicker .label { color: var(--accent); }
 
 .section-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1.5rem; margin-bottom: clamp(2rem, 5vw, 3.5rem); }
@@ -137,6 +142,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--text);
 }
 .chip--accent { border-color: var(--accent-line); color: var(--accent); }
+.chip--purple { border-color: var(--purple); color: #b9a3ff; background: var(--purple-deep); }
 .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); animation: pulse 1.6s infinite; }
 @keyframes pulse { 50% { opacity: .35; } }
 @media (prefers-reduced-motion: reduce) { .dot { animation: none; } }

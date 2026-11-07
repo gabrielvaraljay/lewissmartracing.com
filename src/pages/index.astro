@@ -14,7 +14,7 @@ import { milestones, site, sponsors, stats } from '../data/site';
     <div class="container about__grid">
       <div class="about__media" data-reveal>
         <div class="about__slab" aria-hidden="true"></div>
-        <div class="placeholder-img about__img"><span>Portrait photo</span></div>
+        <img class="about__img" src="/images/lewis-portrait.webp" alt="Lewis Smart on the grid in his number 32 livery" width="1040" height="1300" loading="lazy" decoding="async" />
         <div class="about__ribbon">
           <span class="label">Day job</span>
           <span class="h-sm">Electrician</span>
@@ -47,7 +47,7 @@ import { milestones, site, sponsors, stats } from '../data/site';
         {milestones.map((m, i) => (
           <article class:list={['card card--chamfer ms__card', { 'ms__card--now': i === milestones.length - 1 }]} data-reveal style={`transition-delay:${i * 90}ms`}>
             <span class="ms__yr num" aria-hidden="true">{m.year.slice(2)}</span>
-            <div class="btn-row" style="gap:.5rem"><span class="chip chip--accent">{m.year}</span><span class="chip">{m.tag}</span></div>
+            <div class="btn-row" style="gap:.5rem"><span class="chip chip--accent">{m.year}</span><span class="chip chip--purple">{m.tag}</span></div>
             <h3 class="h-md">{m.title}</h3>
             <p class="muted">{m.body}</p>
           </article>
@@ -120,8 +120,8 @@ import { milestones, site, sponsors, stats } from '../data/site';
 <style>
   .about__grid { display: grid; gap: clamp(2.5rem, 6vw, 5rem); align-items: center; }
   .about__media { position: relative; max-width: 520px; }
-  .about__slab { position: absolute; inset: 8% -6% -6% 10%; background: var(--accent); transform: skewX(-8deg); opacity: .9; }
-  .about__img { position: relative; aspect-ratio: 4 / 5; clip-path: polygon(0 0, calc(100% - 28px) 0, 100% 28px, 100% 100%, 0 100%); }
+  .about__slab { position: absolute; inset: 8% -6% -6% 10%; background: linear-gradient(160deg, var(--accent) 0 62%, var(--purple) 62% 74%, var(--purple-deep) 74%); transform: skewX(-8deg); }
+  .about__img { position: relative; width: 100%; height: auto; object-fit: cover; aspect-ratio: 4 / 5; clip-path: polygon(0 0, calc(100% - 28px) 0, 100% 28px, 100% 100%, 0 100%); }
   .about__ribbon { position: absolute; left: -.5rem; bottom: 1.5rem; display: grid; gap: .15rem; background: var(--bg); border-left: 4px solid var(--accent); padding: .75rem 1.1rem; }
   .about__copy { display: grid; gap: 1.25rem; }
   .about__copy .kicker, .about__copy .lead { margin: 0; }

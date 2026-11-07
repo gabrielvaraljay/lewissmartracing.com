@@ -79,7 +79,7 @@ import { timeline } from '../data/site';
 <style>
   .tl { --tl: 0; position: relative; list-style: none; margin: 0; padding: 0 0 0 2.25rem; display: grid; gap: clamp(2.5rem, 7vw, 5rem); }
   .tl__rail { position: absolute; left: .5rem; top: .5rem; bottom: 0; width: 2px; background: var(--hairline-2); }
-  .tl__fill { position: absolute; inset: 0; background: var(--accent); transform-origin: top; transform: scaleY(var(--tl)); box-shadow: 0 0 12px var(--accent-glow); }
+  .tl__fill { position: absolute; inset: 0; background: linear-gradient(var(--accent), var(--accent) 80%, var(--purple)); transform-origin: top; transform: scaleY(var(--tl)); box-shadow: 0 0 12px var(--accent-glow); }
 
   .tl__item { position: relative; display: grid; gap: 1rem; }
   .tl__node { position: absolute; left: calc(-2.25rem + .5rem - 7px); top: .9rem; width: 16px; height: 16px; background: var(--bg); border: 2px solid var(--accent); transform: rotate(45deg); }
@@ -93,7 +93,7 @@ import { timeline } from '../data/site';
   .tl__item--now .tl__card { border-color: var(--accent-line); }
   .tl__result { font-family: var(--font-display); font-weight: 800; font-style: italic; text-transform: uppercase; font-size: 1.35rem; letter-spacing: .03em; display: flex; align-items: center; gap: .6rem; color: var(--accent); }
   .tl__img { aspect-ratio: 16 / 9; margin-top: .5rem; }
-  .tl__card--next { display: grid; gap: 1rem; }
+  .tl__card--next { display: grid; gap: 1rem; padding: clamp(1.5rem, 4vw, 2.25rem); background: linear-gradient(135deg, var(--purple-deep), var(--surface) 70%); border-left: 4px solid var(--purple); }
 
   .quotes { display: grid; gap: 3rem; }
   .quote { margin: 0; display: grid; gap: 1rem; border-left: 4px solid var(--accent); padding-left: clamp(1.25rem, 3vw, 2rem); }

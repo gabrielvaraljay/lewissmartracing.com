@@ -64,6 +64,8 @@ const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWit
 
 <style>
   .hdr { position: fixed; inset: 0 0 auto; z-index: 50; transition: background-color .3s, border-color .3s; border-bottom: 1px solid transparent; }
+  .hdr::before { content: ''; position: absolute; inset: 0 0 -40px; z-index: -1; pointer-events: none; background: linear-gradient(rgb(7 7 9 / .85), transparent); transition: opacity .3s; }
+  .hdr.is-solid::before, .hdr.is-open::before { opacity: 0; }
   .hdr.is-solid, .hdr.is-open { background: rgb(11 11 13 / .92); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom-color: var(--hairline); }
   .hdr__in { height: var(--header-h); max-width: var(--maxw); margin-inline: auto; padding-inline: var(--margin); display: flex; align-items: center; gap: 1.5rem; }
 

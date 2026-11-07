@@ -2,7 +2,7 @@
 import { heroFrameCount, site } from '../data/site';
 import Icon from './Icon.astro';
 // Static image shown before frames load, on mobile, and with prefers-reduced-motion.
-const fallback = heroFrameCount > 0 ? '/frames/frame-01.webp' : null;
+const fallback = heroFrameCount > 0 ? '/frames/frame-01.webp' : '/images/hero-static.webp';
 ---
 <section class="hero" data-hero data-frames={heroFrameCount}>
   <div class="hero__sticky">
@@ -116,9 +116,12 @@ const fallback = heroFrameCount > 0 ? '/frames/frame-01.webp' : null;
 
   .hero__media { position: absolute; inset: 0; background: var(--surface-inset); }
   .hero__fallback, .hero__canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  img.hero__fallback { object-position: 36% 50%; }
+  @media (min-width: 768px) { img.hero__fallback { object-position: 60% 50%; } }
   .hero__fallback--empty {
     background:
-      radial-gradient(60% 70% at 70% 45%, var(--accent-wash), transparent 70%),
+      radial-gradient(60% 70% at 72% 45%, var(--accent-wash), transparent 70%),
+      radial-gradient(50% 60% at 15% 85%, var(--purple-wash), transparent 70%),
       repeating-linear-gradient(-72deg, rgb(255 255 255 / .03) 0 1px, transparent 1px 22px),
       linear-gradient(160deg, #15151b, var(--surface-inset) 70%);
   }

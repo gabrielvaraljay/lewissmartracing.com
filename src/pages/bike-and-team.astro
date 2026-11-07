@@ -16,7 +16,7 @@ const team: { name: string; role: string; photo?: string }[] = [
   <PageHeader kicker="Bike & Team" title="The" accent="machine" intro="The bike, the spec and the crew that get #32 to the grid." />
   <section class="section">
     <div class="container bike">
-      <div class="placeholder-img bike__img" data-reveal><span>Bike photo</span><span class="watermark" style="font-size: 22rem; left: 1rem; bottom: -5rem;">32</span></div>
+      <img class="bike__img" src="/images/bike-livery.webp" alt="Close-up of the number 32 bike livery" width="1200" height="1600" loading="lazy" decoding="async" data-reveal />
       <dl class="specs" data-reveal>
         {specs.map((s) => (
           <div class="spec"><dt class="label">{s.label}</dt><dd class:list={['h-md', { tbc: s.value === 'TBC' }]}>{s.value}</dd></div>
@@ -42,7 +42,7 @@ const team: { name: string; role: string; photo?: string }[] = [
 
 <style>
   .bike { display: grid; gap: 2rem; }
-  .bike__img { aspect-ratio: 16 / 10; border: 1px solid var(--hairline); }
+  .bike__img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; border: 1px solid var(--hairline); }
   .specs { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--hairline); border: 1px solid var(--hairline); align-self: start; }
   .spec { background: var(--surface); padding: 1.25rem; display: grid; gap: .4rem; border-left: 3px solid transparent; transition: border-color .2s; }
   .spec:hover { border-left-color: var(--accent); }
