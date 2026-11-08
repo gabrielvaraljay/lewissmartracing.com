@@ -6,7 +6,7 @@ export const site = {
   number: '32',
   tagline: 'From Freshman to Factory Triumph',
   description:
-    'Lewis Smart #32, British motorcycle road racer. From a Honda CB500 in the Freshman Championship to racing with Triumph. Follow the story and partner with the team.',
+    'Lewis Smart #32, British motorcycle road racer from Sandy, Bedfordshire. From a Honda CB500 in the Freshman Championship to racing with Triumph. Follow the story and partner with the team.',
   email: null as string | null, // TBC
   instagram: 'https://www.instagram.com/lewis.smart32/',
   facebook: 'https://www.facebook.com/people/Lewis-Smart-32/100076010736822/',
@@ -68,10 +68,11 @@ export const timeline: TimelineEntry[] = [
   {
     year: '2022',
     title: 'Champion',
-    series: 'Sportsman Championship',
+    bike: 'Honda CB500',
+    series: 'CB500 Sportsman Championship',
     result: 'Champion',
     body:
-      'Lewis won the Sportsman Championship. Alongside the title campaign he raced in Junior Supersport, finishing in the 20s and learning fast against the best young riders in the country.',
+      'Racing as #23, Lewis won the CB500 Sportsman Championship. Alongside the title campaign he raced in Junior Supersport, finishing in the 20s and learning fast against the best young riders in the country.',
   },
   {
     year: '2023',
@@ -85,10 +86,10 @@ export const timeline: TimelineEntry[] = [
     year: '2024',
     title: 'Front runner',
     bike: 'Kawasaki ZX-4RR',
-    series: 'Kawasaki British Superteens',
+    series: 'BSB Kawasaki Superteens',
     result: '3rd in Superteens + National 600 Endurance champion',
     body:
-      'On the Kawasaki ZX-4RR Lewis delivered consistent wins and podiums, including victory at the July round, to finish 3rd in the British Superteens championship. He also won the NLR National 600 Endurance series. That form caught the attention of Triumph.',
+      'On the Kawasaki ZX-4RR Lewis delivered consistent wins and podiums, including victory at the July round, to finish 3rd in the BSB Kawasaki Superteens championship. He also won the NLR National 600 Endurance series. That form caught the attention of Triumph.',
   },
   {
     year: '2025',
@@ -103,8 +104,8 @@ export const timeline: TimelineEntry[] = [
 
 export const milestones = [
   { year: '2020', tag: 'Rookie year', title: 'First wins', body: 'Several race wins and 3rd overall in the Freshman Championship on a Honda CB500.' },
-  { year: '2022', tag: 'Title', title: 'Sportsman Champion', body: 'Crowned Sportsman Champion while gaining Junior Supersport experience at national level.' },
-  { year: '2025', tag: 'Present', title: 'Racing with Triumph', body: 'After 3rd in the 2024 British Superteens and the National 600 Endurance title, Lewis joins Macadam Triumph Factory Racing on the Daytona 660.' },
+  { year: '2022', tag: 'Title', title: 'CB500 Sportsman Champion', body: 'Crowned CB500 Sportsman Champion, racing as #23, while gaining Junior Supersport experience at national level.' },
+  { year: '2025', tag: 'Present', title: 'Racing with Triumph', body: 'After 3rd in the 2024 BSB Kawasaki Superteens and the National 600 Endurance title, Lewis joins Macadam Triumph Factory Racing on the Daytona 660.' },
 ];
 
 // Fill in when the calendar is confirmed. ISO date of race day.
