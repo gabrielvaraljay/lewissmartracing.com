@@ -1,15 +1,21 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
-// Fill once confirmed with Lewis.
+// 2025 season, from Triumph's team announcement. Update for 2026 once confirmed.
 const specs: { label: string; value: string }[] = [
   { label: 'Manufacturer', value: 'Triumph' },
-  { label: 'Model', value: 'TBC' },
-  { label: 'Engine', value: 'TBC' },
-  { label: 'Class', value: 'TBC' },
+  { label: 'Model', value: 'Daytona 660' },
+  { label: 'Engine', value: '660cc inline triple' },
+  { label: 'Class', value: 'National Sportbike' },
+  { label: 'Team', value: 'Macadam Triumph Factory Racing' },
 ];
 const team: { name: string; role: string; photo?: string }[] = [
   { name: 'Lewis Smart', role: 'Rider #32' },
+  { name: 'Katie Hand', role: 'Teammate' },
+  { name: 'Jayden Martin', role: 'Teammate' },
+  { name: 'Brodie Gawith', role: 'Teammate' },
+  { name: 'Mick Hand', role: 'Team Manager' },
+  { name: 'Dave Wadsworth', role: 'Team Owner' },
 ];
 ---
 <Base title="Bike & Team" description="The bike and the people behind Lewis Smart #32.">

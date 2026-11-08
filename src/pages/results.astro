@@ -3,8 +3,15 @@ import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
 import { timeline } from '../data/site';
 // Race-by-race results per season. Fill rows as Lewis supplies them.
+// 2025 Brands Hatch: Triumph race report, October 2025.
+const known: Record<string, { round: string; circuit: string; race: string; pos: string }[]> = {
+  '2025': [
+    { round: 'R10', circuit: 'Brands Hatch', race: 'Race 1', pos: '15' },
+    { round: 'R10', circuit: 'Brands Hatch', race: 'Race 2', pos: '5' },
+  ],
+};
 const seasons: { year: string; series: string; rows: { round: string; circuit: string; race: string; pos: string }[] }[] =
-  [...timeline].reverse().map((t) => ({ year: t.year, series: t.series, rows: [] }));
+  [...timeline].reverse().map((t) => ({ year: t.year, series: t.series, rows: known[t.year] ?? [] }));
 ---
 <Base title="Results" description="Season-by-season race results for Lewis Smart #32.">
   <PageHeader kicker="Results" title="Every" accent="lap counts" intro="Season-by-season results. Detailed race tables are being added." />

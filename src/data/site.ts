@@ -34,7 +34,7 @@ export const stats = [
   { label: 'Seasons raced', value: '06', note: '2020 to 2025' },
   { label: 'Race wins', value: null, note: 'TBC' },
   { label: 'Podiums', value: null, note: 'TBC' },
-  { label: 'Titles', value: '01', note: '2022 Sportsman' },
+  { label: 'Titles', value: '03', note: 'Sportsman 2022, Club 600 Endurance 2023, National 600 Endurance 2024' },
 ];
 
 export type TimelineEntry = {
@@ -77,34 +77,34 @@ export const timeline: TimelineEntry[] = [
     year: '2023',
     title: 'Breakthrough',
     series: 'Junior Supersport',
-    result: 'First podium + a win',
+    result: 'First podium, a win + Club 600 Endurance title',
     body:
-      'His first Junior Supersport podium came mid-season, and he ended the year the best way possible: with a race win.',
+      'His first Junior Supersport podium came mid-season, and he ended the year the best way possible: with a race win. He also won the Club 600 Endurance championship.',
   },
   {
     year: '2024',
     title: 'Front runner',
     bike: 'Kawasaki ZX-4RR',
-    series: 'Junior Supersport',
-    result: '3rd in the championship',
+    series: 'Kawasaki British Superteens',
+    result: '3rd in Superteens + National 600 Endurance champion',
     body:
-      'On the Kawasaki ZX-4RR Lewis delivered consistent wins and podiums to finish 3rd in the championship. That form caught the attention of Triumph.',
+      'On the Kawasaki ZX-4RR Lewis delivered consistent wins and podiums, including victory at the July round, to finish 3rd in the British Superteens championship. He also won the NLR National 600 Endurance series. That form caught the attention of Triumph.',
   },
   {
     year: '2025',
     title: 'Racing with Triumph',
-    bike: 'Triumph',
-    series: 'TBC',
-    result: 'Targeting the title',
+    bike: 'Triumph Daytona 660',
+    series: 'Pirelli National Sportbike',
+    result: 'Season-best 5th at Brands Hatch',
     body:
-      'A new chapter with Triumph. The goal is simple: consistent podiums and a serious run at the championship.',
+      'Lewis joined the Macadam Triumph Factory Racing team in the Pirelli National Sportbike Championship on the Triumph Daytona 660, alongside Katie Hand, Jayden Martin and Brodie Gawith. He closed his debut season with a season-best 5th place at the Brands Hatch finale.',
   },
 ];
 
 export const milestones = [
   { year: '2020', tag: 'Rookie year', title: 'First wins', body: 'Several race wins and 3rd overall in the Freshman Championship on a Honda CB500.' },
   { year: '2022', tag: 'Title', title: 'Sportsman Champion', body: 'Crowned Sportsman Champion while gaining Junior Supersport experience at national level.' },
-  { year: '2025', tag: 'Present', title: 'Racing with Triumph', body: 'After 3rd in the 2024 championship, Lewis joins forces with Triumph to chase the title.' },
+  { year: '2025', tag: 'Present', title: 'Racing with Triumph', body: 'After 3rd in the 2024 British Superteens and the National 600 Endurance title, Lewis joins Macadam Triumph Factory Racing on the Daytona 660.' },
 ];
 
 // Fill in when the calendar is confirmed. ISO date of race day.

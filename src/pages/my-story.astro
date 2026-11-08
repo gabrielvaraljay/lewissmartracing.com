@@ -28,24 +28,25 @@ const entries: Entry[] = [
   {
     year: '2023', tag: 'Breakthrough // BSB Support', title: 'The Breakthrough Junior Supersport Podium', machine: 'British Superbikes Junior Supersport',
     body: 'His first Junior Supersport podium arrived mid-season, and Lewis ended the year the best way possible: with a race win.',
-    pills: ['⚡ First Junior Supersport Podium', '🏁 Season-Ending Race Win'], caption: '2023 // Junior Supersport', node: 'dim',
+    pills: ['⚡ First Junior Supersport Podium', '🏁 Season-Ending Race Win', '🥇 Club 600 Endurance Champion'], caption: '2023 // Junior Supersport', node: 'dim',
   },
   {
     year: '2024', tag: 'Scouted // P3 Overall', title: 'Kawasaki ZX-4RR Campaign & Factory Eyes', machine: 'Machine: Kawasaki ZX-4RR',
-    body: 'On the Kawasaki ZX-4RR Lewis delivered consistent wins and podiums to finish 3rd in the championship. That form caught the attention of Triumph.',
-    pills: ['🏁 P3 Overall Championship', '🥇 Race Wins & Podiums', '📋 Triumph Attention'], caption: '2024 // Kawasaki ZX-4RR', node: 'solid',
+    body: 'On the Kawasaki ZX-4RR Lewis delivered consistent wins and podiums to finish 3rd in the British Superteens championship, and won the NLR National 600 Endurance series. That form caught the attention of Triumph.',
+    pills: ['🏁 P3 British Superteens', '🥇 National 600 Endurance Champion', '📋 Triumph Attention'], caption: '2024 // Kawasaki ZX-4RR', node: 'solid',
   },
   {
-    year: '2025', tag: 'Triumph', title: 'The Triumph Era', machine: 'Machine: Triumph',
-    body: 'A new chapter racing with Triumph, in the fluorescent #32 livery. The focus: consistent podium finishes and a serious run at the championship title.',
-    pills: ['🏁 Target: The Title', '🎯 Consistent Podiums'], image: { src: '/images/hero-static.webp', alt: 'Lewis Smart cornering on the 2025 number 32 bike' },
-    caption: 'Racing with Triumph // #32', node: 'active', active: true,
+    year: '2025', tag: 'Triumph', title: 'The Triumph Era', machine: 'Machine: Triumph Daytona 660',
+    body: 'A factory ride with Macadam Triumph Factory Racing in the Pirelli National Sportbike Championship, in the fluorescent #32 livery. The debut season closed with a season-best 5th place at the Brands Hatch finale.',
+    pills: ['🏭 Macadam Triumph Factory Racing', '🏁 Season-Best P5, Brands Hatch'], image: { src: '/images/hero-static.webp', alt: 'Lewis Smart cornering on the 2025 number 32 bike' },
+    caption: 'Macadam Triumph // #32', node: 'active', active: true,
   },
 ];
 const roadmap = [
   { label: 'Freshman Championship', state: 'done' },
   { label: 'Sportsman Champion', state: 'done' },
   { label: 'Junior Supersport Wins', state: 'done' },
+  { label: 'Endurance Champion', state: 'done' },
   { label: 'Racing with Triumph', state: 'now' },
   { label: 'British Superbikes', state: 'goal' },
 ];
@@ -102,7 +103,7 @@ const roadmap = [
               <div class="grid grid-cols-2 gap-2 text-center pt-space-xs relative">
                 <div class="bg-surface-container-low p-2 rounded">
                   <span class="font-telemetry-num text-headline-sm text-primary font-black block leading-none">P3</span>
-                  <span class="font-label-xs text-label-xs text-on-surface-variant uppercase">2024 Championship</span>
+                  <span class="font-label-xs text-label-xs text-on-surface-variant uppercase">2024 Superteens</span>
                 </div>
                 <div class="bg-surface-container-low p-2 rounded">
                   <span class="font-telemetry-num text-headline-sm text-on-surface font-black block leading-none">2022</span>
@@ -121,9 +122,9 @@ const roadmap = [
         <div class="grid grid-cols-2 md:grid-cols-4 gap-gutter text-left">
           {[
             { n: '06', hot: true, a: 'Seasons Competing', b: '2020 to 2025' },
-            { n: '01', hot: false, a: 'Championship Title', b: 'Sportsman 2022' },
-            { n: 'P3', hot: true, a: '2024 Championship', b: 'Kawasaki ZX-4RR' },
-            { n: '2025', hot: false, a: 'Racing with', b: 'Triumph' },
+            { n: '03', hot: false, a: 'Championship Titles', b: 'Sportsman & 2x Endurance' },
+            { n: 'P3', hot: true, a: '2024 Superteens', b: 'Kawasaki ZX-4RR' },
+            { n: '2025', hot: false, a: 'Macadam Triumph', b: 'Daytona 660' },
           ].map((m) => (
             <div class="flex items-center gap-space-sm">
               <span class:list={['font-telemetry-num text-headline-lg italic font-black', m.hot ? 'text-primary-container' : 'text-on-surface']}>{m.n}</span>
