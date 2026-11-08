@@ -1,7 +1,8 @@
 # lewissmartracing.com
 
 Official website of Lewis Smart #32, British motorcycle road racer.
-Static site built with [Astro](https://astro.build): no client framework, a few tiny inline scripts, self-hosted fonts.
+Static site built with [Astro](https://astro.build) + Tailwind CSS (compiled at build time, no CDN).
+The Home and My Story pages are ported 1:1 from the Google Stitch layouts; the Stitch "Apex Precision" tokens live in `tailwind.config.mjs`, with the red palette swapped for the #32 livery (fluorescent yellow-green + purple).
 
 ## Run
 
@@ -15,7 +16,8 @@ npm run build    # static output in dist/
 
 | What | Where |
 | --- | --- |
-| Colours, fonts, spacing (design tokens) | `src/styles/global.css` (`--accent` = the one accent colour) |
+| Design tokens (Stitch colours, type scale, spacing) | `tailwind.config.mjs` (`primary-container` = livery green) |
+| Extra CSS for the simpler pages | `src/styles/global.css` |
 | All copy and data (timeline, stats, socials, sponsors, next race) | `src/data/site.ts` |
 | Pages | `src/pages/*.astro` |
 | Hero flip-book frames | `public/frames/frame-01.webp` ... |

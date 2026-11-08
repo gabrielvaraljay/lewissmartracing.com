@@ -1,114 +1,303 @@
 ---
+// My Story / career timeline. Layout ported 1:1 from the Google Stitch design; copy limited to confirmed facts.
 import Base from '../layouts/Base.astro';
-import PageHeader from '../components/PageHeader.astro';
-import SponsorCta from '../components/SponsorCta.astro';
-import { timeline } from '../data/site';
+import { site } from '../data/site';
+
+type Entry = {
+  year: string; tag: string; title: string; machine: string; body: string; pills: string[];
+  image?: { src: string; alt: string }; caption: string; node: 'live' | 'dim' | 'trophy' | 'solid' | 'active';
+  champion?: boolean; active?: boolean;
+};
+// Oldest first: the rise story unfolds while scrolling.
+const entries: Entry[] = [
+  {
+    year: '2020', tag: 'Debutant // Freshman', title: 'Grassroots Fire & Debut Season', machine: 'Machine: Honda CB500',
+    body: 'After training as a race technician at Silverstone Motorsport College, and inspired by a racing classmate, Lewis entered the Freshman Championship. A COVID-delayed calendar could not slow him down: several race wins and 3rd overall in his first ever season of road racing.',
+    pills: ['🏁 P3 Overall Championship', '⏱ Multiple Race Wins'], caption: '2020 // Freshman Championship', node: 'live',
+  },
+  {
+    year: '2021', tag: 'Elevation // BSB Paddock', title: 'Stepping Up to Sportsman & BSB Wildcard', machine: 'Sportsman Championship & BSB Junior Supersport',
+    body: 'A step up to the Sportsman Championship brought regular podiums. A late-season wildcard in British Superbikes Junior Supersport then gave Lewis his first taste of the national paddock, racing against the best young riders in the country.',
+    pills: ['🏆 Sportsman Podiums', '⚡ British Superbikes Wildcard Debut'], caption: '2021 // BSB Junior Supersport', node: 'dim',
+  },
+  {
+    year: '2022', tag: 'Championship Title', title: 'Sportsman Champion', machine: 'Sportsman Championship',
+    body: 'The breakthrough title. Lewis won the Sportsman Championship, while also racing in Junior Supersport, finishing in the 20s and learning fast against front-running national machinery.',
+    pills: ['🥇 2022 Sportsman Champion', '📊 Junior Supersport Experience'], caption: '2022 // Championship Crowned', node: 'trophy', champion: true,
+  },
+  {
+    year: '2023', tag: 'Breakthrough // BSB Support', title: 'The Breakthrough Junior Supersport Podium', machine: 'British Superbikes Junior Supersport',
+    body: 'His first Junior Supersport podium arrived mid-season, and Lewis ended the year the best way possible: with a race win.',
+    pills: ['⚡ First Junior Supersport Podium', '🏁 Season-Ending Race Win'], caption: '2023 // Junior Supersport', node: 'dim',
+  },
+  {
+    year: '2024', tag: 'Scouted // P3 Overall', title: 'Kawasaki ZX-4RR Campaign & Factory Eyes', machine: 'Machine: Kawasaki ZX-4RR',
+    body: 'On the Kawasaki ZX-4RR Lewis delivered consistent wins and podiums to finish 3rd in the championship. That form caught the attention of Triumph.',
+    pills: ['🏁 P3 Overall Championship', '🥇 Race Wins & Podiums', '📋 Triumph Attention'], caption: '2024 // Kawasaki ZX-4RR', node: 'solid',
+  },
+  {
+    year: '2025', tag: 'Triumph', title: 'The Triumph Era', machine: 'Machine: Triumph',
+    body: 'A new chapter racing with Triumph, in the fluorescent #32 livery. The focus: consistent podium finishes and a serious run at the championship title.',
+    pills: ['🏁 Target: The Title', '🎯 Consistent Podiums'], image: { src: '/images/hero-static.webp', alt: 'Lewis Smart cornering on the 2025 number 32 bike' },
+    caption: 'Racing with Triumph // #32', node: 'active', active: true,
+  },
+];
+const roadmap = [
+  { label: 'Freshman Championship', state: 'done' },
+  { label: 'Sportsman Champion', state: 'done' },
+  { label: 'Junior Supersport Wins', state: 'done' },
+  { label: 'Racing with Triumph', state: 'now' },
+  { label: 'British Superbikes', state: 'goal' },
+];
 ---
 <Base title="My Story" description="From a Honda CB500 in the Freshman Championship to racing with Triumph: the Lewis Smart #32 story, season by season.">
-  <PageHeader kicker="My Story" title="From Freshman" accent="to Triumph"
-    intro="Six seasons, one direction: forward. This is how a race technician from Silverstone Motorsport College became a front runner, one season at a time." />
-
-  <section class="section">
-    <div class="container">
-      <ol class="tl" data-tl>
-        <span class="tl__rail" aria-hidden="true"><span class="tl__fill"></span></span>
-        {timeline.map((t, i) => (
-          <li class:list={['tl__item', { 'tl__item--now': i === timeline.length - 1 }]} data-reveal>
-            <span class="tl__node" aria-hidden="true"></span>
-            <div class="tl__year num" aria-hidden="true">{t.year}</div>
-            <article class="tl__card card card--chamfer">
-              <div class="btn-row" style="gap:.5rem">
-                <span class="chip chip--accent">{t.year}</span>
-                {t.series !== 'TBC' && <span class="chip">{t.series}</span>}
-                {t.bike && <span class="chip">{t.bike}</span>}
+  <div class="flex flex-col w-full relative">
+    <!-- HERO BANNER -->
+    <section class="relative w-full overflow-hidden bg-surface-container-lowest py-space-xl lg:py-margin-lg">
+      <div class="pointer-events-none select-none absolute -right-12 -top-10 lg:right-6 lg:-top-16 opacity-[0.04] font-display-hero text-[180px] lg:text-[340px] text-on-surface font-black italic tracking-tighter leading-none z-0" aria-hidden="true">#32</div>
+      <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_0%,rgba(214,242,10,0.12),transparent_70%)] pointer-events-none z-0"></div>
+      <div class="relative z-10 max-w-7xl mx-auto px-margin-sm lg:px-margin">
+        <div class="inline-flex items-center gap-space-xs px-space-md py-1 bg-surface-container-high text-on-surface rounded-full shadow-md mb-space-md">
+          <span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+          <span class="font-label-xs text-label-xs uppercase tracking-widest text-on-surface-variant">Paddock Chronology // 2020 to the future</span>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-center">
+          <div class="lg:col-span-8 space-y-space-md">
+            <div class="inline-block px-space-sm py-0.5 bg-primary-container text-on-primary-container font-label-xs text-label-xs uppercase tracking-widest font-black italic">From Paddock Spanners to Factory Leathers</div>
+            <h1 class="font-display-hero text-headline-xl-mobile sm:text-headline-xl lg:text-display-hero uppercase tracking-tight text-on-surface font-black italic leading-none">
+              MY STORY: <span class="text-primary-container">THE RACING JOURNEY</span>
+            </h1>
+            <p class="font-body-lg text-body-lg text-on-surface-variant max-w-3xl leading-relaxed">
+              Trained as a race technician at Silverstone Motorsport College. Six seasons of British road racing, from a Honda CB500 in the Freshman Championship to racing with Triumph. Driven by hard work, perseverance and a clear goal: British Superbikes.
+            </p>
+            <div class="flex flex-wrap items-center gap-space-sm pt-space-xs">
+              <div class="px-space-md py-space-xs bg-surface-container text-on-surface rounded flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary-container text-[18px]">engineering</span>
+                <span class="font-label-md text-label-md uppercase tracking-wider">Race Technician, Silverstone</span>
               </div>
-              <h2 class="h-lg">{t.title}</h2>
-              <p class="tl__result"><span class="slash"></span> {t.result}</p>
-              <p class="muted">{t.body}</p>
-              <div class="placeholder-img tl__img"><span>{t.year} photo</span></div>
-            </article>
-          </li>
-        ))}
-        <li class="tl__item tl__item--next" data-reveal>
-          <span class="tl__node" aria-hidden="true"></span>
-          <div class="tl__year num" aria-hidden="true">Next</div>
-          <article class="tl__card tl__card--next">
-            <span class="label accent">The goal</span>
-            <h2 class="h-xl">British Superbikes</h2>
-            <p class="lead">The long-term target is the British Superbike Championship. Getting there takes results, and the right partners. This is where you come in.</p>
-          </article>
-        </li>
-      </ol>
-    </div>
-  </section>
-
-  <section class="section section--panel slant-top">
-    <div class="container quotes">
-      <figure class="quote" data-reveal>
-        <span class="label">Advice to young racers</span>
-        <blockquote class="h-lg">Stick with it. Hard work and perseverance <span class="accent">turn things around.</span></blockquote>
-      </figure>
-      <div class="facts" data-reveal>
-        <div class="fact"><span class="label">Dream race</span><span class="h-md">Yamaha R1 at Mugello</span></div>
-        <div class="fact"><span class="label">Training</span><span class="h-md">Gym five days a week</span></div>
-        <div class="fact"><span class="label">Long-term goal</span><span class="h-md">British Superbikes</span></div>
-        <div class="fact"><span class="label">Racing with</span><span class="h-md">Triumph</span></div>
+              <div class="px-space-md py-space-xs bg-surface-container text-on-surface rounded flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary-container text-[18px]">emoji_events</span>
+                <span class="font-label-md text-label-md uppercase tracking-wider">2022 Sportsman Champion</span>
+              </div>
+              <div class="px-space-md py-space-xs bg-surface-container text-on-surface rounded flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary-container text-[18px]">sports_motorsports</span>
+                <span class="font-label-md text-label-md uppercase tracking-wider">Racing with Triumph</span>
+              </div>
+            </div>
+          </div>
+          <div class="lg:col-span-4 flex justify-center lg:justify-end">
+            <div class="w-full max-w-sm bg-surface-container rounded-xl p-space-md shadow-xl relative overflow-hidden group">
+              <div class="absolute -right-4 -bottom-4 font-telemetry-num text-headline-xl text-surface-container-high opacity-40 italic font-black" aria-hidden="true">#32</div>
+              <div class="relative aspect-[4/5] w-full rounded-lg overflow-hidden mb-space-sm bg-surface-dim">
+                <img class="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" src="/images/lewis-portrait.webp" alt="Lewis Smart on the grid in the number 32 livery" width="1040" height="1300" decoding="async" />
+                <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent"></div>
+                <div class="absolute bottom-2 left-2 right-2 flex justify-between items-end p-space-xs">
+                  <div>
+                    <span class="font-label-xs text-label-xs text-on-surface-variant uppercase tracking-widest block">British Road Racer</span>
+                    <span class="font-headline-sm text-headline-sm text-on-surface uppercase italic font-bold">Lewis Smart</span>
+                  </div>
+                  <span class="px-2 py-1 bg-primary-container text-on-primary-container font-telemetry-num text-body-md font-black italic">#32</span>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-2 text-center pt-space-xs relative">
+                <div class="bg-surface-container-low p-2 rounded">
+                  <span class="font-telemetry-num text-headline-sm text-primary font-black block leading-none">P3</span>
+                  <span class="font-label-xs text-label-xs text-on-surface-variant uppercase">2024 Championship</span>
+                </div>
+                <div class="bg-surface-container-low p-2 rounded">
+                  <span class="font-telemetry-num text-headline-sm text-on-surface font-black block leading-none">2022</span>
+                  <span class="font-label-xs text-label-xs text-on-surface-variant uppercase">Sportsman Title</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="section">
-    <div class="container"><SponsorCta heading="Be part of the next chapter" /></div>
-  </section>
+    <!-- CAREER METRICS BAR -->
+    <section class="w-full bg-surface-container-low py-space-md">
+      <div class="max-w-7xl mx-auto px-margin-sm lg:px-margin">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-gutter text-left">
+          {[
+            { n: '06', hot: true, a: 'Seasons Competing', b: '2020 to 2025' },
+            { n: '01', hot: false, a: 'Championship Title', b: 'Sportsman 2022' },
+            { n: 'P3', hot: true, a: '2024 Championship', b: 'Kawasaki ZX-4RR' },
+            { n: '2025', hot: false, a: 'Racing with', b: 'Triumph' },
+          ].map((m) => (
+            <div class="flex items-center gap-space-sm">
+              <span class:list={['font-telemetry-num text-headline-lg italic font-black', m.hot ? 'text-primary-container' : 'text-on-surface']}>{m.n}</span>
+              <div>
+                <div class="font-headline-sm text-body-lg uppercase font-bold text-on-surface leading-tight">{m.a}</div>
+                <div class="font-label-xs text-label-xs text-on-surface-variant uppercase tracking-wider">{m.b}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- VERTICAL TIMELINE -->
+    <section class="w-full py-space-xl lg:py-margin-lg bg-surface-container-lowest relative overflow-hidden">
+      <div class="absolute left-1/2 top-1/4 -translate-x-1/2 w-96 h-96 bg-primary-container/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute left-1/2 bottom-1/4 -translate-x-1/2 w-96 h-96 bg-secondary-container/15 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="max-w-7xl mx-auto px-margin-sm lg:px-margin relative z-10">
+        <div class="text-center max-w-2xl mx-auto mb-space-xl">
+          <span class="font-label-md text-label-md uppercase tracking-widest text-primary-container font-bold">Season by Season</span>
+          <h2 class="font-display-hero text-headline-lg-mobile sm:text-headline-lg lg:text-headline-xl uppercase italic font-black text-on-surface mt-2">THE APEX TIMELINE</h2>
+          <p class="font-body-md text-body-md text-on-surface-variant mt-2">From a Honda CB500 in the Freshman Championship to racing with Triumph.</p>
+        </div>
+        <div class="relative w-full">
+          <div class="absolute left-6 md:left-1/2 top-0 bottom-0 w-1 bg-surface-container-high md:-translate-x-1/2">
+            <div class="w-full h-full bg-gradient-to-b from-primary-container via-secondary-container to-primary"></div>
+          </div>
+          <div class="space-y-space-xl md:space-y-margin-lg">
+            {entries.map((e, i) => {
+              const left = i % 2 === 0;
+              return (
+                <div class:list={['relative flex flex-col items-center justify-between group', left ? 'md:flex-row' : 'md:flex-row-reverse']}>
+                  {e.node === 'active'
+                    ? <div class="absolute left-6 md:left-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-primary-container flex items-center justify-center shadow-xl z-20 ring-4 ring-primary-container/20"><span class="material-symbols-outlined text-on-primary-container text-[20px]">two_wheeler</span></div>
+                    : <div class="absolute left-6 md:left-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center shadow-lg z-20 transition-transform group-hover:scale-125">
+                        {e.node === 'live' && <div class="w-5 h-5 rounded-full bg-primary-container flex items-center justify-center"><div class="w-2 h-2 rounded-full bg-on-primary-container animate-ping"></div></div>}
+                        {e.node === 'dim' && <div class="w-5 h-5 rounded-full bg-surface-bright flex items-center justify-center"><div class="w-2 h-2 rounded-full bg-primary"></div></div>}
+                        {e.node === 'trophy' && <div class="w-6 h-6 rounded-full bg-primary-container flex items-center justify-center"><span class="material-symbols-outlined text-on-primary-container text-[14px]">emoji_events</span></div>}
+                        {e.node === 'solid' && <div class="w-5 h-5 rounded-full bg-primary-container flex items-center justify-center"><div class="w-2 h-2 rounded-full bg-on-primary-container"></div></div>}
+                      </div>}
+                  <div class="ml-16 md:ml-0 md:w-[45%] w-[calc(100%-4rem)]">
+                    <div class="bg-surface-container p-space-lg rounded-xl shadow-xl hover:bg-surface-container-high transition-all relative overflow-hidden">
+                      {e.champion && <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary-container via-primary to-primary-container"></div>}
+                      <div class="flex flex-wrap items-center justify-between gap-2 mb-space-xs">
+                        {e.active
+                          ? <div class="flex items-center gap-space-xs">
+                              <span class="font-telemetry-num text-headline-md text-primary-container italic font-black">{e.year}</span>
+                              <span class="px-2 py-0.5 bg-primary-container text-on-primary-container font-label-xs text-label-xs uppercase font-black tracking-widest rounded animate-pulse">Active Campaign</span>
+                            </div>
+                          : <span class="font-telemetry-num text-headline-md text-primary-container italic font-black">{e.year}</span>}
+                        <span class:list={['font-label-xs text-label-xs uppercase px-2 py-0.5 rounded', e.champion ? 'bg-primary-container text-on-primary-container font-bold' : e.active ? 'bg-surface-container-lowest text-primary font-bold' : 'bg-surface-container-lowest text-on-surface-variant']}>{e.tag}</span>
+                      </div>
+                      <h3 class="font-headline-md text-headline-md uppercase italic font-extrabold text-on-surface mb-space-xs">{e.title}</h3>
+                      <div class="font-label-md text-label-md text-primary uppercase font-bold tracking-wider mb-space-sm">{e.machine}</div>
+                      <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-space-md">{e.body}</p>
+                      <div class="flex flex-wrap gap-2 pt-space-xs">
+                        {e.pills.map((p, k) => <span class:list={['bg-surface-container-lowest px-space-sm py-1 rounded font-label-xs text-label-xs', e.active && k === 0 ? 'text-primary font-bold' : 'text-on-surface font-semibold']}>{p}</span>)}
+                      </div>
+                    </div>
+                  </div>
+                  <div class:list={['hidden md:block md:w-[45%]', left ? 'pl-space-lg text-left' : 'pr-space-lg']}>
+                    <div class:list={['relative rounded-lg overflow-hidden shadow-lg aspect-video bg-surface-container-low max-w-md', { 'ml-auto': !left }]}>
+                      {e.image
+                        ? <img class="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity" src={e.image.src} alt={e.image.alt} loading="lazy" decoding="async" />
+                        : <div class="w-full h-full flex flex-col items-center justify-center gap-space-xs bg-[repeating-linear-gradient(-60deg,rgba(255,255,255,0.025)_0_2px,transparent_2px_14px)] text-on-surface-variant/60">
+                            <span class="material-symbols-outlined text-[28px]">photo_camera</span>
+                            <span class="font-label-xs text-label-xs uppercase tracking-widest">{e.year} photo coming soon</span>
+                          </div>}
+                      <div class:list={['absolute bottom-2 px-2 py-1 bg-surface-container-lowest/80 backdrop-blur rounded font-label-xs text-label-xs uppercase', left ? 'left-2' : 'right-2', e.active ? 'text-primary font-black' : 'text-on-surface']}>{e.caption}</div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+
+            <!-- THE FUTURE -->
+            <div class="relative flex flex-col md:flex-row items-center justify-between group">
+              <div class="absolute left-6 md:left-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center shadow-lg z-20 transition-transform group-hover:scale-125">
+                <div class="w-5 h-5 rounded-full bg-surface-variant flex items-center justify-center"><span class="material-symbols-outlined text-primary text-[14px]">flag</span></div>
+              </div>
+              <div class="ml-16 md:ml-0 md:w-[45%] w-[calc(100%-4rem)]">
+                <div class="bg-surface-container p-space-lg rounded-xl shadow-xl hover:bg-surface-container-high transition-all relative overflow-hidden">
+                  <div class="flex items-center justify-between mb-space-xs">
+                    <span class="font-telemetry-num text-headline-md text-on-surface-variant italic font-black">NEXT</span>
+                    <span class="font-label-xs text-label-xs uppercase px-2 py-0.5 bg-surface-container-lowest text-primary rounded font-bold">Long-Range Mission</span>
+                  </div>
+                  <h3 class="font-headline-md text-headline-md uppercase italic font-extrabold text-on-surface mb-space-xs">Destination: British Superbikes</h3>
+                  <div class="font-label-md text-label-md text-primary uppercase font-bold tracking-wider mb-space-sm">Ambition: The British Superbike Championship</div>
+                  <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-space-md">The long-term goal is British Superbikes. One day, the dream race: a Yamaha R1 at Mugello. Getting there takes results, hard work and the right partners.</p>
+                  <div class="flex flex-wrap gap-2 pt-space-xs">
+                    <span class="bg-surface-container-lowest px-space-sm py-1 rounded font-label-xs text-label-xs text-on-surface font-semibold">🎯 British Superbikes</span>
+                    <span class="bg-surface-container-lowest px-space-sm py-1 rounded font-label-xs text-label-xs text-on-surface font-semibold">🏁 Dream Race: Yamaha R1 at Mugello</span>
+                  </div>
+                </div>
+              </div>
+              <div class="hidden md:block md:w-[45%] pl-space-lg text-left">
+                <div class="p-space-lg bg-surface-container-low rounded-xl max-w-md shadow-md space-y-space-xs">
+                  <div class="flex items-center justify-between text-on-surface-variant">
+                    <span class="font-label-xs text-label-xs uppercase tracking-widest">Roadmap Status</span>
+                    <span class="font-telemetry-num text-body-sm text-primary-container font-black">STAGE 04/05</span>
+                  </div>
+                  <div class="space-y-space-xs pt-space-xs">
+                    {roadmap.map((r) => (
+                      <div>
+                        <div class="flex justify-between font-label-xs text-label-xs mb-1">
+                          <span class="text-on-surface">{r.label}</span>
+                          <span class:list={['font-bold', r.state === 'goal' ? 'text-on-surface-variant' : 'text-primary']}>{r.state === 'done' ? 'Done' : r.state === 'now' ? 'Now' : 'Goal'}</span>
+                        </div>
+                        <div class="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+                          <div class:list={['h-full', r.state === 'done' ? 'bg-primary-container w-full' : r.state === 'now' ? 'bg-primary w-1/2' : 'w-0']}></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RACING PHILOSOPHY -->
+    <section class="w-full py-space-xl bg-surface-container-low">
+      <div class="max-w-7xl mx-auto px-margin-sm lg:px-margin">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter items-stretch">
+          {[
+            { icon: 'precision_manufacturing', title: 'Race Engineering Mindset', body: 'Training as a race technician at Silverstone Motorsport College means Lewis understands what the bike is doing underneath him, and can turn that feeling into clear feedback for the crew.', foot: 'Chassis // Feedback First' },
+            { icon: 'fitness_center', title: 'Training Discipline', body: 'Five days a week in the gym, all year round. Race fitness is built long before the lights go out, and Lewis treats preparation as part of the job.', foot: 'Discipline // Zero Compromise' },
+            { icon: 'verified', title: 'Backed by Triumph', body: 'Consistent wins and podiums, and 3rd in the 2024 championship, caught the attention of Triumph. Racing with Triumph is the reward, and the platform for what comes next.', foot: 'Triumph // #32 Racing UK' },
+          ].map((p) => (
+            <div class="bg-surface-container p-space-lg rounded-xl shadow-lg flex flex-col justify-between">
+              <div>
+                <div class="w-10 h-10 rounded bg-surface-container-high flex items-center justify-center text-primary-container mb-space-md"><span class="material-symbols-outlined text-[24px]">{p.icon}</span></div>
+                <h4 class="font-headline-sm text-headline-sm uppercase italic font-bold text-on-surface mb-space-xs">{p.title}</h4>
+                <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">{p.body}</p>
+              </div>
+              <div class="mt-space-md pt-space-xs font-label-xs text-label-xs text-on-surface-variant uppercase tracking-widest">{p.foot}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- PARTNERSHIP CTA -->
+    <section class="w-full py-space-xl lg:py-margin-lg bg-surface-container-lowest relative overflow-hidden">
+      <div class="absolute -right-20 top-0 bottom-0 w-80 bg-primary-container/10 -skew-x-12 pointer-events-none"></div>
+      <div class="max-w-7xl mx-auto px-margin-sm lg:px-margin relative z-10">
+        <div class="bg-gradient-to-r from-surface-container to-surface-container-high rounded-2xl p-space-lg lg:p-space-xl shadow-2xl relative overflow-hidden">
+          <div class="pointer-events-none select-none absolute right-4 -bottom-10 opacity-5 font-display-hero text-[180px] lg:text-[240px] text-on-surface font-black italic tracking-tighter" aria-hidden="true">#32</div>
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-center relative z-10">
+            <div class="lg:col-span-8 space-y-space-sm">
+              <div class="inline-flex items-center gap-space-xs px-space-sm py-1 bg-primary-container text-on-primary-container rounded font-label-xs text-label-xs uppercase tracking-widest font-black italic">Commercial Opportunities // Next Season</div>
+              <h2 class="font-display-hero text-headline-lg-mobile sm:text-headline-lg lg:text-headline-xl uppercase italic font-black text-on-surface tracking-tight leading-none">PARTNER WITH LEWIS FOR THE NEXT CHAPTER</h2>
+              <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl leading-relaxed">Align your brand with one of Britain's rising motorcycle road racing talents. High-visibility branding on the bike and leathers, race weekend hospitality and content made for your channels.</p>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-space-sm pt-space-xs">
+                {['Bike & Leathers Livery', 'Paddock Hospitality', 'Content for Your Brand'].map((perk) => (
+                  <div class="flex items-center gap-2 text-on-surface font-label-md text-label-md">
+                    <span class="material-symbols-outlined text-primary-container text-[18px]">check_circle</span><span>{perk}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div class="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-space-sm justify-center">
+              <a class="w-full inline-flex items-center justify-center gap-space-xs px-space-lg py-space-sm bg-primary-container hover:bg-primary text-on-primary-container font-headline-sm text-headline-sm uppercase italic tracking-wider transition-all shadow-lg rounded hover:scale-[1.02] active:scale-[0.98]" href={site.sponsorDeck ?? '/contact/?topic=sponsorship'} download={site.sponsorDeck ? true : undefined}>
+                <span class="material-symbols-outlined text-[20px]">download</span><span>{site.sponsorDeck ? 'Download Sponsor Deck' : 'Request Sponsor Deck'}</span>
+              </a>
+              <a class="w-full inline-flex items-center justify-center gap-space-xs px-space-lg py-space-sm bg-surface-container-lowest hover:bg-surface-bright text-on-surface font-headline-sm text-headline-sm uppercase italic tracking-wider transition-all shadow-md rounded hover:scale-[1.02] active:scale-[0.98]" href="/contact/?topic=sponsorship">
+                <span>Contact Commercial Desk</span><span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
 </Base>
-
-<script>
-  const tl = document.querySelector<HTMLElement>('[data-tl]');
-  if (tl) {
-    const update = () => {
-      const r = tl.getBoundingClientRect();
-      const p = Math.min(1, Math.max(0, (innerHeight * 0.6 - r.top) / r.height));
-      tl.style.setProperty('--tl', p.toFixed(4));
-    };
-    update();
-    addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
-    addEventListener('resize', update);
-  }
-</script>
-
-<style>
-  .tl { --tl: 0; position: relative; list-style: none; margin: 0; padding: 0 0 0 2.25rem; display: grid; gap: clamp(2.5rem, 7vw, 5rem); }
-  .tl__rail { position: absolute; left: .5rem; top: .5rem; bottom: 0; width: 2px; background: var(--hairline-2); }
-  .tl__fill { position: absolute; inset: 0; background: linear-gradient(var(--accent), var(--accent) 80%, var(--purple)); transform-origin: top; transform: scaleY(var(--tl)); box-shadow: 0 0 12px var(--accent-glow); }
-
-  .tl__item { position: relative; display: grid; gap: 1rem; }
-  .tl__node { position: absolute; left: calc(-2.25rem + .5rem - 7px); top: .9rem; width: 16px; height: 16px; background: var(--bg); border: 2px solid var(--accent); transform: rotate(45deg); }
-  .tl__item--now .tl__node, .tl__item--next .tl__node { background: var(--accent); box-shadow: 0 0 16px var(--accent); }
-  .tl__year { text-transform: uppercase; font-size: clamp(3.5rem, 12vw, 7rem); color: transparent; -webkit-text-stroke: 1.5px var(--text-3); }
-  .tl__item--now .tl__year { -webkit-text-stroke-color: var(--accent); }
-  .tl__item--next .tl__year { color: var(--accent); -webkit-text-stroke: 0; }
-
-  .tl__card { display: grid; gap: 1rem; padding: clamp(1.5rem, 4vw, 2.25rem); }
-  .tl__card p { margin: 0; }
-  .tl__item--now .tl__card { border-color: var(--accent-line); }
-  .tl__result { font-family: var(--font-display); font-weight: 800; font-style: italic; text-transform: uppercase; font-size: 1.35rem; letter-spacing: .03em; display: flex; align-items: center; gap: .6rem; color: var(--accent); }
-  .tl__img { aspect-ratio: 16 / 9; margin-top: .5rem; }
-  .tl__card--next { display: grid; gap: 1rem; padding: clamp(1.5rem, 4vw, 2.25rem); background: linear-gradient(135deg, var(--purple-deep), var(--surface) 70%); border-left: 4px solid var(--purple); }
-
-  .quotes { display: grid; gap: 3rem; }
-  .quote { margin: 0; display: grid; gap: 1rem; border-left: 4px solid var(--accent); padding-left: clamp(1.25rem, 3vw, 2rem); }
-  .quote blockquote { margin: 0; font-size: clamp(2rem, 5vw, 3.25rem); line-height: 1; }
-  .facts { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--hairline); border: 1px solid var(--hairline); }
-  .fact { display: grid; gap: .5rem; align-content: start; background: var(--surface); padding: 1.5rem 1.25rem; }
-
-  @media (min-width: 900px) {
-    .tl { padding-left: 0; }
-    .tl__rail { left: 50%; transform: translateX(-1px); }
-    .tl__item { grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
-    .tl__node { left: calc(50% - 8px); top: 2.25rem; }
-    .tl__year { text-align: right; padding-top: .5rem; }
-    .tl__item:nth-child(odd) .tl__year { order: 2; text-align: left; }
-    .tl__item:nth-child(odd) .tl__card { order: 1; }
-    .quotes { grid-template-columns: 1.2fr 1fr; align-items: center; }
-  }
-</style>

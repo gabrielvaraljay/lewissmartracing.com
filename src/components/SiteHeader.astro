@@ -1,0 +1,74 @@
+---
+// Header + mobile drawer, ported from the Google Stitch layout.
+import { nav, site } from '../data/site';
+const path = Astro.url.pathname.replace(/\/?$/, '/');
+const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+const deskBase = 'whitespace-nowrap px-space-sm py-space-xs font-label-md text-label-md uppercase tracking-widest transition-colors';
+const mobBase = 'px-space-md py-space-sm font-headline-md text-headline-md uppercase tracking-wider';
+const on = 'text-on-primary-container bg-primary-container';
+const off = 'text-on-surface-variant hover:text-on-surface';
+---
+<header class="fixed top-0 left-0 w-full z-50 bg-surface-container-lowest/90 backdrop-blur-xl border-b border-primary-container/20">
+  <div class="h-20 max-w-7xl mx-auto px-margin-sm lg:px-margin flex items-center justify-between gap-gutter">
+    <div class="flex items-center gap-space-sm">
+      <a class="flex items-center gap-space-xs" href="/">
+        <span class="whitespace-nowrap font-headline-sm text-headline-sm uppercase tracking-wider text-on-surface">Lewis Smart</span>
+        <span class="font-telemetry-num text-telemetry-num text-primary-container italic font-black">#32</span>
+      </a>
+    </div>
+    <nav class="hidden xl:flex items-center gap-0.5 2xl:gap-space-xs" aria-label="Main">
+      {nav.map((n) => (
+        <a class:list={[deskBase, isActive(n.href) ? on : off]} href={n.href} aria-current={isActive(n.href) ? 'page' : undefined}>{n.label}</a>
+      ))}
+    </nav>
+    <div class="flex items-center gap-space-md">
+      <div class="hidden sm:flex items-center gap-space-xs text-on-surface-variant">
+        <a aria-label="Instagram" class="p-space-xs hover:text-on-surface transition-colors" href={site.instagram} target="_blank" rel="noopener"><span class="material-symbols-outlined text-[20px]">photo_camera</span></a>
+        <a aria-label="Facebook" class="p-space-xs hover:text-on-surface transition-colors" href={site.facebook} target="_blank" rel="noopener"><span class="material-symbols-outlined text-[20px]">share</span></a>
+        <a aria-label="Results" class="p-space-xs hover:text-on-surface transition-colors" href="/results/"><span class="material-symbols-outlined text-[20px]">podium</span></a>
+      </div>
+      <a class="hidden md:inline-flex items-center gap-space-xs px-space-md py-space-xs bg-primary-container hover:bg-primary text-on-primary-container font-headline-sm text-headline-sm uppercase italic tracking-wide transition-all shadow-[0_0_16px_-2px_rgba(214,242,10,0.5)]" href="/sponsors/">
+        <span class="whitespace-nowrap">Sponsor Lewis</span><span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+      </a>
+      <button aria-label="Open Navigation Menu" aria-controls="mobile-drawer" aria-expanded="false" class="xl:hidden p-space-xs text-on-surface hover:text-primary-container focus:outline-none" id="mobile-nav-toggle"><span class="material-symbols-outlined text-[28px]">menu</span></button>
+    </div>
+  </div>
+</header>
+<div class="fixed inset-0 z-50 bg-surface-container-lowest/95 backdrop-blur-2xl hidden flex-col justify-between p-margin-sm border-r border-primary-container/30 overflow-y-auto" id="mobile-drawer">
+  <div class="flex items-center justify-between pb-space-md border-b border-surface-container-high">
+    <div class="flex items-center gap-space-xs">
+      <span class="font-headline-sm text-headline-sm uppercase text-on-surface">LEWIS SMART <span class="text-primary-container italic font-black">#32</span></span>
+    </div>
+    <button aria-label="Close Navigation Menu" class="p-space-xs text-on-surface hover:text-primary-container" id="mobile-nav-close"><span class="material-symbols-outlined text-[32px]">close</span></button>
+  </div>
+  <nav class="flex flex-col gap-space-sm py-space-lg" aria-label="Mobile">
+    {nav.map((n) => (
+      <a class:list={[mobBase, isActive(n.href) ? on : off]} href={n.href} aria-current={isActive(n.href) ? 'page' : undefined}>{n.label}</a>
+    ))}
+  </nav>
+  <div class="flex flex-col gap-space-md pt-space-md border-t border-surface-container-high">
+    <a class="w-full flex items-center justify-center gap-space-xs py-space-sm bg-primary-container text-on-primary-container font-headline-sm text-headline-sm uppercase italic tracking-wider" href="/sponsors/">
+      <span>Sponsor Lewis</span><span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+    </a>
+    <div class="flex items-center justify-center gap-space-lg text-on-surface-variant">
+      <a href={site.instagram} target="_blank" rel="noopener" aria-label="Instagram"><span class="material-symbols-outlined">photo_camera</span></a>
+      <a href={site.facebook} target="_blank" rel="noopener" aria-label="Facebook"><span class="material-symbols-outlined">share</span></a>
+      <a href="/results/" aria-label="Results"><span class="material-symbols-outlined">sports_score</span></a>
+    </div>
+  </div>
+</div>
+
+<script>
+  const toggle = document.getElementById('mobile-nav-toggle');
+  const drawer = document.getElementById('mobile-drawer');
+  const closeBtn = document.getElementById('mobile-nav-close');
+  const set = (open: boolean) => {
+    drawer?.classList.toggle('hidden', !open);
+    drawer?.classList.toggle('flex', open);
+    toggle?.setAttribute('aria-expanded', String(open));
+    document.body.style.overflow = open ? 'hidden' : '';
+  };
+  toggle?.addEventListener('click', () => set(true));
+  closeBtn?.addEventListener('click', () => set(false));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') set(false); });
+</script>

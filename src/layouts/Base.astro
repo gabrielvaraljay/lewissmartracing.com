@@ -1,43 +1,52 @@
 ---
+import '@fontsource/barlow-condensed/600.css';
 import '@fontsource/barlow-condensed/700.css';
+import '@fontsource/barlow-condensed/800.css';
+import '@fontsource/barlow-condensed/900.css';
+import '@fontsource/barlow-condensed/700-italic.css';
 import '@fontsource/barlow-condensed/800-italic.css';
 import '@fontsource/barlow-condensed/900-italic.css';
-import '@fontsource/barlow-condensed/700-italic.css';
 import '@fontsource-variable/inter';
+import '../styles/tailwind.css';
 import '../styles/global.css';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
 import { site } from '../data/site';
 
 interface Props { title?: string; description?: string; image?: string }
-const { title, description = site.description, image } = Astro.props;
+const { title, description = site.description, image = '/images/hero-static.webp' } = Astro.props;
 const fullTitle = title ? `${title} | Lewis Smart #32` : 'Lewis Smart #32 | British Motorcycle Road Racer';
 const canonical = new URL(Astro.url.pathname, Astro.site);
+// Only the Material Symbols glyphs the site uses (keeps the icon font tiny). Must be alphabetical.
+const icons = ['arrow_forward','calendar_today','check_circle','chevron_right','close','construction','download','emoji_events','engineering','fitness_center','flag','keyboard_double_arrow_down','location_on','mail','menu','military_tech','photo_camera','podium','precision_manufacturing','share','sports_motorsports','sports_score','timer','trophy','two_wheeler','verified'].sort();
 ---
 <!doctype html>
-<html lang="en-GB">
+<html class="dark" lang="en-GB">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <meta name="theme-color" content="#0b0b0d" />
+    <meta name="theme-color" content="#0e0e10" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    {image && <meta property="og:image" content={new URL(image, Astro.site)} />}
+    <meta property="og:image" content={new URL(image, Astro.site)} />
     <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href={`https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=${icons.join(',')}&display=block`} />
     <script is:inline>document.documentElement.classList.add('js');</script>
     <slot name="head" />
   </head>
-  <body>
-    <a href="#main" class="skip">Skip to content</a>
-    <Header />
-    <main id="main"><slot /></main>
-    <Footer />
+  <body class="bg-surface-container-lowest text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container min-h-screen flex flex-col">
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-3 focus:bg-primary-container focus:text-on-primary-container">Skip to content</a>
+    <SiteHeader />
+    <main id="main" class="w-full pt-20 flex-grow bg-surface-container-lowest relative overflow-hidden"><slot /></main>
+    <SiteFooter />
     <script>
       const io = new IntersectionObserver((entries) => {
         for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
@@ -46,8 +55,3 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     </script>
   </body>
 </html>
-
-<style>
-  .skip { position: absolute; left: -999px; top: 0; z-index: 100; background: var(--accent); color: var(--on-accent); padding: .75rem 1rem; font-weight: 700; }
-  .skip:focus { left: 1rem; top: 1rem; }
-</style>

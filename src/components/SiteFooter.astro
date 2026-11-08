@@ -1,0 +1,55 @@
+---
+// Footer, ported from the Google Stitch layout.
+import { site } from '../data/site';
+const year = new Date().getFullYear();
+---
+<footer class="w-full bg-surface-container-low border-t border-surface-container-high relative overflow-hidden">
+  <div class="pointer-events-none select-none absolute right-4 -bottom-10 opacity-5 font-display-hero text-display-hero text-on-surface font-black italic tracking-tighter" aria-hidden="true">#32</div>
+  <div class="max-w-7xl mx-auto px-margin-sm lg:px-margin py-space-xl relative z-10">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter mb-space-xl">
+      <div>
+        <div class="flex items-center gap-space-xs mb-space-sm">
+          <span class="font-headline-lg text-headline-lg uppercase tracking-tight text-on-surface font-black">SMART</span>
+          <span class="font-telemetry-num text-telemetry-num text-primary-container italic font-black">#32</span>
+        </div>
+        <p class="font-body-sm text-body-sm text-on-surface-variant max-w-sm mb-space-md">British motorcycle road racer. From a Honda CB500 in the Freshman Championship to racing with Triumph.</p>
+        <div class="flex items-center gap-space-xs">
+          <span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+          <span class="font-label-xs text-label-xs uppercase tracking-widest text-on-surface-variant">Racing with Triumph</span>
+        </div>
+      </div>
+      <div>
+        <div class="font-headline-sm text-headline-sm uppercase tracking-wider text-on-surface mb-space-md">Paddock Quick Links</div>
+        <ul class="space-y-space-xs font-label-md text-label-md uppercase tracking-wider text-on-surface-variant">
+          <li class="hover:text-on-surface transition-colors"><a href="/my-story/">My Story</a></li>
+          <li class="hover:text-on-surface transition-colors"><a href="/calendar/">Race Calendar</a></li>
+          <li class="hover:text-on-surface transition-colors"><a href="/results/">Results</a></li>
+          <li class="hover:text-on-surface transition-colors"><a href="/bike-and-team/">Bike &amp; Team</a></li>
+          <li class="hover:text-on-surface transition-colors"><a href="/gallery/">Gallery</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="font-headline-sm text-headline-sm uppercase tracking-wider text-on-surface mb-space-md">Follow #32</div>
+        <ul class="space-y-space-xs font-body-sm text-body-sm text-on-surface-variant">
+          <li><a class="inline-flex items-center gap-space-xs hover:text-on-surface transition-colors" href={site.instagram} target="_blank" rel="noopener"><span class="material-symbols-outlined text-[18px] text-primary-container">photo_camera</span>Instagram @lewis.smart32</a></li>
+          <li><a class="inline-flex items-center gap-space-xs hover:text-on-surface transition-colors" href={site.facebook} target="_blank" rel="noopener"><span class="material-symbols-outlined text-[18px] text-primary-container">share</span>Facebook: Lewis Smart 32</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="font-headline-sm text-headline-sm uppercase tracking-wider text-on-surface mb-space-md">Commercial Desk</div>
+        <p class="font-body-sm text-body-sm text-on-surface-variant mb-space-xs">Sponsorship &amp; partner enquiries:</p>
+        {site.email
+          ? <a class="font-headline-sm text-headline-sm text-primary-container hover:text-on-surface tracking-wide block mb-space-md" href={`mailto:${site.email}`}>{site.email}</a>
+          : <a class="font-headline-sm text-headline-sm text-primary-container hover:text-on-surface tracking-wide inline-flex items-center gap-space-xs mb-space-md uppercase italic" href="/contact/?topic=sponsorship">Get in touch <span class="material-symbols-outlined text-[18px]">arrow_forward</span></a>}
+        <p class="font-label-xs text-label-xs uppercase text-on-surface-variant">Partnership packages for the coming season</p>
+      </div>
+    </div>
+    <div class="pt-space-md border-t border-surface-container-highest flex flex-col sm:flex-row items-center justify-between gap-space-sm font-label-xs text-label-xs text-on-surface-variant uppercase tracking-widest">
+      <div>&copy; {year} Lewis Smart #32 Racing. All Rights Reserved.</div>
+      <div class="flex items-center gap-space-md">
+        <a class="hover:text-on-surface" href="/sponsors/">Sponsors</a>
+        <a class="hover:text-on-surface" href="/contact/">Contact</a>
+      </div>
+    </div>
+  </div>
+</footer>
