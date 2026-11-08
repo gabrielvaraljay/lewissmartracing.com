@@ -18,7 +18,8 @@ const socialTiles = [
 <Base>
   <div class="flex flex-col w-full bg-surface-container-lowest text-on-surface">
     <!-- 1. HERO: SCROLL-DRIVEN FLIP-BOOK -->
-    <section class="relative w-full h-[100svh] sm:h-[300vh] bg-surface-container-lowest" id="hero-scroll-container" data-frames={heroFrameCount}>
+    <!-- The extra scroll height only exists when there are flip-book frames to scrub through. -->
+    <section class:list={['relative w-full h-[100svh] bg-surface-container-lowest', { 'sm:h-[300vh]': heroFrameCount > 0 }]} id="hero-scroll-container" data-frames={heroFrameCount}>
       <div class="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-between">
         <div class="absolute inset-0 z-0">
           <img class="absolute inset-0 w-full h-full object-cover object-[36%_50%] sm:object-center" src={heroStatic} alt="Lewis Smart racing the number 32 bike" fetchpriority="high" decoding="async" />
@@ -394,7 +395,9 @@ const socialTiles = [
 
     const progress = () => {
       const r = container.getBoundingClientRect();
-      const span = Math.max(1, container.offsetHeight - innerHeight);
+      // Without frames the hero is one screen tall, so measure progress across its own height.
+      const extra = container.offsetHeight - innerHeight;
+      const span = Math.max(1, extra > 50 ? extra : container.offsetHeight);
       return Math.min(1, Math.max(0, -r.top / span));
     };
     const drawFrame = (i: number) => {
