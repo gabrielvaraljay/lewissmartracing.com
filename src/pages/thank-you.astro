@@ -1,0 +1,30 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../data/site';
+---
+<Base title="Thank you" description="Your message to Lewis Smart #32 has been sent.">
+  <meta slot="head" name="robots" content="noindex, follow" />
+  <PageHeader kicker="Message sent" title="Thank" accent="you" intro="Your message is on its way to Lewis. He reads every enquiry and will get back to you as soon as he can." />
+  <section class="section">
+    <div class="container ty">
+      <div class="ty__actions">
+        <a class="btn btn--primary" href="/">Back to home <span class="arrow"><Icon name="arrow" size={18} /></span></a>
+        <a class="btn btn--ghost" href="/my-story/">Read the story</a>
+      </div>
+      <div class="ty__social">
+        <span class="label">Follow #32 in the meantime</span>
+        <div class="ty__actions">
+          <a class="btn btn--ghost" href={site.instagram} target="_blank" rel="noopener"><Icon name="instagram" size={18} /> @lewis.smart32</a>
+          <a class="btn btn--ghost" href={site.facebook} target="_blank" rel="noopener"><Icon name="facebook" size={18} /> Follow on Facebook</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+<style>
+  .ty { display: grid; gap: 2.5rem; }
+  .ty__actions { display: flex; flex-wrap: wrap; gap: 1rem; }
+  .ty__social { display: grid; gap: 1rem; }
+</style>

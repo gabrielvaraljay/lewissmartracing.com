@@ -6,11 +6,11 @@ const { topic = 'general' } = Astro.props;
 ---
 <form class="form" method="post" action={site.formEndpoint ?? undefined} data-form>
   <div class="form__row">
-    <label class="field"><span class="label">Name</span><input name="name" required autocomplete="name" placeholder="Your name" /></label>
-    <label class="field"><span class="label">Email</span><input name="email" type="email" required autocomplete="email" placeholder="you@company.com" /></label>
+    <label class="field"><span class="label">Name</span><input name="name" required maxlength="120" autocomplete="name" placeholder="Your name" /></label>
+    <label class="field"><span class="label">Email</span><input name="email" type="email" required maxlength="200" autocomplete="email" placeholder="you@company.com" /></label>
   </div>
   <div class="form__row">
-    <label class="field"><span class="label">Company</span><input name="company" autocomplete="organization" placeholder="Optional" /></label>
+    <label class="field"><span class="label">Company</span><input name="company" maxlength="160" autocomplete="organization" placeholder="Optional" /></label>
     <label class="field"><span class="label">Topic</span>
       <select name="topic" data-topic>
         <option value="general" selected={topic === 'general'}>General enquiry</option>
@@ -19,20 +19,47 @@ const { topic = 'general' } = Astro.props;
       </select>
     </label>
   </div>
-  <label class="field"><span class="label">Message</span><textarea name="message" required placeholder="Tell us a bit about what you have in mind"></textarea></label>
+  <label class="field"><span class="label">Message</span><textarea name="message" required maxlength="5000" placeholder="Tell us a bit about what you have in mind"></textarea></label>
+  <!-- Honeypot: hidden from people, bots fill it in. -->
+  <div class="hp" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off" /></label></div>
   <div class="form__foot">
-    <button class="btn btn--primary" type="submit">Send message <span class="arrow"><Icon name="arrow" size={18} /></span></button>
+    <button class="btn btn--primary" type="submit" data-submit>Send message <span class="arrow"><Icon name="arrow" size={18} /></span></button>
+    <p class="form__note" data-status role="status" aria-live="polite"></p>
     {!site.formEndpoint && <p class="tbc form__note">Form delivery is being connected. In the meantime, message Lewis on Instagram.</p>}
   </div>
 </form>
 
 <script>
-  // Preselect topic from ?topic=sponsorship
-  const t = new URLSearchParams(location.search).get('topic');
+  const ERRORS: Record<string, string> = {
+    invalid: 'Please fill in your name, a valid email and a message.',
+    rate: 'Too many messages from this connection. Please try again later.',
+    default: 'Sorry, the message could not be sent. Please try again, or message Lewis on Instagram.',
+  };
+  const params = new URLSearchParams(location.search);
   const sel = document.querySelector<HTMLSelectElement>('[data-topic]');
+  const t = params.get('topic');
   if (t && sel && [...sel.options].some((o) => o.value === t)) sel.value = t;
+
   const form = document.querySelector<HTMLFormElement>('[data-form]');
-  form?.addEventListener('submit', (e) => { if (!form.getAttribute('action')) e.preventDefault(); });
+  const status = form?.querySelector<HTMLElement>('[data-status]');
+  const button = form?.querySelector<HTMLButtonElement>('[data-submit]');
+  const showError = (code: string) => { if (status) { status.textContent = ERRORS[code] ?? ERRORS.default; status.classList.add('is-error'); } };
+  if (params.get('error')) showError(params.get('error')!);
+
+  form?.addEventListener('submit', async (e) => {
+    const action = form.getAttribute('action');
+    e.preventDefault();
+    if (!action || !button) return;
+    button.disabled = true;
+    if (status) { status.textContent = 'Sending…'; status.classList.remove('is-error'); }
+    try {
+      const res = await fetch(action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.ok) { location.href = data.redirect || '/thank-you/'; return; }
+      showError(data.error);
+    } catch { showError('default'); }
+    button.disabled = false;
+  });
 </script>
 
 <style>
@@ -40,5 +67,8 @@ const { topic = 'general' } = Astro.props;
   .form__row { display: grid; gap: 1.5rem; }
   .form__foot { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
   .form__note { margin: 0; font-size: 13px; }
+  .form__note.is-error { color: #ff6b6b; }
+  .form button[disabled] { opacity: .6; cursor: wait; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
   @media (min-width: 700px) { .form__row { grid-template-columns: 1fr 1fr; } }
 </style>

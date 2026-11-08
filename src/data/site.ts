@@ -11,7 +11,7 @@ export const site = {
   instagram: 'https://www.instagram.com/lewis.smart32/',
   facebook: 'https://www.facebook.com/people/Lewis-Smart-32/100076010736822/',
   sponsorDeck: null as string | null, // e.g. '/lewis-smart-32-sponsorship.pdf'
-  formEndpoint: null as string | null, // e.g. Formspree / Web3Forms URL
+  formEndpoint: '/api/enquiry.php' as string | null, // PHP handler on the server -> BlueFox (public/api/enquiry.php)
 };
 
 export const nav = [
