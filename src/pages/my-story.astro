@@ -19,7 +19,7 @@ import { timeline } from '../data/site';
             <article class="tl__card card card--chamfer">
               <div class="btn-row" style="gap:.5rem">
                 <span class="chip chip--accent">{t.year}</span>
-                <span class="chip">{t.series}</span>
+                {t.series !== 'TBC' && <span class="chip">{t.series}</span>}
                 {t.bike && <span class="chip">{t.bike}</span>}
               </div>
               <h2 class="h-lg">{t.title}</h2>
@@ -84,7 +84,7 @@ import { timeline } from '../data/site';
   .tl__item { position: relative; display: grid; gap: 1rem; }
   .tl__node { position: absolute; left: calc(-2.25rem + .5rem - 7px); top: .9rem; width: 16px; height: 16px; background: var(--bg); border: 2px solid var(--accent); transform: rotate(45deg); }
   .tl__item--now .tl__node, .tl__item--next .tl__node { background: var(--accent); box-shadow: 0 0 16px var(--accent); }
-  .tl__year { font-size: clamp(3.5rem, 12vw, 7rem); color: transparent; -webkit-text-stroke: 1.5px var(--text-3); }
+  .tl__year { text-transform: uppercase; font-size: clamp(3.5rem, 12vw, 7rem); color: transparent; -webkit-text-stroke: 1.5px var(--text-3); }
   .tl__item--now .tl__year { -webkit-text-stroke-color: var(--accent); }
   .tl__item--next .tl__year { color: var(--accent); -webkit-text-stroke: 0; }
 
