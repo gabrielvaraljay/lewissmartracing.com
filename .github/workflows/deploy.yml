@@ -1,0 +1,53 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://lewissmartracing.com
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      # The key belongs to the dedicated `lsr-deploy` user on the server. Its
+      # authorized_keys entry is `restrict,command="rrsync /var/www/lewissmartracing.com"`:
+      # no shell, no forwarding, and rsync is jailed to the site directory.
+      - name: Set up SSH
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+
+      # The path is relative to the rrsync jail, so "/" is /var/www/lewissmartracing.com.
+      - name: Upload site
+        run: >
+          rsync -az --delete --chmod=D755,F644
+          -e "ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes"
+          dist/ lsr-deploy@78.47.73.104:/
+
+      - name: Smoke test
+        run: curl -fsS -o /dev/null -w "%{http_code}\n" http://lewissmartracing.com/
