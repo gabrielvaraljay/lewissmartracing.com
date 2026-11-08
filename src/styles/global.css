@@ -76,7 +76,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .page-top { padding-top: calc(var(--header-h) + clamp(3rem, 7vw, 5rem)); }
 
 /* ---------- type ---------- */
-.display, h1, h2, h3, h4 {
+.display, h1, h2, h3, h4, .h-hero, .h-xl, .h-lg, .h-md, .h-sm {
   font-family: var(--font-display);
   text-transform: uppercase;
   margin: 0;
