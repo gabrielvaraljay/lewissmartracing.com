@@ -49,9 +49,9 @@ jobs:
           -e "ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes"
           dist/ lsr-deploy@78.47.73.104:/
 
-      # 401 is accepted while the site sits behind the temporary nginx password.
+      # While the temporary password gate is on, / redirects (302) to /__gate.html.
       - name: Smoke test
         run: |
           code=$(curl -sS -o /dev/null -w "%{http_code}" https://lewissmartracing.com/)
           echo "HTTP $code"
-          [ "$code" = 200 ] || [ "$code" = 401 ]
+          [ "$code" = 200 ] || [ "$code" = 302 ]
