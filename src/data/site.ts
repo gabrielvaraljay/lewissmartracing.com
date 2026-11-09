@@ -31,7 +31,7 @@ export const heroFrameCount = 0;
 
 // Placeholder values until confirmed by Lewis.
 export const stats = [
-  { label: 'Seasons raced', value: '06', note: '2020 to 2025' },
+  { label: 'Seasons raced', value: '07', note: '2020 to 2026' },
   { label: 'Race wins', value: null, note: 'TBC' },
   { label: 'Podiums', value: null, note: 'TBC' },
   { label: 'Titles', value: '03', note: 'Sportsman 2022, Club 600 Endurance 2023, National 600 Endurance 2024' },
@@ -100,12 +100,21 @@ export const timeline: TimelineEntry[] = [
     body:
       'Lewis joined the Macadam Triumph Factory Racing team in the Pirelli National Sportbike Championship on the Triumph Daytona 660, alongside Katie Hand, Jayden Martin and Brodie Gawith. He closed his debut season with a season-best 5th place at the Brands Hatch finale.',
   },
+  {
+    year: '2026',
+    title: 'Top 10 regular',
+    bike: 'Triumph',
+    series: 'Pirelli British Sportbike',
+    result: 'Consistent top 10s, best P4 at Oulton Park',
+    body:
+      'A season of consistent top 10 finishes in the Pirelli British Sportbike Championship at Bennetts British Superbikes, with a best of 4th at Oulton Park. The goal for 2027: turning that pace into podiums.',
+  },
 ];
 
 export const milestones = [
   { year: '2020', tag: 'Rookie year', title: 'First wins', body: 'Several race wins and 3rd overall in the Freshman Championship on a Honda CB500.' },
   { year: '2022', tag: 'Title', title: 'CB500 Sportsman Champion', body: 'Crowned CB500 Sportsman Champion, racing as #23, while gaining Junior Supersport experience at national level.' },
-  { year: '2025', tag: 'Present', title: 'Racing with Triumph', body: 'After 3rd in the 2024 BSB Kawasaki Superteens and the National 600 Endurance title, Lewis joins Macadam Triumph Factory Racing on the Daytona 660.' },
+  { year: '2026', tag: 'Present', title: 'Chasing podiums', body: 'Consistent top 10 finishes in the Pirelli British Sportbike Championship, with a best of 4th at Oulton Park. 2027 target: the podium.' },
 ];
 
 // Fill in when the calendar is confirmed. ISO date of race day.

@@ -39,7 +39,12 @@ const entries: Entry[] = [
     year: '2025', tag: 'Triumph', title: 'The Triumph Era', machine: 'Machine: Triumph Daytona 660',
     body: 'A factory ride with Macadam Triumph Factory Racing in the Pirelli National Sportbike Championship, in the fluorescent #32 livery. The debut season closed with a season-best 5th place at the Brands Hatch finale.',
     pills: ['🏭 Macadam Triumph Factory Racing', '🏁 Season-Best P5, Brands Hatch'], image: { src: '/images/hero-static.webp', alt: 'Lewis Smart cornering on the 2025 number 32 bike' },
-    caption: 'Macadam Triumph // #32', node: 'active', active: true,
+    caption: 'Macadam Triumph // #32', node: 'solid',
+  },
+  {
+    year: '2026', tag: 'British Sportbike // Top 10', title: 'Top 10 Regular', machine: 'Pirelli British Sportbike Championship',
+    body: 'A season of consistent top 10 finishes in the Pirelli British Sportbike Championship at Bennetts British Superbikes, with a best of 4th at Oulton Park. The work for 2027 has already started: turning that pace into podium finishes.',
+    pills: ['🏁 Best P4, Oulton Park', '🎯 2027 Target: Podiums'], caption: '2026 // #32', node: 'active', active: true,
   },
 ];
 const roadmap = [
@@ -47,7 +52,8 @@ const roadmap = [
   { label: 'Sportsman Champion', state: 'done' },
   { label: 'Junior Supersport Wins', state: 'done' },
   { label: 'Endurance Champion', state: 'done' },
-  { label: 'Racing with Triumph', state: 'now' },
+  { label: 'Racing with Triumph', state: 'done' },
+  { label: 'British Sportbike Podiums', state: 'now' },
   { label: 'British Superbikes', state: 'goal' },
 ];
 ---
@@ -121,10 +127,10 @@ const roadmap = [
       <div class="max-w-7xl mx-auto px-margin-sm lg:px-margin">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-gutter text-left">
           {[
-            { n: '06', hot: true, a: 'Seasons Competing', b: '2020 to 2025' },
+            { n: '07', hot: true, a: 'Seasons Competing', b: '2020 to 2026' },
             { n: '03', hot: false, a: 'Championship Titles', b: 'Sportsman & 2x Endurance' },
             { n: 'P3', hot: true, a: '2024 Superteens', b: 'Kawasaki ZX-4RR' },
-            { n: '2025', hot: false, a: 'Macadam Triumph', b: 'Daytona 660' },
+            { n: 'P4', hot: false, a: '2026 Best Finish', b: 'Oulton Park' },
           ].map((m) => (
             <div class="flex items-center gap-space-sm">
               <span class:list={['font-telemetry-num text-headline-lg italic font-black', m.hot ? 'text-primary-container' : 'text-on-surface']}>{m.n}</span>

@@ -9,15 +9,24 @@ const tiers = [
   { id: 'partner', name: 'Official partners' },
   { id: 'supporter', name: 'Supporters' },
 ] as const;
-// Package names only; content and pricing to be agreed with Lewis.
-const packages = [
-  { name: 'Supporter', points: ['Logo on the website', 'Social media thank-you posts', 'Race weekend updates'] },
-  { name: 'Partner', points: ['Logo on the bike', 'Regular social features', 'Paddock hospitality'] },
-  { name: 'Title', points: ['Prime bike and leathers placement', 'Content made for your brand', 'Appearances and events'] },
+// From Lewis's 2027 sponsorship call on Facebook.
+const offers = [
+  { title: 'Bike, leathers and helmet', body: 'Your company logo on the race bike, leathers and helmet, in front of BSB crowds and TV cameras.' },
+  { title: 'Social media exposure', body: 'Regular sharing, tagging and promotion of your business across our platforms.' },
+  { title: 'Workplace visits', body: 'Visits to your workplace for photos, videos and promotional content.' },
+  { title: 'BSB race weekend tickets', body: 'Complimentary tickets to selected BSB race weekends: meet the team and experience the paddock.' },
+  { title: 'Bespoke promotion', body: 'Promotional opportunities tailored to help your business gain exposure.' },
 ];
 ---
-<Base title="Sponsors" description="Partner with Lewis Smart #32. Sponsorship packages, deck download and enquiries.">
-  <PageHeader kicker="Sponsors" title="Race" accent="with us" intro="Every race weekend is powered by partners. Here is who backs #32, and how your business can join them." />
+<Base title="Sponsors" description="2027 sponsorship opportunities with Lewis Smart #32 in the Pirelli British Sportbike Championship.">
+  <PageHeader kicker="2027 Sponsorship" title="Race" accent="with us" intro="After a season of consistent top 10 finishes in the Pirelli British Sportbike Championship, including 4th at Oulton Park, we're looking ahead to 2027 with one clear goal: turning that pace into podium finishes." />
+
+  <section class="section">
+    <div class="container about">
+      <p class="lead">As a small, family-run racing team, we're looking for new and existing sponsors to join us. With 10 rounds of the championship ahead, there are great opportunities to get your business, brand or company noticed while supporting a team with big ambitions.</p>
+      <p>We pride ourselves on being approachable, flexible and easy to work with, and we want every partnership to be worthwhile and rewarding for everyone involved. Whether you're a local business, an established company or simply someone who wants to support a small team chasing big dreams, we'd love to have you on board.</p>
+    </div>
+  </section>
 
   <section class="section">
     <div class="container">
@@ -39,17 +48,17 @@ const packages = [
 
   <section class="section section--panel slant-top">
     <div class="container">
-      <div class="section-head"><div><div class="kicker"><span class="label">Packages</span></div><h2 class="h-xl">Ways to partner</h2></div></div>
+      <div class="section-head"><div><div class="kicker"><span class="label">What we offer</span></div><h2 class="h-xl">What sponsors get</h2></div></div>
       <div class="pk">
-        {packages.map((p, i) => (
-          <article class:list={['card card--chamfer pk__card', { 'pk__card--top': i === 2 }]} data-reveal>
+        {offers.map((o, i) => (
+          <article class:list={['card card--chamfer pk__card', { 'pk__card--top': i === 0 }]} data-reveal>
             <span class="label">{String(i + 1).padStart(2, '0')}</span>
-            <h3 class="h-lg">{p.name}</h3>
-            <ul>{p.points.map((pt) => <li>{pt}</li>)}</ul>
+            <h3 class="h-lg">{o.title}</h3>
+            <p>{o.body}</p>
           </article>
         ))}
       </div>
-      <p class="tbc" style="margin-top:1.5rem">Packages are flexible and tailored to each partner.</p>
+      <p class="tbc" style="margin-top:1.5rem">Every partnership is tailored. Get in touch below, drop us a DM on Instagram or Facebook, or email <a href="mailto:smart.racing32@gmail.com">smart.racing32@gmail.com</a>.</p>
     </div>
   </section>
 
@@ -75,9 +84,11 @@ const packages = [
   .tier__logo--empty { border-style: dashed; }
   .pk { display: grid; gap: var(--gutter); }
   .pk__card { display: grid; gap: 1rem; align-content: start; padding: 2rem; }
-  .pk__card ul { margin: 0; padding: 0; list-style: none; display: grid; gap: .6rem; color: var(--text-2); }
-  .pk__card li { display: flex; gap: .6rem; }
-  .pk__card li::before { content: ''; flex: none; width: 8px; height: 8px; margin-top: .55rem; background: var(--accent); transform: rotate(45deg); }
+  .pk__card p { margin: 0; color: var(--text-2); }
+  .about { display: grid; gap: 1.25rem; max-width: 60rem; }
+  .about p { margin: 0; color: var(--text-2); }
+  .about .lead { font-size: 1.25rem; color: var(--text); }
   .pk__card--top { border-color: var(--accent-line); }
-  @media (min-width: 900px) { .pk { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 700px) { .pk { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1000px) { .pk { grid-template-columns: repeat(3, 1fr); } }
 </style>
