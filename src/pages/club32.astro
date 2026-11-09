@@ -1,0 +1,325 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Icon from '../components/Icon.astro';
+import { club32, site } from '../data/site';
+const cells = Array.from({ length: club32.numbers }, (_, i) => i + 1);
+---
+<Base title="Club32" description="Club32: pick your lucky number for the whole season and win BSB race weekend tickets before every round. £32 a number, 100 numbers.">
+  <PageHeader kicker="Supporters' club" title="Club" accent="32" intro="100 numbers. £32 each. Your number is yours for the whole season and goes into the draw before every British Superbikes race weekend." />
+
+  <section class="section">
+    <div class="container">
+      <ol class="c32-steps">
+        {club32.steps.map((s, i) => (
+          <li class="card card--chamfer" data-reveal>
+            <span class="label">{String(i + 1).padStart(2, '0')}</span>
+            <h2 class="h-md">{s.title}</h2>
+            <p>{s.body}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section section--panel slant-top" id="numbers">
+    <div class="container c32">
+      <div class="section-head">
+        <div>
+          <div class="kicker"><span class="label">Season <span data-season>2027</span></span></div>
+          <h2 class="h-xl">Pick your number</h2>
+        </div>
+        <ul class="c32-legend" aria-label="Key">
+          <li><i class="sw sw--free"></i>Free</li>
+          <li><i class="sw sw--sel"></i>Your pick</li>
+          <li><i class="sw sw--held"></i>Reserved</li>
+          <li><i class="sw sw--member"></i>Held for a member</li>
+          <li><i class="sw sw--taken"></i>Taken</li>
+        </ul>
+      </div>
+
+      <p class="c32-banner" data-banner hidden></p>
+
+      <div class="c32-grid" data-grid role="group" aria-label="Club32 numbers 1 to 100">
+        {cells.map((n) => (
+          <button type="button" class="cell" data-n={n} disabled aria-pressed="false">
+            <span class="cell__n">{n}</span><span class="cell__name"></span>
+          </button>
+        ))}
+      </div>
+      <p class="tbc c32-load" data-load>Loading the latest numbers…</p>
+
+      <form class="form c32-form" data-form hidden novalidate>
+        <div class="c32-pick">
+          <div>
+            <span class="label">Your numbers</span>
+            <p class="c32-pick__nums" data-picked>None yet</p>
+          </div>
+          <div class="c32-pick__total">
+            <span class="label">Total</span>
+            <p class="c32-pick__sum" data-total>£0.00</p>
+          </div>
+        </div>
+        <div class="form__row">
+          <label class="field"><span class="label">First name</span><input name="first_name" required maxlength="60" autocomplete="given-name" /></label>
+          <label class="field"><span class="label">Last name</span><input name="last_name" required maxlength="60" autocomplete="family-name" /></label>
+        </div>
+        <div class="form__row">
+          <label class="field"><span class="label">Email</span><input name="email" type="email" required maxlength="200" autocomplete="email" /></label>
+          <label class="field"><span class="label">Phone</span><input name="phone" type="tel" maxlength="30" autocomplete="tel" placeholder="Optional" /></label>
+        </div>
+        <label class="c32-consent"><input type="checkbox" name="consent" value="1" required /> <span>I am 18 or over and I accept the Club32 rules below. Only my first name will be shown next to my number.</span></label>
+        <div class="hp" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off" /></label></div>
+        <div class="form__foot">
+          <button class="btn btn--primary" type="submit" data-submit>Reserve my numbers <span class="arrow"><Icon name="arrow" size={18} /></span></button>
+          <p class="form__note" data-status role="status" aria-live="polite"></p>
+        </div>
+        <p class="form__note">Your numbers are held for <span data-hold>24</span> hours. We email you the bank details and your payment reference straight away.</p>
+      </form>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container c32-two">
+      <div>
+        <div class="kicker"><span class="label">Prizes</span></div>
+        <h2 class="h-xl">Before every round</h2>
+        <ol class="c32-prizes" data-prizes>
+          <li><span class="num">1st</span><span>Two tickets to the upcoming BSB race weekend</span></li>
+          <li><span class="num">2nd</span><span>A custom smart32xugly&amp;co cap</span></li>
+        </ol>
+        <p>The draws are done live with Dad on Lewis's socials. Follow along on <a href={site.facebook} target="_blank" rel="noopener">Facebook</a> and <a href={site.instagram} target="_blank" rel="noopener">Instagram</a>.</p>
+      </div>
+      <div>
+        <div class="kicker"><span class="label">Winners</span></div>
+        <h2 class="h-xl">Lucky numbers</h2>
+        <div data-winners><p class="tbc">The first draw is before the opening round. Winners will appear here.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--inset">
+    <div class="container c32-rules">
+      <div class="kicker"><span class="label">The small print</span></div>
+      <h2 class="h-xl">Club32 rules</h2>
+      <ul>
+        <li>There are 100 numbers, from 1 to 100. Each costs £32 and is yours for the whole season.</li>
+        <li>You can have as many numbers as you like.</li>
+        <li>Every number that is paid for is in the draw before every British Superbikes race weekend of the season.</li>
+        <li>1st prize: two tickets to the upcoming race weekend. 2nd prize: a custom smart32xugly&amp;co cap.</li>
+        <li>Reserved numbers are held while you pay by bank transfer. Use your payment reference so we can match your payment. If no payment arrives in time, the numbers are released.</li>
+        <li>Last season's members get first refusal on their old number before the remaining numbers open to everyone.</li>
+        <li>Only your first name is shown on this page. Your details are used only to run Club32 and to contact you about it.</li>
+      </ul>
+      <p class="tbc">Full terms and conditions to be confirmed. Questions? <a href="/contact/">Get in touch</a>.</p>
+    </div>
+  </section>
+</Base>
+
+<script>
+  type Cell = { n: number; s: 'free' | 'held' | 'member' | 'taken'; name?: string };
+  type Board = {
+    ok: boolean; season: number; pricePence: number; holdHours: number; maxPerOrder: number; salesOpen: boolean;
+    presaleUntil: string | null; prizes: string[]; numbers: Cell[];
+    draws: { label: string; date: string; winners: { place: number; number: number; prize: string; name: string }[] }[];
+    claim: null | { expired: true } | { number: number; firstName: string; lastName: string; email: string };
+  };
+  const API = '/api/club32';
+  const ERRORS: Record<string, string> = {
+    invalid: 'Please fill in your name and a valid email, and tick the box.',
+    taken: 'Sorry, someone has just reserved one of those numbers. The board has been refreshed: please pick again.',
+    too_many: 'That is more numbers than one reservation allows. Please split them into two.',
+    pending: 'You already have reservations waiting for payment. Please pay for those first.',
+    closed: 'Club32 is not open to new members yet.',
+    rate: 'Too many attempts from this connection. Please try again later.',
+    default: 'Sorry, something went wrong. Please try again, or message Lewis on Instagram.',
+  };
+
+  const $ = <T extends Element>(s: string) => document.querySelector<T>(s)!;
+  const grid = $<HTMLElement>('[data-grid]');
+  const form = $<HTMLFormElement>('[data-form]');
+  const status = $<HTMLElement>('[data-status]');
+  const banner = $<HTMLElement>('[data-banner]');
+  const submit = $<HTMLButtonElement>('[data-submit]');
+  const claimToken = new URLSearchParams(location.search).get('claim') ?? '';
+  const picked = new Set<number>();
+  let board: Board | null = null;
+  let lockedClaim: number | null = null;
+
+  const money = (p: number) => '£' + (p / 100).toFixed(2);
+  const fmtDate = (iso: string) => new Date(iso).toLocaleString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+  const esc = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+
+  function canPick(c: Cell) {
+    if (!board) return false;
+    if (lockedClaim !== null && !board.salesOpen) return c.n === lockedClaim;
+    if (c.s === 'member') return c.n === lockedClaim;
+    return board.salesOpen && c.s === 'free';
+  }
+
+  function paint() {
+    if (!board) return;
+    for (const c of board.numbers) {
+      const el = grid.querySelector<HTMLButtonElement>(`[data-n="${c.n}"]`)!;
+      if (!canPick(c)) picked.delete(c.n);
+      const sel = picked.has(c.n);
+      el.className = `cell cell--${sel ? 'sel' : c.s}`;
+      el.disabled = !canPick(c);
+      el.setAttribute('aria-pressed', String(sel));
+      el.querySelector('.cell__name')!.textContent = c.s === 'taken' ? c.name ?? '' : c.s === 'held' ? 'Reserved' : c.s === 'member' ? 'Member' : '';
+      el.title = c.s === 'taken' ? `#${c.n}: ${c.name}` : c.s === 'free' ? `#${c.n} is free` : `#${c.n}`;
+    }
+    const list = [...picked].sort((a, b) => a - b);
+    $('[data-picked]').textContent = list.length ? list.map((n) => `#${n}`).join(', ') : 'None yet';
+    $('[data-total]').textContent = money(list.length * board.pricePence);
+    submit.disabled = list.length === 0;
+  }
+
+  function showBanner(text: string) { banner.textContent = text; banner.hidden = false; }
+
+  function renderWinners(b: Board) {
+    if (!b.draws.length) return;
+    $('[data-winners]').innerHTML = b.draws.map((d) => `
+      <div class="c32-draw"><span class="label">${esc(d.label)} · ${esc(d.date)}</span>
+      ${d.winners.map((w) => `<p><strong class="num">#${w.number}</strong> ${esc(w.name)} <span class="muted">· ${esc(w.prize)}</span></p>`).join('')}</div>`).join('');
+  }
+
+  async function load() {
+    const res = await fetch(`${API}/numbers.php${claimToken ? `?claim=${encodeURIComponent(claimToken)}` : ''}`, { headers: { Accept: 'application/json' } });
+    const data: Board = await res.json();
+    if (!data.ok) throw new Error('board');
+    board = data;
+    $('[data-season]').textContent = String(data.season);
+    $('[data-hold]').textContent = String(data.holdHours);
+    $('[data-prizes]').innerHTML = data.prizes.map((p, i) => `<li><span class="num">${i ? '2nd' : '1st'}</span><span>${esc(p)}</span></li>`).join('');
+    renderWinners(data);
+
+    const claim = data.claim;
+    if (claim && 'number' in claim) {
+      lockedClaim = claim.number;
+      const mine = data.numbers.find((c) => c.n === claim.number);
+      if (mine && (mine.s === 'member' || mine.s === 'free')) {
+        picked.add(claim.number);
+        (form.elements.namedItem('first_name') as HTMLInputElement).value ||= claim.firstName;
+        (form.elements.namedItem('last_name') as HTMLInputElement).value ||= claim.lastName;
+        (form.elements.namedItem('email') as HTMLInputElement).value ||= claim.email;
+        showBanner(`Welcome back, ${claim.firstName}! Your number #${claim.number} is held for you${data.presaleUntil ? ` until ${fmtDate(data.presaleUntil)}` : ''}. Reserve it below${data.salesOpen ? ', and add more numbers if you like' : ''}.`);
+      } else {
+        showBanner(`Welcome back, ${claim.firstName}! Your number #${claim.number} is already reserved or taken. Check your email for the payment details.`);
+      }
+    } else if (claim) {
+      showBanner('This returning-member link has expired. Any free number is still yours to pick.');
+    } else if (!data.salesOpen) {
+      showBanner(`Club32 ${data.season} opens soon. Last season's members get first refusal on their old number. Everyone else: watch Lewis's socials for the launch.`);
+    } else if (data.presaleUntil) {
+      showBanner(`Numbers marked "Held for a member" are kept for last season's members until ${fmtDate(data.presaleUntil)}. Any number left after that goes back on sale.`);
+    }
+
+    form.hidden = !(data.salesOpen || lockedClaim !== null);
+    $('[data-load]').hidden = true;
+    paint();
+  }
+
+  grid.addEventListener('click', (e) => {
+    const el = (e.target as Element).closest<HTMLButtonElement>('[data-n]');
+    if (!el || el.disabled || !board) return;
+    const n = Number(el.dataset.n);
+    if (picked.has(n)) picked.delete(n);
+    else if (picked.size >= board.maxPerOrder) { status.textContent = `Up to ${board.maxPerOrder} numbers per reservation.`; return; }
+    else picked.add(n);
+    status.textContent = '';
+    paint();
+    if (picked.size === 1 && !form.hidden) form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!form.reportValidity() || !picked.size) return;
+    submit.disabled = true;
+    status.classList.remove('is-error');
+    status.textContent = 'Reserving…';
+    const fd = new FormData(form);
+    const body = { ...Object.fromEntries(fd), numbers: [...picked], claim: claimToken || undefined };
+    try {
+      const res = await fetch(`${API}/reserve.php`, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(body) });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.ok) { location.href = data.redirect; return; }
+      status.textContent = ERRORS[data.error] ?? ERRORS.default;
+      status.classList.add('is-error');
+      if (data.error === 'taken') await load();
+    } catch {
+      status.textContent = ERRORS.default;
+      status.classList.add('is-error');
+    }
+    submit.disabled = picked.size === 0;
+  });
+
+  load().catch(() => { $('[data-load]').textContent = 'The numbers could not be loaded. Please refresh the page in a moment.'; });
+</script>
+
+<style>
+  .c32-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--gutter); }
+  .c32-steps li { display: grid; gap: .5rem; align-content: start; }
+  .c32-steps p { margin: 0; }
+  @media (min-width: 700px) { .c32-steps { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 1100px) { .c32-steps { grid-template-columns: repeat(4, 1fr); } }
+
+  .c32 .section-head { align-items: end; }
+  .c32-legend { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; font-size: 13px; color: var(--text-2); }
+  .c32-legend li { display: flex; align-items: center; gap: .5rem; }
+  .sw { width: 14px; height: 14px; display: inline-block; border: 1px solid var(--hairline-2); }
+  .sw--free { background: var(--surface); }
+  .sw--sel { background: var(--accent); border-color: var(--accent); }
+  .sw--held { background: repeating-linear-gradient(45deg, var(--purple-wash) 0 3px, transparent 3px 6px); border-color: var(--purple); }
+  .sw--member { background: var(--purple-deep); border-color: var(--purple); }
+  .sw--taken { background: var(--surface-inset); }
+
+  .c32-banner { margin: 0 0 1.5rem; padding: 1rem 1.25rem; border-left: 4px solid var(--accent); background: var(--accent-wash); color: var(--text); }
+
+  .c32-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  @media (min-width: 520px) { .c32-grid { grid-template-columns: repeat(10, 1fr); } }
+  .cell { position: relative; aspect-ratio: 1; display: grid; place-items: center; align-content: center; gap: 2px; padding: 2px;
+    background: var(--surface); border: 1px solid var(--hairline-2); color: var(--text); cursor: pointer; font: inherit; min-width: 0;
+    transition: transform .12s, background .12s, border-color .12s; }
+  .cell__n { font-family: var(--font-display); font-weight: 800; font-style: italic; font-size: clamp(1.15rem, 3.2vw, 1.75rem); line-height: 1; }
+  .cell__name { font-size: 10px; line-height: 1.1; color: var(--text-2); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cell--free:hover:not(:disabled) { border-color: var(--accent); transform: translateY(-2px); }
+  .cell:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .cell--sel { background: var(--accent); border-color: var(--accent); color: var(--on-accent); box-shadow: 0 0 18px -4px var(--accent-glow); }
+  .cell--sel .cell__name { color: var(--on-accent); }
+  .cell--held { background: repeating-linear-gradient(45deg, var(--purple-wash) 0 6px, transparent 6px 12px); border-color: var(--purple); }
+  .cell--member { background: var(--purple-deep); border-color: var(--purple); }
+  .cell--member:not(:disabled) { cursor: pointer; }
+  .cell--taken { background: var(--surface-inset); border-color: var(--hairline); color: var(--text-3); }
+  .cell--taken .cell__name { color: var(--accent); }
+  .cell:disabled { cursor: default; }
+  .cell--free:disabled { opacity: .55; }
+  .c32-load { margin-top: 1rem; }
+
+  .c32-form { margin-top: 2rem; }
+  .c32-pick { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--hairline); }
+  .c32-pick p { margin: .25rem 0 0; }
+  .c32-pick__nums { font-family: var(--font-display); font-weight: 800; font-style: italic; font-size: 1.6rem; color: var(--accent); }
+  .c32-pick__sum { font-family: var(--font-display); font-weight: 800; font-size: 1.6rem; text-align: right; }
+  .c32-consent { display: flex; gap: .75rem; align-items: flex-start; font-size: 14px; color: var(--text-2); cursor: pointer; }
+  .c32-consent input { margin-top: .2rem; width: 18px; height: 18px; accent-color: var(--accent); flex: none; }
+  .form { display: grid; gap: 1.5rem; background: var(--surface); border: 1px solid var(--hairline); padding: clamp(1.5rem, 4vw, 2.5rem); }
+  .form__row { display: grid; gap: 1.5rem; }
+  .form__foot { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
+  .form__note { margin: 0; font-size: 13px; }
+  .form__note.is-error { color: #ff6b6b; }
+  .form button[disabled] { opacity: .6; cursor: not-allowed; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  @media (min-width: 700px) { .form__row { grid-template-columns: 1fr 1fr; } }
+
+  .c32-two { display: grid; gap: 3rem; }
+  @media (min-width: 900px) { .c32-two { grid-template-columns: 1fr 1fr; } }
+  .c32-prizes { list-style: none; margin: 1.5rem 0; padding: 0; display: grid; gap: .75rem; }
+  .c32-prizes li { display: flex; gap: 1rem; align-items: baseline; padding: 1rem 1.25rem; background: var(--surface); border-left: 3px solid var(--accent); }
+  .c32-prizes li + li { border-left-color: var(--purple); }
+  .c32-prizes .num { font-family: var(--font-display); font-weight: 800; font-style: italic; font-size: 1.4rem; color: var(--accent); min-width: 2.5rem; }
+  :global(.c32-draw) { padding: 1rem 0; border-bottom: 1px solid var(--hairline); }
+  :global(.c32-draw p) { margin: .35rem 0 0; }
+  :global(.c32-draw .num) { color: var(--accent); font-family: var(--font-display); font-style: italic; font-size: 1.3rem; }
+  .c32-rules ul { display: grid; gap: .6rem; padding-left: 1.2rem; margin: 1.5rem 0; max-width: 70ch; }
+</style>

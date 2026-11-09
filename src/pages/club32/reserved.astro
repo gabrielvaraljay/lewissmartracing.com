@@ -1,0 +1,92 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import Icon from '../../components/Icon.astro';
+---
+<Base title="Club32 reservation" description="Your Club32 numbers and how to pay for them.">
+  <meta slot="head" name="robots" content="noindex, nofollow" />
+  <PageHeader kicker="Club32" title="Numbers" accent="reserved" intro="Thanks for joining Club32! Here is everything you need to pay. We have emailed you the same details." />
+  <section class="section">
+    <div class="container">
+      <div class="pay card--chamfer" data-pay hidden>
+        <div class="pay__head">
+          <div><span class="label">Your numbers</span><p class="pay__nums" data-nums></p></div>
+          <div class="pay__status" data-status></div>
+        </div>
+        <div data-bank>
+          <dl class="pay__list">
+            <div><dt class="label">Amount</dt><dd data-amount></dd></div>
+            <div><dt class="label">Payment reference</dt><dd><strong class="pay__ref" data-ref></strong> <button type="button" class="pay__copy" data-copy>Copy</button></dd></div>
+            <div><dt class="label">Account name</dt><dd data-bname></dd></div>
+            <div><dt class="label">Sort code</dt><dd data-bsort></dd></div>
+            <div><dt class="label">Account number</dt><dd data-bacc></dd></div>
+            <div><dt class="label">Pay by</dt><dd data-deadline></dd></div>
+          </dl>
+          <p class="pay__note">Please put the payment reference exactly as shown into your bank transfer, so Lewis can match it to your numbers. Once the payment is confirmed you will get a confirmation email and your first name goes up on the board.</p>
+        </div>
+      </div>
+      <p class="tbc" data-msg>Loading your reservation…</p>
+      <div class="btn-row" style="margin-top:2rem">
+        <a class="btn btn--primary" href="/club32/">Back to Club32 <span class="arrow"><Icon name="arrow" size={18} /></span></a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const $ = <T extends Element>(s: string) => document.querySelector<T>(s)!;
+  const code = new URLSearchParams(location.search).get('code') ?? '';
+  const STATUS: Record<string, [string, string]> = {
+    pending: ['Awaiting payment', 'is-pending'],
+    paid: ['Paid: you are in!', 'is-paid'],
+    expired: ['Hold expired', 'is-off'],
+    cancelled: ['Cancelled', 'is-off'],
+  };
+  const msg = $<HTMLElement>('[data-msg]');
+
+  (async () => {
+    const res = await fetch(`/api/club32/order.php?code=${encodeURIComponent(code)}`, { headers: { Accept: 'application/json' } });
+    const o = await res.json().catch(() => ({}));
+    if (!o.ok) { msg.textContent = 'We could not find this reservation. Please check the link in your email.'; return; }
+    $('[data-nums]').textContent = o.numbers.map((n: number) => `#${n}`).join(', ');
+    const [label, cls] = STATUS[o.status] ?? [o.status, ''];
+    const st = $<HTMLElement>('[data-status]');
+    st.textContent = label; st.className = `pay__status ${cls}`;
+    $('[data-amount]').textContent = o.amount;
+    $('[data-ref]').textContent = o.code;
+    if (o.bank) {
+      $('[data-bname]').textContent = o.bank.name || 'TBC';
+      $('[data-bsort]').textContent = o.bank.sortCode || 'TBC';
+      $('[data-bacc]').textContent = o.bank.account || 'TBC';
+      $('[data-deadline]').textContent = o.expiresAt ? new Date(o.expiresAt).toLocaleString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) : '';
+      msg.hidden = true;
+    } else {
+      $('[data-bank]').hidden = true;
+      msg.textContent = o.status === 'paid'
+        ? `Your payment is confirmed, ${o.firstName}. Good luck in the draws!`
+        : 'This reservation is no longer active. You are welcome to pick your numbers again.';
+    }
+    $('[data-pay]').hidden = false;
+  })().catch(() => { msg.textContent = 'Your reservation could not be loaded. Please refresh the page in a moment.'; });
+
+  $('[data-copy]').addEventListener('click', async (e) => {
+    try { await navigator.clipboard.writeText($('[data-ref]').textContent ?? ''); (e.target as HTMLElement).textContent = 'Copied'; } catch {}
+  });
+</script>
+
+<style>
+  .pay { display: grid; gap: 1.5rem; padding: clamp(1.5rem, 4vw, 2.5rem); background: var(--surface); border-left: 4px solid var(--accent); }
+  .pay__head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; }
+  .pay__nums { margin: .25rem 0 0; font-family: var(--font-display); font-weight: 800; font-style: italic; font-size: clamp(1.8rem, 5vw, 2.6rem); color: var(--accent); }
+  .pay__status { padding: .4rem .8rem; font-size: 13px; text-transform: uppercase; letter-spacing: .08em; border: 1px solid var(--hairline-2); }
+  .pay__status.is-pending { border-color: var(--purple); background: var(--purple-wash); }
+  .pay__status.is-paid { border-color: var(--accent); color: var(--accent); }
+  .pay__status.is-off { color: var(--text-3); }
+  .pay__list { display: grid; gap: 1rem; margin: 0; }
+  @media (min-width: 700px) { .pay__list { grid-template-columns: 1fr 1fr; } }
+  .pay__list div { display: grid; gap: .25rem; padding: .75rem 1rem; background: var(--surface-inset); }
+  .pay__list dd { margin: 0; font-size: 1.1rem; }
+  .pay__ref { font-family: ui-monospace, monospace; font-size: 1.3rem; color: var(--accent); letter-spacing: .05em; }
+  .pay__copy { margin-left: .5rem; padding: .2rem .6rem; background: transparent; border: 1px solid var(--hairline-2); color: var(--text-2); font-size: 12px; cursor: pointer; }
+  .pay__note { margin: 1rem 0 0; color: var(--text-2); font-size: 14px; max-width: 70ch; }
+</style>
