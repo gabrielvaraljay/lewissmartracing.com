@@ -22,8 +22,23 @@ export const nav = [
   { href: '/bike-and-team/', label: 'Bike & Team' },
   { href: '/gallery/', label: 'Gallery' },
   { href: '/sponsors/', label: 'Sponsors' },
+  { href: '/club32/', label: 'Club32' },
   { href: '/contact/', label: 'Contact' },
 ];
+
+// Club32: the supporters' number draw. Prices, prizes, bank details and dates are live data
+// managed in the admin panel (/admin/); this is only the fixed explanatory copy.
+// Facts below are from Lewis's own Club32 message. Anything else stays TBC.
+export const club32 = {
+  api: '/api/club32',
+  numbers: 100,
+  steps: [
+    { title: 'Pick your numbers', body: 'Choose any free number from 1 to 100. Have as many as you like.' },
+    { title: 'Reserve them', body: 'Leave your name and email. Your numbers are held for you while you pay.' },
+    { title: 'Pay by bank transfer', body: 'We email you the bank details and your own payment reference. Pay within the hold time.' },
+    { title: 'In every draw', body: 'Once the payment is confirmed, your numbers are in the draw before every British Superbikes race weekend, all season.' },
+  ],
+};
 
 // Hero flip-book: number of frames in /public/frames (frame-01.webp ...).
 // 0 = no frames yet, the hero shows the static fallback.

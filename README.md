@@ -20,6 +20,7 @@ A fast, fully static site built with [Astro](https://astro.build) and [Tailwind 
 - [Editing content](#editing-content)
 - [Design system](#design-system)
 - [Hero flip-book frames](#hero-flip-book-frames)
+- [Club32 and admin](#club32-and-admin)
 - [Deployment](#deployment)
 - [Still to confirm](#still-to-confirm)
 - [Changelog](#changelog)
@@ -28,7 +29,8 @@ A fast, fully static site built with [Astro](https://astro.build) and [Tailwind 
 
 ## Features
 
-- **Eight pages:** Home, My Story, Results, Calendar, Bike & Team, Gallery, Sponsors and Contact.
+- **Nine pages:** Home, My Story, Results, Calendar, Bike & Team, Gallery, Sponsors, Club32 and Contact.
+- **Club32 and admin:** a number board with bank-transfer reservations, and a private admin panel (see [below](#club32-and-admin)).
 - **Home hero:** a canvas "flip-book" driven by scrolling. It falls back to a static image on small screens and when `prefers-reduced-motion` is set.
 - **My Story:** the career timeline, oldest season first, so the story builds up as the visitor scrolls.
 - **One content file:** all copy and data live in `src/data/site.ts`.
@@ -129,6 +131,48 @@ Extra CSS for the simpler pages is in `src/styles/global.css`.
 3. Set `heroFrameCount` in `src/data/site.ts` to the number the script prints.
 
 The frames play only on screens 768 px and wider, and only when reduced motion is not requested. Everywhere else, frame 1 (or the static hero image) is shown.
+
+## Club32 and admin
+
+Club32 is the supporters' draw: 100 numbers at £32, each valid for the whole season and in the draw before every BSB race weekend.
+
+**How a purchase works**
+
+1. The visitor picks free numbers on `/club32/` and leaves their name and email.
+2. The numbers are held for 24 hours (configurable). BlueFox emails the bank details and a personal payment reference such as `C32-K7F3Q`. Lewis gets an alert email.
+3. A reminder goes out 6 hours before the hold ends. If nothing is confirmed by then, the numbers are released and the buyer is told.
+4. When the transfer arrives, Lewis (or whoever has a login) presses **Payment received** in the admin. The buyer gets a confirmation and their first name appears on the board. Surnames are never shown publicly.
+
+Last season's members can be imported on the admin **Presale** page and emailed a personal link that holds their old number until the presale end date.
+
+**Parts**
+
+| Path | What it is |
+| --- | --- |
+| `src/pages/club32.astro`, `src/pages/club32/reserved.astro` | Public board and the "how to pay" page |
+| `public/api/club32/*.php` | `numbers.php` (board), `reserve.php` (new hold), `order.php` (payment details by reference) |
+| `public/api/_lib/club32.php` | Shared code: database, rules, BlueFox emails |
+| `public/api/hit.php` | Cookie-free visit counter (daily totals, no IPs stored) |
+| `public/admin/index.php` | The admin panel |
+| `public/admin/cli.php` | Command line only: `add-user`, `set-password`, `list-users`, `sweep` |
+
+**Data and secrets.** The SQLite database is `/var/lib/lewissmartracing/club32.sqlite`, outside the web root, so deploys never touch it. The BlueFox API key stays in `/etc/lewissmartracing/bluefox.env`; the Club32 email ids are in `/etc/lewissmartracing/club32.env`. Bank details, price, hold time and prizes are set in the admin **Settings** page.
+
+**Server setup (once).** After the first deploy with these files, run `bash scripts/setup-club32.sh`. It creates the data folder, writes the email ids, adds the cron job (`cli.php sweep` every 10 minutes) and creates the first admin user. nginx needs `index.php` in its `index` list for `/admin/` to load.
+
+**Admin security.** Every admin page needs a login (hashed passwords, 5 failed attempts per 15 minutes, `SameSite=Strict` session cookie, CSRF tokens). The panel is not linked from the site and sends `noindex`. It is deliberately *not* listed in `robots.txt`, because that file is public.
+
+**Local development**
+
+```bash
+mkdir -p /tmp/lsr/etc /tmp/lsr/data
+export LSR_ETC=/tmp/lsr/etc LSR_DATA=/tmp/lsr/data LSR_MAIL_LOG=/tmp/lsr/mail.log
+LSR_PASSWORD=devpassword123 php public/admin/cli.php add-user dev
+php -S localhost:8080 -t public   # PHP endpoints and /admin/
+npm run dev                       # proxies /api and /admin to :8080
+```
+
+With `LSR_MAIL_LOG` set, emails are written to that file instead of being sent.
 
 ## Deployment
 

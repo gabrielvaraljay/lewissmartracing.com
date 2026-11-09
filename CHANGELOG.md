@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- **Club32** (`/club32/`): a 1-100 number board for the supporters' draw. Visitors pick numbers, reserve them for 24 hours and pay by bank transfer with their own reference (`C32-XXXXX`). Only first names are shown. Returning members get a personal presale link that holds their old number.
+- **Admin panel** (`/admin/`, login required, not indexed): confirm payments, extend or cancel holds, add cash sales, member board and CSV export, presale invitations, random or manual draws with a reveal screen for the live videos, winner emails, settings (bank details, price, hold time, sales on/off) and an activity log.
+- Cookie-free visit counter (`/api/hit.php`) with a Visitors page in the admin.
+- Club32 emails through BlueFox: payment details, reminder, expiry, confirmation, cancellation, new-reservation alert to Lewis, presale invitation and winner.
+- `scripts/setup-club32.sh` for the one-off server setup (database folder, email ids, cron, first admin user).
 - Professional README covering the stack, setup, scripts, project structure, content editing, the design system, hero frames and deployment.
 - This changelog.
 - GitHub Actions deploy workflow: builds the site and rsyncs it to the Hetzner server on every push to `main`, using a dedicated deploy key jailed to the site directory.

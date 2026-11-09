@@ -52,6 +52,14 @@ const icons = ['arrow_forward','calendar_today','check_circle','chevron_right','
         for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
       }, { rootMargin: '0px 0px -10% 0px' });
       document.querySelectorAll('[data-reveal]').forEach((el) => io.observe(el));
+
+      // Cookie-free visit counter for the admin panel (public/api/hit.php). No personal data is stored.
+      try {
+        const body = JSON.stringify({ p: location.pathname, r: document.referrer });
+        if (!navigator.sendBeacon?.('/api/hit.php', new Blob([body], { type: 'application/json' }))) {
+          fetch('/api/hit.php', { method: 'POST', body, keepalive: true, headers: { 'Content-Type': 'application/json' } }).catch(() => {});
+        }
+      } catch {}
     </script>
   </body>
 </html>
