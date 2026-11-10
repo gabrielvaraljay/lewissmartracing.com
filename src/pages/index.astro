@@ -1,6 +1,7 @@
 ---
 // Home page. Layout ported 1:1 from the Google Stitch design; copy limited to confirmed facts.
 import Base from '../layouts/Base.astro';
+import NewsletterSignup from '../components/NewsletterSignup.astro';
 import { heroFrameCount, nextRace, site, sponsors, stats } from '../data/site';
 
 const heroStatic = heroFrameCount > 0 ? '/frames/frame-01.webp' : '/images/hero-static.webp';
@@ -54,8 +55,18 @@ const socialTiles = [
               <span class="font-headline-lg text-[22px] sm:text-headline-lg uppercase italic font-bold tracking-tight text-on-surface-variant">{site.tagline}</span>
             </div>
           </div>
+          <!-- Big announcement + newsletter signup -->
+          <div class="mt-space-md sm:mt-space-lg max-w-2xl bg-surface-container/85 backdrop-blur-md border-l-4 border-primary-container p-space-md sm:p-space-lg shadow-2xl">
+            <div class="flex items-center gap-space-xs mb-1">
+              <span class="w-2.5 h-2.5 rounded-full bg-primary-container animate-pulse" aria-hidden="true"></span>
+              <span class="font-label-xs text-label-xs uppercase tracking-widest text-primary-container font-bold">Stay in the loop</span>
+            </div>
+            <h2 class="font-display-hero text-[28px] sm:text-[40px] leading-none uppercase italic font-black text-on-surface tracking-tight">Big Announcement <span class="text-primary-container">Coming Soon</span></h2>
+            <p class="font-body-md text-body-md text-on-surface-variant mt-space-xs mb-space-sm">Subscribe for updates and be the first to hear the news.</p>
+            <NewsletterSignup id="hero-newsletter" />
+          </div>
           <!-- Data strip -->
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-space-sm max-w-3xl mt-space-lg">
+          <div class="hidden sm:grid grid-cols-2 sm:grid-cols-4 gap-space-sm max-w-3xl mt-space-lg">
             <div class="bg-surface-container-high/80 backdrop-blur-md p-space-sm">
               <span class="block font-label-xs text-label-xs uppercase text-on-surface-variant">First Season</span>
               <div class="flex items-baseline gap-1 mt-0.5"><span class="font-telemetry-num text-telemetry-num font-black text-on-surface">2020</span><span class="font-label-xs text-label-xs text-primary-container uppercase">CB500</span></div>

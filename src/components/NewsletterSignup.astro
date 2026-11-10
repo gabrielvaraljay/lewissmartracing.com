@@ -1,0 +1,80 @@
+---
+// Email-only newsletter signup. Posts to the BlueFox "Website Newsletter" signup form,
+// which adds the address to the "Newsletter" subscriber list (lewissmartracing.com is whitelisted).
+interface Props { id?: string; class?: string }
+const { id = 'newsletter', class: cls } = Astro.props;
+const FORM_ID = '6af3250822a3fca8ec6744ce';
+---
+<form
+  class:list={['newsletter-form w-full max-w-xl', cls]}
+  id={id}
+  action={`https://api.bluefox.email/v1/signup-forms/${FORM_ID}`}
+  method="post"
+  novalidate
+>
+  <div class="newsletter-fields flex flex-col sm:flex-row gap-space-xs">
+    <label class="sr-only" for={`${id}-email`}>Email address</label>
+    <input
+      id={`${id}-email`}
+      name="email"
+      type="email"
+      required
+      autocomplete="email"
+      inputmode="email"
+      placeholder="Your email address"
+      class="flex-1 min-w-0 bg-surface-container-lowest/90 backdrop-blur-md border border-outline-variant focus:border-primary-container focus:outline-none focus:ring-2 focus:ring-primary-container/40 px-space-md py-3 font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/70 rounded"
+    />
+    <button
+      type="submit"
+      class="shrink-0 bg-primary-container text-on-primary-container px-space-lg py-3 font-label-md text-label-md uppercase tracking-widest font-black italic rounded hover:brightness-110 transition disabled:opacity-60 disabled:cursor-wait"
+    >Subscribe for updates</button>
+  </div>
+  <p class="newsletter-msg hidden mt-space-xs font-body-sm text-body-sm" role="status" aria-live="polite"></p>
+  <p class="newsletter-note mt-space-xs font-body-sm text-[12px] text-on-surface-variant">Email only. No spam, unsubscribe at any time.</p>
+</form>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('form.newsletter-form').forEach((form) => {
+    if (form.dataset.bound) return;
+    form.dataset.bound = '1';
+    const input = form.querySelector<HTMLInputElement>('input[name=email]')!;
+    const button = form.querySelector<HTMLButtonElement>('button[type=submit]')!;
+    const msg = form.querySelector<HTMLParagraphElement>('.newsletter-msg')!;
+    const fields = form.querySelector<HTMLDivElement>('.newsletter-fields')!;
+    const note = form.querySelector<HTMLParagraphElement>('.newsletter-note')!;
+    const show = (text: string, ok: boolean) => {
+      msg.textContent = text;
+      msg.classList.remove('hidden', 'text-primary-container', 'text-error');
+      msg.classList.add(ok ? 'text-primary-container' : 'text-error');
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = input.value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        show('Please enter a valid email address.', false);
+        input.focus();
+        return;
+      }
+      button.disabled = true;
+      button.textContent = 'Please wait…';
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data?.error?.message || 'Something went wrong. Please try again.');
+        fields.classList.add('hidden');
+        note.classList.add('hidden');
+        show("You're on the list. Thanks for subscribing: you'll be the first to hear the news.", true);
+      } catch (err) {
+        show(err instanceof Error ? err.message : 'Something went wrong. Please try again.', false);
+      } finally {
+        button.disabled = false;
+        button.textContent = 'Subscribe for updates';
+      }
+    });
+  });
+</script>

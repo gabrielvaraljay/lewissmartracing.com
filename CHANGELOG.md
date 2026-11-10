@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Admin and Developer roles: developers add admins on the Admins page (invite email to set a password), change roles and remove admins.
 - Professional README covering the stack, setup, scripts, project structure, content editing, the design system, hero frames and deployment.
 - This changelog.
+- Home hero: "Big Announcement Coming Soon" panel with an email-only newsletter signup (`NewsletterSignup` component). Sign-ups go to the BlueFox "Website Newsletter" form and the "Newsletter" subscriber list.
 - GitHub Actions deploy workflow: builds the site and rsyncs it to the Hetzner server on every push to `main`, using a dedicated deploy key jailed to the site directory.
 
 ### Changed
