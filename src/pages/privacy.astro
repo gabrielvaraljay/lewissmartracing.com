@@ -1,0 +1,59 @@
+---
+// Privacy notice for the whole site: contact form, newsletter, Club32, the visit counter and the admin.
+// It describes what the code does (public/api/*, public/admin/*); update it when that changes.
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+const updated = '10 November 2026';
+---
+<Base title="Privacy notice" description="How lewissmartracing.com uses your personal data: the contact form, the newsletter and Club32.">
+  <PageHeader kicker="Privacy" title="Privacy" accent="notice" intro={`What we collect, why, and your rights. Last updated ${updated}.`} />
+  <section class="section">
+    <div class="container legal">
+      <h2>Who we are</h2>
+      <p>This website is run by Lewis Smart (Lewis Smart #32 Racing), a motorcycle racer from Sandy, Bedfordshire, and his family. We are the controller of the personal data described here. For anything about your data, use the <a href="/contact/">contact form</a> or reply to any email from us.</p>
+
+      <h2>What we collect and why</h2>
+      <table>
+        <thead><tr><th>When</th><th>What we keep</th><th>Why, and on what basis</th></tr></thead>
+        <tbody>
+          <tr><td>You use the contact form</td><td>Your name, email, company (if given), topic and message</td><td>To answer you. Our legitimate interest in replying to messages, or steps before a sponsorship agreement you ask about.</td></tr>
+          <tr><td>You sign up to the newsletter</td><td>Your email address, and when you signed up and confirmed</td><td>To send you the newsletter. Your consent, which you give by confirming your address and can withdraw any time with the unsubscribe link.</td></tr>
+          <tr><td>You join Club32</td><td>Your first and last name, email, phone (if given), your numbers, payment reference, payment date and the draws you win. We also see your name on our bank statement when you pay.</td><td>To run your membership: hold and confirm your numbers, match your payment, run the draws, send you your prize and the emails about your membership. This is needed for our agreement with you.</td></tr>
+          <tr><td>You are a Club32 member</td><td>Your name and email on the members' newsletter list</td><td>To send you the Club32 members' newsletter, which is part of the membership. Our legitimate interest in keeping members up to date. You can say no when you join, and unsubscribe from any issue.</td></tr>
+          <tr><td>You visit the site</td><td>Daily totals only: pages viewed and the websites visitors came from. To count unique visitors we use a one-way code made from your connection and browser with a secret that changes every day, so you cannot be recognised from one day to the next. No cookies, and no IP addresses are stored.</td><td>To see how many people use the site. Our legitimate interest. Browsers that send "Do Not Track" or "Global Privacy Control" are not counted.</td></tr>
+        </tbody>
+      </table>
+
+      <h2>What is public</h2>
+      <p>On the Club32 page, only your first name is shown next to your number, and next to it if your number wins a draw. Draws may be shown live on Lewis's social media with the winning numbers and first names. Surnames, emails and phone numbers are never shown.</p>
+
+      <h2>Who else handles your data</h2>
+      <p>We do not sell your data or pass it on for anyone else's marketing. We use these services to run the site, and they only act on our instructions:</p>
+      <ul>
+        <li><strong>bluefox.email</strong> sends our emails and keeps our contact and newsletter lists (it uses Amazon Web Services to deliver the email).</li>
+        <li><strong>Hetzner Online</strong> (Germany) hosts the website and the Club32 database.</li>
+        <li><strong>Google Fonts</strong> serves the website's fonts, so your browser connects to Google when a page loads.</li>
+      </ul>
+      <p>Some of these may process data outside the UK. Where they do, they use safeguards recognised under UK data protection law, such as the UK International Data Transfer Addendum or an adequacy decision.</p>
+      <p>Bank transfers go through your bank and ours. We only see what appears on our bank statement.</p>
+
+      <h2>How long we keep it</h2>
+      <ul>
+        <li>Messages from the contact form: as long as the conversation needs, and no more than 2 years after.</li>
+        <li>Newsletter: until you unsubscribe. After that we keep only a record that you unsubscribed, so we do not email you again.</li>
+        <li>Club32: for the season you joined and the following season (so we can offer you your number again), then up to 6 years for payment records. Reservations that were never paid are deleted within 12 months.</li>
+        <li>Visit counts: daily totals, which contain no personal data.</li>
+      </ul>
+
+      <h2>Cookies</h2>
+      <p>The public website sets no cookies. The only cookie is a sign-in cookie for the people who run the admin area, which visitors never see.</p>
+
+      <h2>Your rights</h2>
+      <p>You can ask us for a copy of your data, to correct it, to delete it, or to stop using it, and you can object to how we use it. Contact us through the <a href="/contact/">contact form</a> and we will reply within one month. If we cannot delete something yet (for example a payment record), we will tell you why.</p>
+      <p>If you are not happy with how we handle your data, you can complain to the Information Commissioner's Office at <a href="https://ico.org.uk/make-a-complaint/" target="_blank" rel="noopener">ico.org.uk</a>. We would appreciate the chance to sort it out first.</p>
+
+      <h2>Changes</h2>
+      <p>We will update this notice when what we do changes. The date at the top shows the latest version.</p>
+    </div>
+  </section>
+</Base>

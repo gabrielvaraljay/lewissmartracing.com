@@ -160,6 +160,10 @@ Last season's members can be imported on the admin **Presale** page and emailed 
 
 **Server setup (once).** After the first deploy with these files, run `bash scripts/setup-club32.sh`. It creates the data folder, writes the email ids, adds the cron job (`cli.php sweep` every 10 minutes) and creates the first admin user. nginx needs `index.php` in its `index` list for `/admin/` to load.
 
+**Members' newsletter.** Club32 membership includes a members-only newsletter. When a payment is confirmed (or a paid member is added by hand), the member is added to the private BlueFox list **Club32 Members** (double opt-in off; the list id is looked up by name once, or set `BLUEFOX_C32_LIST_ID`). Buyers can tick "No thanks" on the form; that choice is stored on the order (`orders.newsletter`) and shown in the members CSV. Send the newsletter as a BlueFox campaign to that list.
+
+**Legal pages.** `/privacy/` (whole site) and `/club32/terms/` describe what the code does. They are drafts to be checked before Club32 goes public: the prize-claim deadline, the refund rule, the retention periods, and whether the draw needs a lottery registration (see the note in the CHANGELOG).
+
 **Admin users.** Admins sign in with their email and password, and can reset a forgotten password by email (a one-time link, valid 1 hour). There are two roles: **Admin** runs Club32, draws, visitors and settings; **Developer** can also add, remove and change admins on the **Admins** page (new admins get an invite email to set their own password, valid 7 days). There is always at least one developer. Accounts made before email sign-in keep working with their username until an email is added on their **Account** page. The first developer is made on the server:
 
 ```bash

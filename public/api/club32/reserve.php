@@ -1,6 +1,6 @@
 <?php
 // POST: reserve Club32 numbers for hold_hours while the buyer pays by bank transfer.
-// Body (JSON or form): numbers[], first_name, last_name, email, phone?, consent, claim? (presale token), website (honeypot).
+// Body (JSON or form): numbers[], first_name, last_name, email, phone?, consent, no_newsletter?, claim? (presale token), website (honeypot).
 declare(strict_types=1);
 require __DIR__ . '/../_lib/club32.php';
 
@@ -52,7 +52,7 @@ try {
     try {
         $o = create_order([
             'numbers' => $nums, 'first_name' => $first, 'last_name' => $last, 'email' => $email, 'phone' => $phone,
-            'source' => $presale ? 'presale' : 'web', 'ip_hash' => ip_hash(),
+            'source' => $presale ? 'presale' : 'web', 'ip_hash' => ip_hash(), 'newsletter' => empty($in['no_newsletter']),
         ]);
     } catch (RuntimeException $e) {
         if (str_starts_with($e->getMessage(), 'taken:')) {

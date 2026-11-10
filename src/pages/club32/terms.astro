@@ -1,0 +1,63 @@
+---
+// Club32 terms. Facts come from Lewis's Club32 post; the operational rules match the code in public/api/_lib/club32.php.
+// Draft written for Lewis to check: see the README ("Club32 legal pages") for what still needs confirming.
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+const updated = '10 November 2026';
+---
+<Base title="Club32 terms" description="The terms of Club32, Lewis Smart's supporters' club: numbers, payment, draws, prizes and the members' newsletter.">
+  <PageHeader kicker="Club32" title="Club32" accent="terms" intro={`How Club32 works, in full. Last updated ${updated}.`} />
+  <section class="section">
+    <div class="container legal">
+      <h2>1. Who runs Club32</h2>
+      <p>Club32 is Lewis Smart's supporters' club, run by Lewis Smart (Lewis Smart #32 Racing) and his family ("we", "us"). You can reach us through the <a href="/contact/">contact form</a> or by replying to any Club32 email.</p>
+
+      <h2>2. Joining</h2>
+      <ul>
+        <li>You must be 18 or over to join.</li>
+        <li>There are 100 numbers, from 1 to 100. Each number costs £32 and is valid for one racing season (the season shown on the <a href="/club32/">Club32 page</a>).</li>
+        <li>You can have as many numbers as you like, while numbers are free.</li>
+        <li>Last season's members get first refusal on their old number for a limited time (normally two weeks) before it is offered to everyone. We email them a personal link for this.</li>
+      </ul>
+
+      <h2>3. Reserving and paying</h2>
+      <ul>
+        <li>When you reserve, your numbers are held for you for 24 hours, unless the Club32 page says otherwise. We email you the bank details and your own payment reference straight away, and a reminder before the hold ends.</li>
+        <li>Pay by bank transfer and put your payment reference in the payment note, so we can match your payment to your numbers.</li>
+        <li>If we do not receive your payment in time, the hold ends and the numbers are released for others. If your payment arrives after that, we will give you the same numbers if they are still free, or refund you.</li>
+        <li>Your numbers are confirmed when we have received your payment and emailed you a confirmation. Only confirmed numbers are in the draws.</li>
+        <li>Numbers are personal to you and cannot be resold.</li>
+      </ul>
+
+      <h2>4. The draws</h2>
+      <ul>
+        <li>There is a draw before every British Superbikes race weekend of the season. Every confirmed number is in every draw, so one number can win more than once.</li>
+        <li>Each draw picks two different numbers at random from the confirmed numbers. The draws are usually shown live on Lewis's social media.</li>
+        <li>Winning numbers and the winners' first names are shown on the Club32 page and on social media. We email the winners.</li>
+      </ul>
+
+      <h2>5. Prizes</h2>
+      <ul>
+        <li>1st prize: two tickets to the upcoming British Superbikes race weekend.</li>
+        <li>2nd prize: a custom smart32xugly&amp;co cap.</li>
+        <li>Prizes have no cash alternative and cannot be exchanged. Travel, accommodation and other costs of attending a race weekend are not included.</li>
+        <li>Please reply to the winner email within 7 days so we can arrange your prize. If we cannot reach you in time, or you cannot use the tickets, we may offer the prize to the next number drawn.</li>
+        <li>If a race weekend is cancelled or postponed, the tickets follow the organiser's rules for that event. If a prize is no longer available, we will offer one of similar value.</li>
+      </ul>
+
+      <h2>6. The members' newsletter</h2>
+      <p>Club32 membership includes the members' newsletter by email: race weekend updates from Lewis, draw news and behind-the-scenes from the paddock. You can say no when you reserve, and every newsletter has an unsubscribe link. Unsubscribing does not affect your numbers or the draws, and we still send you the emails about your membership (payment, confirmation and prizes).</p>
+
+      <h2>7. Refunds</h2>
+      <p>Once confirmed, numbers are not refundable, because they stay in every draw of the season. If we have to end Club32 before the season is over, we will refund a fair share of what you paid for the draws that did not take place. A payment that arrives after your numbers went to someone else is refunded in full.</p>
+
+      <h2>8. Your details</h2>
+      <p>Only your first name is shown publicly, next to your number. How we use and protect your details is explained in the <a href="/privacy/">privacy notice</a>.</p>
+
+      <h2>9. Changes</h2>
+      <p>We may update these terms, for example for a new season. Changes do not reduce what you already paid for in the current season. The date at the top shows the latest version.</p>
+
+      <p class="legal__law">These terms are governed by the law of England and Wales.</p>
+    </div>
+  </section>
+</Base>

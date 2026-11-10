@@ -25,6 +25,7 @@ const { topic = 'general' } = Astro.props;
   <div class="form__foot">
     <button class="btn btn--primary" type="submit" data-submit>Send message <span class="arrow"><Icon name="arrow" size={18} /></span></button>
     <p class="form__note" data-status role="status" aria-live="polite"></p>
+    <p class="form__note">We use your details only to reply. See the <a href="/privacy/" style="color: var(--accent)">privacy notice</a>.</p>
     {!site.formEndpoint && <p class="tbc form__note">Form delivery is being connected. In the meantime, message Lewis on Instagram.</p>}
   </div>
 </form>

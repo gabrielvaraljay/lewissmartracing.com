@@ -63,6 +63,13 @@ function migrate(PDO $db): void {
     PRAGMA user_version = 2;
     COMMIT;
     SQL);
+    if ($v < 3) $db->exec(<<<SQL
+    BEGIN;
+    -- 1 = the member gets the Club32 members' newsletter (they can say no on the form, or unsubscribe later in BlueFox).
+    ALTER TABLE orders ADD COLUMN newsletter INTEGER NOT NULL DEFAULT 1;
+    PRAGMA user_version = 3;
+    COMMIT;
+    SQL);
 }
 
 function migrate_v1(PDO $db): void {
@@ -252,16 +259,16 @@ function clean(array $in, string $k, int $max): string { return mb_substr(trim((
 
 // ---------------------------------------------------------------- BlueFox
 
-function bluefox(string $path, array $body): array {
+/** Calls the BlueFox API. A null $body makes it a GET. */
+function bluefox(string $path, ?array $body): array {
     $key = cfg('BLUEFOX_API_KEY');
     $ch = curl_init('https://api.bluefox.email/v1' . $path);
     curl_setopt_array($ch, [
-        CURLOPT_POST => true,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_TIMEOUT => 15,
         CURLOPT_HTTPHEADER => ['Content-Type: application/json', "Authorization: Bearer $key"],
-        CURLOPT_POSTFIELDS => json_encode($body),
     ]);
+    if ($body !== null) curl_setopt_array($ch, [CURLOPT_POST => true, CURLOPT_POSTFIELDS => json_encode($body)]);
     $res = curl_exec($ch);
     $code = (int)curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
     curl_close($ch);
@@ -290,6 +297,34 @@ function upsert_contact(string $email, string $name, array $tags): void {
     if (getenv('LSR_MAIL_LOG') || cfg('BLUEFOX_API_KEY') === '') return;
     [$code, $res] = bluefox('/projectId/' . cfg('BLUEFOX_PROJECT_ID') . '/contacts', ['email' => $email, 'name' => $name, 'tags' => $tags]);
     if ($code >= 300) error_log("club32: contact upsert HTTP $code $res");
+}
+
+const C32_LIST_NAME = 'Club32 Members';
+
+/**
+ * Adds a paid member to the private BlueFox "Club32 Members" list (the members' newsletter; double opt-in is off
+ * on that list). The list id comes from BLUEFOX_C32_LIST_ID, or is looked up by name once and remembered.
+ * Someone who unsubscribed stays unsubscribed: BlueFox does not reactivate them from here.
+ */
+function newsletter_subscribe(string $email, string $name): void {
+    if ($log = getenv('LSR_MAIL_LOG')) {
+        file_put_contents($log, json_encode(['at' => date('c'), 'kind' => 'newsletter_subscribe', 'to' => $email, 'name' => $name]) . "\n", FILE_APPEND);
+        return;
+    }
+    $project = cfg('BLUEFOX_PROJECT_ID');
+    if ($project === '' || cfg('BLUEFOX_API_KEY') === '') return;
+    $list = cfg('BLUEFOX_C32_LIST_ID') ?: setting('_bluefox_list_id');
+    if ($list === '') {
+        [$code, $res] = bluefox("/projectId/$project/subscriber-lists?" . http_build_query(['filter[name]' => C32_LIST_NAME]), null);
+        $j = json_decode($res, true) ?: [];
+        foreach ($j['result']['items'] ?? $j['items'] ?? $j['result'] ?? [] as $l) {
+            if (is_array($l) && ($l['name'] ?? '') === C32_LIST_NAME) { $list = (string)($l['_id'] ?? $l['id'] ?? ''); break; }
+        }
+        if ($list === '') { error_log("club32: newsletter list not found HTTP $code $res"); return; }
+        set_setting('_bluefox_list_id', $list);
+    }
+    [$code, $res] = bluefox("/projectId/$project/subscriber-lists/$list/subscribers", ['email' => $email, 'name' => $name, 'status' => 'active', 'tags' => ['club32', 'club32-' . season()]]);
+    if ($code >= 300) error_log("club32: newsletter subscribe HTTP $code $res");
 }
 
 // ---------------------------------------------------------------- admin users
@@ -393,6 +428,7 @@ function order_mail_data(array $o): array {
         'sortCode' => $bank['sortCode'],
         'accountNumber' => $bank['account'],
         'orderUrl' => site_url() . '/club32/reserved/?code=' . rawurlencode($o['code']),
+        'newsletter' => (bool)($o['newsletter'] ?? 1),
     ];
 }
 
@@ -425,13 +461,13 @@ function create_order(array $p): array {
     $db->beginTransaction();
     try {
         do { $code = new_code(); } while (order_by_code($code));
-        $db->prepare('INSERT INTO orders (code, season, first_name, last_name, email, phone, amount_pence, status, source, note, created_at, expires_at, paid_at, handled_by, ip_hash)
-                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+        $db->prepare('INSERT INTO orders (code, season, first_name, last_name, email, phone, amount_pence, status, source, note, created_at, expires_at, paid_at, handled_by, ip_hash, newsletter)
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
            ->execute([
                $code, season(), tidy_name($p['first_name']), tidy_name($p['last_name']), strtolower($p['email']), $p['phone'] ?? '',
                count($nums) * (int)setting('price_pence'), $status, $p['source'] ?? 'web', $p['note'] ?? '', $now,
                $status === 'pending' ? $now + (int)setting('hold_hours') * 3600 : null,
-               $status === 'paid' ? $now : null, $p['handled_by'] ?? null, $p['ip_hash'] ?? null,
+               $status === 'paid' ? $now : null, $p['handled_by'] ?? null, $p['ip_hash'] ?? null, (int)($p['newsletter'] ?? 1) ? 1 : 0,
            ]);
         $id = (int)$db->lastInsertId();
         $ins = $db->prepare('INSERT INTO order_numbers (order_id, number) VALUES (?, ?)');
@@ -443,6 +479,13 @@ function create_order(array $p): array {
         throw $e;
     }
     return order_by_id($id);
+}
+
+/** A paid member: BlueFox contact with the season tags, and the members' newsletter unless they said no. */
+function member_joined(array $o): void {
+    $name = $o['first_name'] . ' ' . $o['last_name'];
+    upsert_contact($o['email'], $name, ['club32', 'club32-' . $o['season']]);
+    if ((int)$o['newsletter']) newsletter_subscribe($o['email'], $name);
 }
 
 /** Marks an order paid. Works on expired orders too, as long as the numbers are still free. */
@@ -458,7 +501,7 @@ function approve_order(int $id, string $by): array {
     } catch (Throwable $e) { $db->rollBack(); throw $e; }
     $o = order_by_id($id);
     send_mail('confirmed', $o['email'], order_mail_data($o));
-    upsert_contact($o['email'], $o['first_name'] . ' ' . $o['last_name'], ['club32', 'club32-' . $o['season']]);
+    member_joined($o);
     audit($by, 'approve', $o['code']);
     return $o;
 }

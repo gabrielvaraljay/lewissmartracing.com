@@ -172,13 +172,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $o = create_order([
                     'numbers' => $nums, 'first_name' => trim((string)$_POST['first_name']), 'last_name' => trim((string)$_POST['last_name']),
                     'email' => $email, 'phone' => trim((string)$_POST['phone']), 'status' => $paid ? 'paid' : 'pending',
-                    'source' => 'manual', 'note' => trim((string)$_POST['note']), 'handled_by' => me(),
+                    'source' => 'manual', 'note' => trim((string)$_POST['note']), 'handled_by' => me(), 'newsletter' => !empty($_POST['newsletter']),
                 ]);
                 audit(me(), 'manual', $o['code'] . ' ' . nums_label($nums));
                 if (!empty($_POST['email_them'])) {
                     send_mail($paid ? 'confirmed' : 'reserved', $o['email'], order_mail_data($o));
                 }
-                if ($paid) upsert_contact($o['email'], $o['first_name'] . ' ' . $o['last_name'], ['club32', 'club32-' . $o['season']]);
+                if ($paid) member_joined($o);
                 flash("{$o['code']} added: " . nums_label($nums) . '.');
                 go('p=orders&s=' . ($paid ? 'paid' : 'pending'));
             case 'presale_import':
@@ -343,10 +343,10 @@ if ($p === 'export') {
     header('Content-Disposition: attachment; filename="club32-' . season() . '-members.csv"');
     $out = fopen('php://output', 'w');
     fwrite($out, "\xEF\xBB\xBF");
-    fputcsv($out, ['Number', 'First name', 'Last name', 'Email', 'Phone', 'Reference', 'Paid on', 'Source']);
+    fputcsv($out, ['Number', 'First name', 'Last name', 'Email', 'Phone', 'Reference', 'Paid on', 'Source', 'Newsletter']);
     $q = db()->prepare("SELECT c.number, o.* FROM claims c JOIN orders o ON o.id = c.order_id WHERE c.season = ? AND o.status = 'paid' ORDER BY c.number");
     $q->execute([season()]);
-    foreach ($q->fetchAll() as $r) fputcsv($out, [$r['number'], $r['first_name'], $r['last_name'], $r['email'], $r['phone'], $r['code'], date('Y-m-d', (int)$r['paid_at']), $r['source']]);
+    foreach ($q->fetchAll() as $r) fputcsv($out, [$r['number'], $r['first_name'], $r['last_name'], $r['email'], $r['phone'], $r['code'], date('Y-m-d', (int)$r['paid_at']), $r['source'], $r['newsletter'] ? 'yes' : 'no']);
     exit;
 }
 
@@ -448,6 +448,7 @@ case 'add':
       <label>Status<select name="status"><option value="paid">Paid already</option><option value="pending">Reserve, awaiting payment</option></select></label>
       <label>Note<input name="note" placeholder="e.g. cash at Brands Hatch"></label>
       <label class="inline"><input type="checkbox" name="email_them" value="1" checked> Email them (confirmation, or the payment details)</label>
+      <label class="inline"><input type="checkbox" name="newsletter" value="1" checked> Members\' newsletter (untick if they said no)</label>
       <button class="btn btn--go">Add</button></form>';
     break;
 
