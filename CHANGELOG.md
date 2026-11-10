@@ -19,6 +19,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - This changelog.
 - GitHub Actions deploy workflow: builds the site and rsyncs it to the Hetzner server on every push to `main`, using a dedicated deploy key jailed to the site directory.
 
+### Changed
+
+- My Story timeline is now newest first: 2026 is at the top (below the British Superbikes goal) and the story goes back in time to 2020.
+
 ## [0.1.0] - 2026-11-08
 
 First version of the site.

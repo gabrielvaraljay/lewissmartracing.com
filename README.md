@@ -32,7 +32,7 @@ A fast, fully static site built with [Astro](https://astro.build) and [Tailwind 
 - **Nine pages:** Home, My Story, Results, Calendar, Bike & Team, Gallery, Sponsors, Club32 and Contact.
 - **Club32 and admin:** a number board with bank-transfer reservations, and a private admin panel (see [below](#club32-and-admin)).
 - **Home hero:** a canvas "flip-book" driven by scrolling. It falls back to a static image on small screens and when `prefers-reduced-motion` is set.
-- **My Story:** the career timeline, oldest season first, so the story builds up as the visitor scrolls.
+- **My Story:** the career timeline, newest season first (2026 at the top), with the long-range goal above it and the story going back in time as the visitor scrolls.
 - **One content file:** all copy and data live in `src/data/site.ts`.
 - **Facts only:** anything not yet confirmed shows as "TBC" or a placeholder. Nothing is invented.
 - **SEO and sharing:** each page has a canonical URL, a meta description, Open Graph tags and a Twitter card.

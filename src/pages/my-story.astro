@@ -8,8 +8,8 @@ type Entry = {
   image?: { src: string; alt: string }; caption: string; node: 'live' | 'dim' | 'trophy' | 'solid' | 'active';
   champion?: boolean; active?: boolean;
 };
-// Oldest first: the rise story unfolds while scrolling.
-const entries: Entry[] = [
+// Newest first: the current season sits at the top, then the story goes back in time.
+const entries: Entry[] = ([
   {
     year: '2020', tag: 'Debutant // Freshman', title: 'Grassroots Fire & Debut Season', machine: 'Machine: Honda CB500',
     body: 'After training as a race technician at Silverstone Motorsport College, and inspired by a racing classmate, Lewis entered the Freshman Championship. A COVID-delayed calendar could not slow him down: several race wins and 3rd overall in his first ever season of road racing.',
@@ -46,7 +46,7 @@ const entries: Entry[] = [
     body: 'A season of consistent top 10 finishes in the Pirelli British Sportbike Championship at Bennetts British Superbikes, with a best of 4th at Oulton Park. The work for 2027 has already started: turning that pace into podium finishes.',
     pills: ['🏁 Best P4, Oulton Park', '🎯 2027 Target: Podiums'], caption: '2026 // #32', node: 'active', active: true,
   },
-];
+] as Entry[]).reverse();
 const roadmap = [
   { label: 'Freshman Championship', state: 'done' },
   { label: 'Sportsman Champion', state: 'done' },
@@ -156,11 +156,54 @@ const roadmap = [
         </div>
         <div class="relative w-full">
           <div class="absolute left-6 md:left-1/2 top-0 bottom-0 w-1 bg-surface-container-high md:-translate-x-1/2">
-            <div class="w-full h-full bg-gradient-to-b from-primary-container via-secondary-container to-primary"></div>
+            <div class="w-full h-full bg-gradient-to-t from-primary-container via-secondary-container to-primary"></div>
           </div>
           <div class="space-y-space-xl md:space-y-margin-lg">
+            <!-- THE FUTURE (top: newest first) -->
+            <div class="relative flex flex-col md:flex-row items-center justify-between group">
+              <div class="absolute left-6 md:left-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center shadow-lg z-20 transition-transform group-hover:scale-125">
+                <div class="w-5 h-5 rounded-full bg-surface-variant flex items-center justify-center"><span class="material-symbols-outlined text-primary text-[14px]">flag</span></div>
+              </div>
+              <div class="ml-16 md:ml-0 md:w-[45%] w-[calc(100%-4rem)]">
+                <div class="bg-surface-container p-space-lg rounded-xl shadow-xl hover:bg-surface-container-high transition-all relative overflow-hidden">
+                  <div class="flex items-center justify-between mb-space-xs">
+                    <span class="font-telemetry-num text-headline-md text-on-surface-variant italic font-black">NEXT</span>
+                    <span class="font-label-xs text-label-xs uppercase px-2 py-0.5 bg-surface-container-lowest text-primary rounded font-bold">Long-Range Mission</span>
+                  </div>
+                  <h3 class="font-headline-md text-headline-md uppercase italic font-extrabold text-on-surface mb-space-xs">Destination: British Superbikes</h3>
+                  <div class="font-label-md text-label-md text-primary uppercase font-bold tracking-wider mb-space-sm">Ambition: The British Superbike Championship</div>
+                  <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-space-md">The long-term goal is British Superbikes. One day, the dream race: a Yamaha R1 at Mugello. Getting there takes results, hard work and the right partners.</p>
+                  <div class="flex flex-wrap gap-2 pt-space-xs">
+                    <span class="bg-surface-container-lowest px-space-sm py-1 rounded font-label-xs text-label-xs text-on-surface font-semibold">🎯 British Superbikes</span>
+                    <span class="bg-surface-container-lowest px-space-sm py-1 rounded font-label-xs text-label-xs text-on-surface font-semibold">🏁 Dream Race: Yamaha R1 at Mugello</span>
+                  </div>
+                </div>
+              </div>
+              <div class="hidden md:block md:w-[45%] pl-space-lg text-left">
+                <div class="p-space-lg bg-surface-container-low rounded-xl max-w-md shadow-md space-y-space-xs">
+                  <div class="flex items-center justify-between text-on-surface-variant">
+                    <span class="font-label-xs text-label-xs uppercase tracking-widest">Roadmap Status</span>
+                    <span class="font-telemetry-num text-body-sm text-primary-container font-black">STAGE 04/05</span>
+                  </div>
+                  <div class="space-y-space-xs pt-space-xs">
+                    {roadmap.map((r) => (
+                      <div>
+                        <div class="flex justify-between font-label-xs text-label-xs mb-1">
+                          <span class="text-on-surface">{r.label}</span>
+                          <span class:list={['font-bold', r.state === 'goal' ? 'text-on-surface-variant' : 'text-primary']}>{r.state === 'done' ? 'Done' : r.state === 'now' ? 'Now' : 'Goal'}</span>
+                        </div>
+                        <div class="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+                          <div class:list={['h-full', r.state === 'done' ? 'bg-primary-container w-full' : r.state === 'now' ? 'bg-primary w-1/2' : 'w-0']}></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {entries.map((e, i) => {
-              const left = i % 2 === 0;
+              const left = i % 2 === 1;
               return (
                 <div class:list={['relative flex flex-col items-center justify-between group', left ? 'md:flex-row' : 'md:flex-row-reverse']}>
                   {e.node === 'active'
@@ -206,48 +249,6 @@ const roadmap = [
               );
             })}
 
-            <!-- THE FUTURE -->
-            <div class="relative flex flex-col md:flex-row items-center justify-between group">
-              <div class="absolute left-6 md:left-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center shadow-lg z-20 transition-transform group-hover:scale-125">
-                <div class="w-5 h-5 rounded-full bg-surface-variant flex items-center justify-center"><span class="material-symbols-outlined text-primary text-[14px]">flag</span></div>
-              </div>
-              <div class="ml-16 md:ml-0 md:w-[45%] w-[calc(100%-4rem)]">
-                <div class="bg-surface-container p-space-lg rounded-xl shadow-xl hover:bg-surface-container-high transition-all relative overflow-hidden">
-                  <div class="flex items-center justify-between mb-space-xs">
-                    <span class="font-telemetry-num text-headline-md text-on-surface-variant italic font-black">NEXT</span>
-                    <span class="font-label-xs text-label-xs uppercase px-2 py-0.5 bg-surface-container-lowest text-primary rounded font-bold">Long-Range Mission</span>
-                  </div>
-                  <h3 class="font-headline-md text-headline-md uppercase italic font-extrabold text-on-surface mb-space-xs">Destination: British Superbikes</h3>
-                  <div class="font-label-md text-label-md text-primary uppercase font-bold tracking-wider mb-space-sm">Ambition: The British Superbike Championship</div>
-                  <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-space-md">The long-term goal is British Superbikes. One day, the dream race: a Yamaha R1 at Mugello. Getting there takes results, hard work and the right partners.</p>
-                  <div class="flex flex-wrap gap-2 pt-space-xs">
-                    <span class="bg-surface-container-lowest px-space-sm py-1 rounded font-label-xs text-label-xs text-on-surface font-semibold">🎯 British Superbikes</span>
-                    <span class="bg-surface-container-lowest px-space-sm py-1 rounded font-label-xs text-label-xs text-on-surface font-semibold">🏁 Dream Race: Yamaha R1 at Mugello</span>
-                  </div>
-                </div>
-              </div>
-              <div class="hidden md:block md:w-[45%] pl-space-lg text-left">
-                <div class="p-space-lg bg-surface-container-low rounded-xl max-w-md shadow-md space-y-space-xs">
-                  <div class="flex items-center justify-between text-on-surface-variant">
-                    <span class="font-label-xs text-label-xs uppercase tracking-widest">Roadmap Status</span>
-                    <span class="font-telemetry-num text-body-sm text-primary-container font-black">STAGE 04/05</span>
-                  </div>
-                  <div class="space-y-space-xs pt-space-xs">
-                    {roadmap.map((r) => (
-                      <div>
-                        <div class="flex justify-between font-label-xs text-label-xs mb-1">
-                          <span class="text-on-surface">{r.label}</span>
-                          <span class:list={['font-bold', r.state === 'goal' ? 'text-on-surface-variant' : 'text-primary']}>{r.state === 'done' ? 'Done' : r.state === 'now' ? 'Now' : 'Goal'}</span>
-                        </div>
-                        <div class="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
-                          <div class:list={['h-full', r.state === 'done' ? 'bg-primary-container w-full' : r.state === 'now' ? 'bg-primary w-1/2' : 'w-0']}></div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
