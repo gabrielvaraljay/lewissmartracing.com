@@ -3,39 +3,56 @@ import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
 import NextRace from '../components/NextRace.astro';
 import Icon from '../components/Icon.astro';
-// Season rounds. ISO dates. Past rounds are greyed out automatically at build time.
-const rounds: { round: string; circuit: string; date: string; series: string }[] = [];
-const now = Date.now();
+import { calendar, calendarYear } from '../data/site';
+// Past events are greyed out automatically at build time.
+const today = new Date().toISOString().slice(0, 10);
+const d = (iso: string, opts: Intl.DateTimeFormatOptions) => new Date(`${iso}T12:00:00Z`).toLocaleDateString('en-GB', { timeZone: 'UTC', ...opts });
+const range = (a: string, b: string) => {
+  const sameMonth = a.slice(0, 7) === b.slice(0, 7);
+  return sameMonth
+    ? `${d(a, { day: 'numeric' })}–${d(b, { day: 'numeric', month: 'long', year: 'numeric' })}`
+    : `${d(a, { day: 'numeric', month: 'short' })} – ${d(b, { day: 'numeric', month: 'short', year: 'numeric' })}`;
+};
 ---
 <Base title="Calendar" description="Race calendar for Lewis Smart #32.">
-  <PageHeader kicker="Calendar" title="Race" accent="weekends" intro="Where to see #32 on track this season." />
+  <PageHeader kicker="Calendar" title="Race" accent="weekends" intro="Where to see #32 on track in 2027: every British Superbike Championship weekend Lewis is racing at." />
   <section class="section">
     <div class="container">
       <NextRace />
+      <h2 class="h-lg cal__title">{calendarYear} <span class="accent">season</span></h2>
       <div class="rounds">
-        {rounds.length
-          ? rounds.map((r) => {
-              const past = new Date(r.date).getTime() < now;
-              return (
-                <article class:list={['card card--chamfer round', { 'round--past': past }]}>
-                  <span class="chip">{r.round}</span>
-                  <h2 class="h-md">{r.circuit}</h2>
-                  <p class="muted"><Icon name="calendar" size={16} /> {new Date(r.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-                  <span class="label">{past ? 'Completed' : r.series}</span>
-                </article>
-              );
-            })
-          : <p class="tbc">The full season calendar will be published here once confirmed.</p>}
+        {calendar.map((r) => {
+          const past = r.end < today;
+          return (
+            <article class:list={['card card--chamfer round', { 'round--past': past, 'round--test': r.kind === 'test' }]}>
+              <span class:list={['chip', { 'chip--accent': r.kind === 'round' && !past }]}>{r.round}</span>
+              <h3 class="h-md">{r.circuit}</h3>
+              <p class="muted"><Icon name="calendar" size={16} /> {range(r.start, r.end)}</p>
+              <span class="label">{past ? 'Completed' : r.kind === 'test' ? `Pre-season test · Layout: ${r.layout}` : `Layout: ${r.layout}`}</span>
+              {!past && (
+                <div class="round__links">
+                  {r.tickets && <a class="link-arrow" href={r.tickets} target="_blank" rel="noopener">Tickets <Icon name="arrow" size={16} /></a>}
+                  <a class="link-arrow" href={r.info} target="_blank" rel="noopener">Event info <Icon name="arrow" size={16} /></a>
+                </div>
+              )}
+            </article>
+          );
+        })}
       </div>
+      <p class="muted cal__note">Dates from the official British Superbike Championship calendar and may change. Check the event page before you travel.</p>
     </div>
   </section>
 </Base>
 
 <style>
-  .rounds { display: grid; gap: var(--gutter); margin-top: 3rem; }
+  .rounds { display: grid; gap: var(--gutter); margin-top: 1.5rem; }
   .round { display: grid; gap: .75rem; justify-items: start; padding: 1.75rem; }
   .round p { margin: 0; display: flex; align-items: center; gap: .5rem; }
   .round--past { opacity: .4; filter: grayscale(1); }
+  .round--test { border-style: dashed; }
+  .round__links { display: flex; flex-wrap: wrap; gap: 1.25rem; }
+  .cal__title { margin: 3.5rem 0 0; }
+  .cal__note { margin-top: 2rem; font-size: .875rem; }
   @media (min-width: 768px) { .rounds { grid-template-columns: repeat(2, 1fr); } }
   @media (min-width: 1100px) { .rounds { grid-template-columns: repeat(3, 1fr); } }
 </style>

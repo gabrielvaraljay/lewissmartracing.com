@@ -14,7 +14,17 @@ export const site = {
   formEndpoint: '/api/enquiry.php' as string | null, // PHP handler on the server -> BlueFox (public/api/enquiry.php)
 };
 
-export const nav = [
+// Build target. `npm run build` makes the public site; `npm run build:staging` sets PUBLIC_SITE_ENV=staging
+// and builds everything, including pages that are not finished yet (staging.lewissmartracing.com, password protected).
+export const isStaging = import.meta.env.PUBLIC_SITE_ENV === 'staging';
+// Pages only on staging until they are ready. scripts/prune-staging-only.mjs removes them from the production build
+// and fails the build if a production page still links to one.
+export const stagingOnly = ['/bike-and-team/', '/gallery/', '/club32/'];
+// Sponsors stays live (the "Sponsor Lewis" button links to it) but is only in the menu on staging.
+const stagingOnlyNav = [...stagingOnly, '/sponsors/'];
+export const isLive = (href: string) => isStaging || !stagingOnly.some((p) => href.startsWith(p));
+
+const allNav = [
   { href: '/', label: 'Home' },
   { href: '/my-story/', label: 'My Story' },
   { href: '/results/', label: 'Results' },
@@ -25,6 +35,7 @@ export const nav = [
   { href: '/club32/', label: 'Club32' },
   { href: '/contact/', label: 'Contact' },
 ];
+export const nav = isStaging ? allNav : allNav.filter((n) => !stagingOnlyNav.includes(n.href));
 
 // Club32: the supporters' number draw. Prices, prizes, bank details and dates are live data
 // managed in the admin panel (/admin/); this is only the fixed explanatory copy.
@@ -132,7 +143,44 @@ export const milestones = [
   { year: '2026', tag: 'Present', title: 'Chasing podiums', body: 'Consistent top 10 finishes in the Pirelli British Sportbike Championship, with a best of 4th at Oulton Park. 2027 target: the podium.' },
 ];
 
-// Fill in when the calendar is confirmed. ISO date of race day.
-export const nextRace: { round: string; circuit: string; series: string; date: string } | null = null;
+export type CalendarEvent = {
+  kind: 'test' | 'round';
+  round: string; // official BSB round label
+  circuit: string;
+  layout: string;
+  start: string; // ISO date, first day of the event
+  end: string; // ISO date, last day (race day)
+  tickets?: string;
+  info: string; // official event page
+};
+
+// 2027 British Superbike Championship calendar, from britishsuperbike.com/calendar (fetched 10 Nov 2026).
+// Round 9 at Assen (NL, 17-19 Sep) is left out on purpose: Lewis is not racing there.
+// Official round numbers are kept so they match the BSB timetable.
+const BSB = 'https://www.britishsuperbike.com/calendar/2027';
+export const calendarSeries = 'British Superbike Championship';
+export const calendarYear = 2027;
+export const calendar: CalendarEvent[] = [
+  { kind: 'test', round: 'Official Test', circuit: 'Donington Park', layout: 'GP', start: '2027-03-26', end: '2027-03-27', info: `${BSB}/t1-donington-park` },
+  { kind: 'test', round: 'Official Test', circuit: 'Oulton Park', layout: 'International', start: '2027-04-20', end: '2027-04-21', info: `${BSB}/t2-oulton-park` },
+  { kind: 'round', round: 'Round 1', circuit: 'Oulton Park', layout: 'International', start: '2027-05-01', end: '2027-05-03', tickets: 'https://www.oultonpark.co.uk/2027/may/british-superbike-championship', info: `${BSB}/r1-oulton-park` },
+  { kind: 'round', round: 'Round 2', circuit: 'Donington Park', layout: 'GP', start: '2027-05-21', end: '2027-05-23', tickets: 'https://www.donington-park.co.uk/2027/may/british-superbike-championship', info: `${BSB}/r2-donington-park` },
+  { kind: 'round', round: 'Round 3', circuit: 'Knockhill', layout: 'Full', start: '2027-06-18', end: '2027-06-20', tickets: 'https://www.knockhill.com/events/British-Superbike-Championship', info: `${BSB}/r3-knockhill` },
+  { kind: 'round', round: 'Round 4', circuit: 'Snetterton', layout: '300', start: '2027-07-02', end: '2027-07-04', tickets: 'https://www.snetterton.co.uk/2027/july/british-superbike-championship', info: `${BSB}/r4-snetterton` },
+  { kind: 'round', round: 'Round 5', circuit: 'Brands Hatch', layout: 'GP', start: '2027-07-16', end: '2027-07-18', tickets: 'https://www.brandshatch.co.uk/2027/july/british-superbike-championship', info: `${BSB}/r5-brands-hatch` },
+  { kind: 'round', round: 'Round 6', circuit: 'Oulton Park', layout: 'International', start: '2027-07-30', end: '2027-08-01', tickets: 'https://www.oultonpark.co.uk/2027/august/british-superbike-championship', info: `${BSB}/r6-oulton-park` },
+  { kind: 'round', round: 'Round 7', circuit: 'Thruxton', layout: 'Full', start: '2027-08-06', end: '2027-08-08', tickets: 'https://thruxtonracing.co.uk/racing/bsb', info: `${BSB}/r7-thruxton` },
+  { kind: 'round', round: 'Round 8', circuit: 'Cadwell Park', layout: 'Full', start: '2027-08-28', end: '2027-08-30', tickets: 'https://www.cadwellpark.co.uk/2027/august/british-superbike-championship', info: `${BSB}/r8-cadwell-park` },
+  { kind: 'round', round: 'Round 10', circuit: 'Donington Park', layout: 'GP', start: '2027-10-01', end: '2027-10-03', tickets: 'https://www.donington-park.co.uk/2027/october/british-superbike-championship', info: `${BSB}/r10-donington-park` },
+  { kind: 'round', round: 'Round 11', circuit: 'Brands Hatch', layout: 'GP', start: '2027-10-15', end: '2027-10-17', tickets: 'https://www.brandshatch.co.uk/2027/october/british-superbike-championship', info: `${BSB}/r11-brands-hatch` },
+];
+
+// Next race weekend, worked out at build time: the first round whose last day has not passed.
+// `date` is the weekend's first day (08:00 UK time), which the countdowns run to.
+const today = new Date().toISOString().slice(0, 10);
+const upcoming = calendar.find((e) => e.kind === 'round' && e.end >= today);
+export const nextRace: { round: string; circuit: string; series: string; date: string } | null = upcoming
+  ? { round: upcoming.round, circuit: upcoming.circuit, series: calendarSeries, date: `${upcoming.start}T08:00:00+01:00` }
+  : null;
 
 export const sponsors: { name: string; logo: string; url?: string; tier: 'title' | 'partner' | 'supporter' }[] = [];
