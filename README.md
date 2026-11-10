@@ -180,6 +180,18 @@ npm run dev                       # proxies /api and /admin to :8080
 
 With `LSR_MAIL_LOG` set, emails are written to that file instead of being sent.
 
+## Results
+
+The Results page reads `src/data/results.json`, built from the official TSL Timing classifications (<https://www.tsl-timing.com/Results>) for British Superbikes and No Limits Racing. Every row links to its source PDF. To refresh after a race weekend (needs Python 3 and `pdftotext` from poppler-utils):
+
+```bash
+python3 scripts/results/crawl.py /tmp/tsl bsb,nolimits 2021,2022,2023,2024,2025,2026
+python3 scripts/results/parse.py /tmp/tsl
+python3 scripts/results/build.py /tmp/tsl/results.json
+```
+
+`crawl.py` downloads every result PDF of every event (cached, so later runs only fetch new ones) and keeps the ones with "Lewis SMART". `parse.py` reads his row: position, class position in mixed-class and endurance races, best lap and endurance team-mates. `build.py` names the championships and writes the JSON. 2020 (Freshman Championship) is not on TSL, so that season shows the summary from the timeline.
+
 ## Deployment
 
 The site runs on the Hetzner server (nginx), served from `/var/www/lewissmartracing.com`.

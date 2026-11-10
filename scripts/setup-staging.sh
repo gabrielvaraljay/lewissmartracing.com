@@ -20,7 +20,8 @@
 set -euo pipefail
 
 HOST=78.47.73.104
-SSH="ssh -t -o ControlPath=$HOME/.ssh/cm-hetzner-lsr gabriel@$HOST"
+# Optional: LSR_SSH_KEY=~/.ssh/<key> to pick the key for gabriel@78.47.73.104.
+SSH="ssh -t -o ControlPath=$HOME/.ssh/cm-hetzner-lsr ${LSR_SSH_KEY:+-i $LSR_SSH_KEY -o IdentitiesOnly=yes} gabriel@$HOST"
 DOMAIN=staging.lewissmartracing.com
 WEB=/var/www/$DOMAIN
 LIVE=/var/www/lewissmartracing.com
