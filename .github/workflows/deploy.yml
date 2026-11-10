@@ -15,6 +15,8 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      HAS_STAGING: ${{ secrets.DEPLOY_STAGING_SSH_KEY != '' }}
     environment:
       name: production
       url: https://lewissmartracing.com
@@ -27,6 +29,7 @@ jobs:
           cache: npm
 
       - run: npm ci
+      # Production: only the finished pages (scripts/prune-staging-only.mjs removes the rest).
       - run: npm run build
 
       # The key belongs to the dedicated `lsr-deploy` user on the server. Its
@@ -55,3 +58,32 @@ jobs:
           code=$(curl -sS -o /dev/null -w "%{http_code}" https://lewissmartracing.com/)
           echo "HTTP $code"
           [ "$code" = 200 ] || [ "$code" = 302 ]
+
+      # ---------------------------------------------------------------- staging
+      # staging.lewissmartracing.com gets the full site, including pages that are not
+      # live yet (npm run build:staging). It is password protected and noindex on the
+      # server. Its key is a second `lsr-deploy` key jailed to the staging directory:
+      # restrict,command="rrsync /var/www/staging.lewissmartracing.com".
+      # Skipped until scripts/setup-staging.sh has set the DEPLOY_STAGING_SSH_KEY secret.
+      - name: Build staging
+        if: env.HAS_STAGING == 'true'
+        run: npm run build:staging
+
+      - name: Upload staging
+        if: env.HAS_STAGING == 'true'
+        env:
+          DEPLOY_STAGING_SSH_KEY: ${{ secrets.DEPLOY_STAGING_SSH_KEY }}
+        run: |
+          printf '%s\n' "$DEPLOY_STAGING_SSH_KEY" > ~/.ssh/staging_key
+          chmod 600 ~/.ssh/staging_key
+          rsync -az --delete --chmod=D755,F644 \
+            -e "ssh -i ~/.ssh/staging_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes" \
+            dist/ lsr-deploy@78.47.73.104:/
+
+      # Without the password the staging site must answer 401, never 200.
+      - name: Staging smoke test
+        if: env.HAS_STAGING == 'true'
+        run: |
+          code=$(curl -sS -o /dev/null -w "%{http_code}" https://staging.lewissmartracing.com/)
+          echo "HTTP $code"
+          [ "$code" = 401 ]

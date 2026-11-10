@@ -11,7 +11,7 @@ import '../styles/tailwind.css';
 import '../styles/global.css';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
-import { site } from '../data/site';
+import { isStaging, site } from '../data/site';
 
 interface Props { title?: string; description?: string; image?: string }
 const { title, description = site.description, image = '/images/hero-static.webp' } = Astro.props;
@@ -40,10 +40,12 @@ const icons = ['arrow_forward','calendar_today','check_circle','chevron_right','
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href={`https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=${icons.join(',')}&display=block`} />
     <script is:inline>document.documentElement.classList.add('js');</script>
+    {isStaging && <meta name="robots" content="noindex, nofollow" />}
     <slot name="head" />
   </head>
   <body class="bg-surface-container-lowest text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container min-h-screen flex flex-col">
     <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-3 focus:bg-primary-container focus:text-on-primary-container">Skip to content</a>
+    {isStaging && <div class="fixed bottom-3 left-3 z-[90] px-3 py-1 bg-error text-on-error font-label-xs text-label-xs uppercase tracking-widest font-black pointer-events-none select-none" aria-hidden="true">Staging</div>}
     <SiteHeader />
     <main id="main" class="w-full pt-20 flex-grow bg-surface-container-lowest relative overflow-hidden"><slot /></main>
     <SiteFooter />

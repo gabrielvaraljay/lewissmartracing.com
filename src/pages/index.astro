@@ -2,7 +2,7 @@
 // Home page. Layout ported 1:1 from the Google Stitch design; copy limited to confirmed facts.
 import Base from '../layouts/Base.astro';
 import NewsletterSignup from '../components/NewsletterSignup.astro';
-import { heroFrameCount, nextRace, site, sponsors, stats } from '../data/site';
+import { heroFrameCount, isLive, nextRace, site, sponsors, stats } from '../data/site';
 
 const heroStatic = heroFrameCount > 0 ? '/frames/frame-01.webp' : '/images/hero-static.webp';
 const race = nextRace;
@@ -161,9 +161,10 @@ const socialTiles = [
               <a class="inline-flex items-center gap-space-xs px-space-lg py-space-sm bg-primary-container hover:bg-primary text-on-primary-container font-headline-sm text-headline-sm uppercase italic tracking-wider transition-all shadow-lg shadow-primary-container/20 hover:scale-[1.02]" href="/my-story/">
                 <span>Read My Full Story</span><span class="material-symbols-outlined text-[20px]">arrow_forward</span>
               </a>
+              {isLive('/bike-and-team/') && (
               <a class="inline-flex items-center gap-space-xs px-space-md py-space-sm bg-surface-container-high hover:bg-surface-variant text-on-surface font-headline-sm text-headline-sm uppercase italic tracking-wide transition-all" href="/bike-and-team/">
                 <span>View the Bike</span>
-              </a>
+              </a>)}
             </div>
           </div>
         </div>

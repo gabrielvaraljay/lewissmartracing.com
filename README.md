@@ -29,7 +29,7 @@ A fast, fully static site built with [Astro](https://astro.build) and [Tailwind 
 
 ## Features
 
-- **Nine pages:** Home, My Story, Results, Calendar, Bike & Team, Gallery, Sponsors, Club32 and Contact.
+- **Nine pages:** Home, My Story, Results, Calendar, Bike & Team, Gallery, Sponsors, Club32 and Contact. Live: Home, My Story, Results, Calendar, Contact and Sponsors (via the "Sponsor Lewis" button). The rest are on staging only.
 - **Club32 and admin:** a number board with bank-transfer reservations, and a private admin panel (see [below](#club32-and-admin)).
 - **Home hero:** a canvas "flip-book" driven by scrolling. It falls back to a static image on small screens and when `prefers-reduced-motion` is set.
 - **My Story:** the career timeline, newest season first (2026 at the top), with the long-range goal above it and the story going back in time as the visitor scrolls.
@@ -197,6 +197,18 @@ The repository secrets it needs are:
 | --- | --- |
 | `DEPLOY_SSH_KEY` | Private key of `lsr-deploy` |
 | `DEPLOY_KNOWN_HOSTS` | Output of `ssh-keyscan -t ed25519 78.47.73.104` |
+
+### Staging
+
+<https://staging.lewissmartracing.com> has the full site, including pages that are not live yet. It is password protected (HTTP basic auth), every response carries `X-Robots-Tag: noindex, nofollow`, every page has a `noindex` meta tag, and a "Staging" badge sits in the corner. Nothing about staging is listed in a robots.txt or sitemap.
+
+- `npm run build` is the production build. `scripts/prune-staging-only.mjs` removes the pages listed in `stagingOnly` (`src/data/site.ts`: Bike & Team, Gallery, Club32) and fails the build if a live page still links to one. Sponsors stays live for the "Sponsor Lewis" button, but is only in the menu on staging.
+- `npm run build:staging` (`PUBLIC_SITE_ENV=staging`) builds every page.
+- To put a page live, remove it from `stagingOnly` in both `src/data/site.ts` and `scripts/prune-staging-only.mjs`.
+
+The Deploy workflow deploys both: production first, then staging with a second `lsr-deploy` key jailed to `/var/www/staging.lewissmartracing.com` (secret `DEPLOY_STAGING_SSH_KEY`). Staging PHP uses its own config and database (`/etc/lewissmartracing-staging`, `/var/lib/lewissmartracing-staging`), so it never touches live Club32 data.
+
+**Server setup (once).** Add a DNS A record `staging` → `78.47.73.104` in GoDaddy, then run `bash scripts/setup-staging.sh`. It asks for the staging username, password and first admin email, sets up nginx, TLS, the deploy key and the GitHub secret, and runs a deploy.
 
 The production URL is set by `site` in `astro.config.mjs`, and the canonical and Open Graph URLs are built from it.
 

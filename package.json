@@ -5,9 +5,10 @@
   "version": "0.1.0",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && node scripts/prune-staging-only.mjs",
     "preview": "astro preview",
-    "frames": "node scripts/make-frames.mjs"
+    "frames": "node scripts/make-frames.mjs",
+    "build:staging": "PUBLIC_SITE_ENV=staging astro build && PUBLIC_SITE_ENV=staging node scripts/prune-staging-only.mjs"
   },
   "dependencies": {
     "@fontsource-variable/inter": "5.2.8",

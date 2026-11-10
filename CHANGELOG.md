@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Changed
+
+- Production now shows only the finished pages: Home, My Story, Results, Calendar and Contact in the menu, plus Sponsors through the "Sponsor Lewis" button. Bike & Team, Gallery and Club32 are on staging only.
+
 ### Added
 
 - **Club32** (`/club32/`): a 1-100 number board for the supporters' draw. Visitors pick numbers, reserve them for 24 hours and pay by bank transfer with their own reference (`C32-XXXXX`). Only first names are shown. Returning members get a personal presale link that holds their old number.
@@ -18,6 +22,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Professional README covering the stack, setup, scripts, project structure, content editing, the design system, hero frames and deployment.
 - This changelog.
 - Home hero: "Big Announcement Coming Soon" panel with an email-only newsletter signup (`NewsletterSignup` component). Sign-ups go to the BlueFox "Website Newsletter" form and the "Newsletter" subscriber list.
+- Newsletter double opt-in: after signing up, visitors land on `/newsletter/check-your-inbox/` (confirm, save 32@lewissmartracing.com, check spam). The confirmation email comes from 32@lewissmartracing.com, and the link leads to `/newsletter/confirmed/`.
+- 2027 race calendar from the official British Superbike Championship calendar: two official tests and every round except Round 9 at Assen (Lewis is not racing there), with ticket and event links. The home page and Calendar countdowns now run to the next round (Round 1, Oulton Park, 1 May 2027).
+- Staging site (staging.lewissmartracing.com): full site behind a password and noindex. `npm run build:staging`, a second jailed deploy key, and `scripts/setup-staging.sh` for the one-off server setup.
 - GitHub Actions deploy workflow: builds the site and rsyncs it to the Hetzner server on every push to `main`, using a dedicated deploy key jailed to the site directory.
 
 ### Changed

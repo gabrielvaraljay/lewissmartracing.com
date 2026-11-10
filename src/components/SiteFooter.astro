@@ -1,6 +1,6 @@
 ---
 // Footer, ported from the Google Stitch layout.
-import { site } from '../data/site';
+import { isLive, site } from '../data/site';
 const year = new Date().getFullYear();
 ---
 <footer class="w-full bg-surface-container-low border-t border-surface-container-high relative overflow-hidden">
@@ -24,8 +24,8 @@ const year = new Date().getFullYear();
           <li class="hover:text-on-surface transition-colors"><a href="/my-story/">My Story</a></li>
           <li class="hover:text-on-surface transition-colors"><a href="/calendar/">Race Calendar</a></li>
           <li class="hover:text-on-surface transition-colors"><a href="/results/">Results</a></li>
-          <li class="hover:text-on-surface transition-colors"><a href="/bike-and-team/">Bike &amp; Team</a></li>
-          <li class="hover:text-on-surface transition-colors"><a href="/gallery/">Gallery</a></li>
+          {isLive('/bike-and-team/') && <li class="hover:text-on-surface transition-colors"><a href="/bike-and-team/">Bike &amp; Team</a></li>}
+          {isLive('/gallery/') && <li class="hover:text-on-surface transition-colors"><a href="/gallery/">Gallery</a></li>}
         </ul>
       </div>
       <div>
