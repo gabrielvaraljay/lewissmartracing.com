@@ -195,6 +195,18 @@ Emails carry a clickable "Proudly supported by" row of sponsor logos. Each logo 
 | Club32 - Payment confirmed, Club32 - Winner, Club32 - Reservation cancelled | Club32 - Reserved (payment details), Payment reminder, Reservation expired, Returning member presale |
 | | Admin - Password reset, Admin - Invite, Website enquiry notification and New reservation (internal) |
 
+### Email sources and Gmail dark mode
+
+Every BlueFox transactional email has its source in `email/*.html`. Run `python3 scripts/email-build.py` and paste the result from `email/dist/` (git-ignored) into BlueFox. The build fills in two placeholders: `<!-- @darkmode -->` and `<!-- @sponsors -->`.
+
+The Gmail apps recolour dark emails in dark mode: black turns light grey and #d6f20a turns dark green. The emails keep their look in three ways:
+
+- Every background colour is also set as a `linear-gradient` image.
+- Text is wrapped in `<div class="gb-s"><div class="gb-d">`, and only Gmail applies the blend-mode rules to it.
+- Buttons are PNG images in the site's button style. To make a new one, run `python3 scripts/email-button.py "LABEL" email/buttons/x.png` and upload it to the "Sponsor logos (email)" gallery folder.
+
+The 3 newsletter templates are built in the visual editor. They have the logo grid, but not the dark-mode fix.
+
 When a sponsor is added or removed:
 
 1. Update `sponsors` in `src/data/site.ts` and the list in `scripts/email-sponsor-logos.py`.

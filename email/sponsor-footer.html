@@ -1,17 +1,25 @@
 <!-- Sponsor logos for email footers. Source of truth: src/data/site.ts (sponsors). Images: BlueFox gallery, folder "Sponsor logos (email)".
      Goes into newsletters and non-critical emails only, never into sign-up confirmations, payment details, reminders or password emails.
-     After a sponsor change: regenerate the PNGs (scripts/email-sponsor-logos.py), upload them, update this file and re-run the inject script. -->
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#141417;"><tr><td align="center" style="padding:22px 12px 6px;font-family:Arial,Helvetica,sans-serif;color:#9a9aa3;font-size:11px;letter-spacing:3px;font-weight:bold;">PROUDLY SUPPORTED BY</td></tr>
-<tr><td align="center" style="padding:6px 12px 0;">
-<table role="presentation" cellpadding="0" cellspacing="0" align="center"><tr>
-<td style="padding:4px;"><a href="https://www.basgroup.uk/" target="_blank" rel="noopener"><img src="https://cdn.bluefox.email/668d0d8f71935df50e4d0f11/6af3945f22a3fca8ecbd6b40/4M6DK60XXNT98QUNIsoca.png" width="124" height="62" alt="BAS Group" style="display:block;border:0;width:124px;max-width:100%;height:auto;"></a></td>
-<td style="padding:4px;"><a href="https://amethyst-designs.co.uk/" target="_blank" rel="noopener"><img src="https://cdn.bluefox.email/668d0d8f71935df50e4d0f11/6af3945f22a3fca8ecbd6b40/Igm9XszPqVlfxVzO97g2w.png" width="124" height="62" alt="Amethyst" style="display:block;border:0;width:124px;max-width:100%;height:auto;"></a></td>
-<td style="padding:4px;"><a href="https://www.instagram.com/striveperformance/" target="_blank" rel="noopener"><img src="https://cdn.bluefox.email/668d0d8f71935df50e4d0f11/6af3945f22a3fca8ecbd6b40/-B8SdSKNReoqoKnNBIXQj.png" width="124" height="62" alt="Strive Performance" style="display:block;border:0;width:124px;max-width:100%;height:auto;"></a></td>
-<td style="padding:4px;"><a href="https://www.instagram.com/greenpowermotorsports/" target="_blank" rel="noopener"><img src="https://cdn.bluefox.email/668d0d8f71935df50e4d0f11/6af3945f22a3fca8ecbd6b40/NeSTIt6t9OhDl9_-a9SeU.png" width="124" height="62" alt="Green Power Motorsports" style="display:block;border:0;width:124px;max-width:100%;height:auto;"></a></td>
-</tr></table>
-<table role="presentation" cellpadding="0" cellspacing="0" align="center"><tr>
-<td style="padding:4px;"><a href="https://www.araihelmet.eu/" target="_blank" rel="noopener"><img src="https://cdn.bluefox.email/668d0d8f71935df50e4d0f11/6af3945f22a3fca8ecbd6b40/i4bn8uIDAGFZ-w_NUorTg.png" width="124" height="62" alt="Arai" style="display:block;border:0;width:124px;max-width:100%;height:auto;"></a></td>
-<td style="padding:4px;"><a href="https://www.rg-racing.com/" target="_blank" rel="noopener"><img src="https://cdn.bluefox.email/668d0d8f71935df50e4d0f11/6af3945f22a3fca8ecbd6b40/sL2O1XdVQSgYRzxsyo6Hk.png" width="124" height="62" alt="R&amp;G" style="display:block;border:0;width:124px;max-width:100%;height:auto;"></a></td>
-<td style="padding:4px;"><a href="https://ugglyandco.com/" target="_blank" rel="noopener"><img src="https://cdn.bluefox.email/668d0d8f71935df50e4d0f11/6af3945f22a3fca8ecbd6b40/Y34gop0ZbIkE8menUmZsZ.png" width="124" height="62" alt="Uggly &amp; Co" style="display:block;border:0;width:124px;max-width:100%;height:auto;"></a></td>
-</tr></table>
-</td></tr><tr><td style="padding:0 0 18px;font-size:0;line-height:0;">&nbsp;</td></tr></table>
+     One fixed 8-column grid (66px each), so Gmail cannot stretch the second row. Backgrounds use a gradient image as well, so Gmail's dark mode keeps them dark.
+     After a sponsor change: regenerate the PNGs (scripts/email-sponsor-logos.py), upload them, update this file and paste it into every email listed in the README. -->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#141417" style="background:#141417;background-image:linear-gradient(#141417,#141417);">
+<tr><td align="center" style="padding:22px 12px 8px;font-family:Arial,Helvetica,sans-serif;color:#9a9aa3;font-size:11px;letter-spacing:3px;font-weight:bold;"><div class="gb-s"><div class="gb-d">PROUDLY SUPPORTED BY</div></div></td></tr>
+<tr><td align="center" style="padding:0 6px 20px;">
+<table role="presentation" width="528" cellpadding="0" cellspacing="0" align="center" style="width:528px;max-width:100%;table-layout:fixed;">
+<tr><td width="66"></td><td width="66"></td><td width="66"></td><td width="66"></td><td width="66"></td><td width="66"></td><td width="66"></td><td width="66"></td></tr>
+<tr>
+<td colspan="2" align="center" style="padding:4px;"><a href="https://www.basgroup.uk/" target="_blank" rel="noopener"><img src="https://cdn.bluefox.email/668d0d8f71935df50e4d0f11/6af3945f22a3fca8ecbd6b40/4M6DK60XXNT98QUNIsoca.png" width="124" height="62" alt="BAS Group" style="display:block;border:0;width:124px;height:auto;"></a></td>
+<td colspan="2" align="center" style="padding:4px;"><a href="https://amethyst-designs.co.uk/" target="_blank" rel="noopener"><img src="https://cdn.bluefox.email/668d0d8f71935df50e4d0f11/6af3945f22a3fca8ecbd6b40/Igm9XszPqVlfxVzO97g2w.png" width="124" height="62" alt="Amethyst" style="display:block;border:0;width:124px;height:auto;"></a></td>
+<td colspan="2" align="center" style="padding:4px;"><a href="https://www.instagram.com/striveperformance/" target="_blank" rel="noopener"><img src="https://cdn.bluefox.email/668d0d8f71935df50e4d0f11/6af3945f22a3fca8ecbd6b40/-B8SdSKNReoqoKnNBIXQj.png" width="124" height="62" alt="Strive Performance" style="display:block;border:0;width:124px;height:auto;"></a></td>
+<td colspan="2" align="center" style="padding:4px;"><a href="https://www.instagram.com/greenpowermotorsports/" target="_blank" rel="noopener"><img src="https://cdn.bluefox.email/668d0d8f71935df50e4d0f11/6af3945f22a3fca8ecbd6b40/NeSTIt6t9OhDl9_-a9SeU.png" width="124" height="62" alt="Green Power Motorsports" style="display:block;border:0;width:124px;height:auto;"></a></td>
+</tr>
+<tr>
+<td></td>
+<td colspan="2" align="center" style="padding:4px;"><a href="https://www.araihelmet.eu/" target="_blank" rel="noopener"><img src="https://cdn.bluefox.email/668d0d8f71935df50e4d0f11/6af3945f22a3fca8ecbd6b40/i4bn8uIDAGFZ-w_NUorTg.png" width="124" height="62" alt="Arai" style="display:block;border:0;width:124px;height:auto;"></a></td>
+<td colspan="2" align="center" style="padding:4px;"><a href="https://www.rg-racing.com/" target="_blank" rel="noopener"><img src="https://cdn.bluefox.email/668d0d8f71935df50e4d0f11/6af3945f22a3fca8ecbd6b40/sL2O1XdVQSgYRzxsyo6Hk.png" width="124" height="62" alt="R&amp;G" style="display:block;border:0;width:124px;height:auto;"></a></td>
+<td colspan="2" align="center" style="padding:4px;"><a href="https://ugglyandco.com/" target="_blank" rel="noopener"><img src="https://cdn.bluefox.email/668d0d8f71935df50e4d0f11/6af3945f22a3fca8ecbd6b40/Y34gop0ZbIkE8menUmZsZ.png" width="124" height="62" alt="Uggly &amp; Co" style="display:block;border:0;width:124px;height:auto;"></a></td>
+<td></td>
+</tr>
+</table>
+</td></tr>
+</table>
