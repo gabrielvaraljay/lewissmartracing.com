@@ -186,3 +186,17 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .js [data-reveal] { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
 .js [data-reveal].is-in { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) { .js [data-reveal] { opacity: 1; transform: none; transition: none; } }
+
+/* Legal pages: /privacy/ and /club32/terms/ */
+  .legal { max-width: 75ch; }
+  .legal h2 { font-family: var(--font-display); font-size: 1.35rem; margin: 2.5rem 0 .75rem; }
+  .legal h2:first-child { margin-top: 0; }
+  .legal p, .legal li { color: var(--text-2); line-height: 1.7; }
+  .legal ul { display: grid; gap: .5rem; padding-left: 1.2rem; list-style: disc; }
+  .legal li::marker { color: var(--accent); }
+  .legal a { color: var(--accent); }
+  .legal table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .95rem; }
+  .legal th, .legal td { text-align: left; vertical-align: top; padding: .6rem .75rem; border-bottom: 1px solid rgb(255 255 255 / .1); color: var(--text-2); }
+  .legal th { color: var(--text, #fff); font-weight: 600; }
+  .legal__law { margin-top: 2.5rem; font-size: .9rem; }
+  @media (max-width: 640px) { .legal table, .legal thead, .legal tbody, .legal tr, .legal th, .legal td { display: block; } .legal thead { display: none; } .legal td:first-child { color: var(--text, #fff); font-weight: 600; border-bottom: 0; padding-bottom: 0; } }

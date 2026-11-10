@@ -6,7 +6,7 @@ import { club32, site } from '../data/site';
 const cells = Array.from({ length: club32.numbers }, (_, i) => i + 1);
 ---
 <Base title="Club32" description="Club32: pick your lucky number for the whole season and win BSB race weekend tickets before every round. £32 a number, 100 numbers.">
-  <PageHeader kicker="Supporters' club" title="Club" accent="32" intro="100 numbers. £32 each. Your number is yours for the whole season and goes into the draw before every British Superbikes race weekend." />
+  <PageHeader kicker="Supporters' club" title="Club" accent="32" intro="100 numbers. £32 each. Your number is yours for the whole season, goes into the draw before every British Superbikes race weekend, and gets you Lewis's members-only newsletter." />
 
   <section class="section">
     <div class="container">
@@ -68,7 +68,8 @@ const cells = Array.from({ length: club32.numbers }, (_, i) => i + 1);
           <label class="field"><span class="label">Email</span><input name="email" type="email" required maxlength="200" autocomplete="email" /></label>
           <label class="field"><span class="label">Phone</span><input name="phone" type="tel" maxlength="30" autocomplete="tel" placeholder="Optional" /></label>
         </div>
-        <label class="c32-consent"><input type="checkbox" name="consent" value="1" required /> <span>I am 18 or over and I accept the Club32 rules below. Only my first name will be shown next to my number.</span></label>
+        <label class="c32-consent"><input type="checkbox" name="consent" value="1" required /> <span>I am 18 or over and I accept the <a href="/club32/terms/" target="_blank">Club32 terms</a>. I have read the <a href="/privacy/" target="_blank">privacy notice</a>. Only my first name will be shown next to my number.</span></label>
+        <label class="c32-consent"><input type="checkbox" name="no_newsletter" value="1" /> <span>No thanks, don't send me the Club32 members' newsletter. (You can also unsubscribe from any issue.)</span></label>
         <div class="hp" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off" /></label></div>
         <div class="form__foot">
           <button class="btn btn--primary" type="submit" data-submit>Reserve my numbers <span class="arrow"><Icon name="arrow" size={18} /></span></button>
@@ -88,6 +89,11 @@ const cells = Array.from({ length: club32.numbers }, (_, i) => i + 1);
           <li><span class="num">1st</span><span>Two tickets to the upcoming BSB race weekend</span></li>
           <li><span class="num">2nd</span><span>A custom smart32xugly&amp;co cap</span></li>
         </ol>
+        <div class="c32-perk">
+          <span class="label">Members only</span>
+          <h3 class="h-md">The Club32 newsletter</h3>
+          <p>Race weekend updates straight from Lewis, draw news and behind-the-scenes from the paddock, only for Club32 members.</p>
+        </div>
         <p>The draws are done live with Dad on Lewis's socials. Follow along on <a href={site.facebook} target="_blank" rel="noopener">Facebook</a> and <a href={site.instagram} target="_blank" rel="noopener">Instagram</a>.</p>
       </div>
       <div>
@@ -109,9 +115,10 @@ const cells = Array.from({ length: club32.numbers }, (_, i) => i + 1);
         <li>1st prize: two tickets to the upcoming race weekend. 2nd prize: a custom smart32xugly&amp;co cap.</li>
         <li>Reserved numbers are held while you pay by bank transfer. Use your payment reference so we can match your payment. If no payment arrives in time, the numbers are released.</li>
         <li>Last season's members get first refusal on their old number before the remaining numbers open to everyone.</li>
-        <li>Only your first name is shown on this page. Your details are used only to run Club32 and to contact you about it.</li>
+        <li>Members get the Club32 members' newsletter by email. You can say no when you reserve, or unsubscribe from any issue.</li>
+        <li>Only your first name is shown on this page. Your details are used only to run Club32 and to send you the members' newsletter, never sold or passed on for marketing.</li>
       </ul>
-      <p class="tbc">Full terms and conditions to be confirmed. Questions? <a href="/contact/">Get in touch</a>.</p>
+      <p>Read the full <a href="/club32/terms/">Club32 terms</a> and the <a href="/privacy/">privacy notice</a>. Questions? <a href="/contact/">Get in touch</a>.</p>
     </div>
   </section>
 </Base>
@@ -314,6 +321,9 @@ const cells = Array.from({ length: club32.numbers }, (_, i) => i + 1);
 
   .c32-two { display: grid; gap: 3rem; }
   @media (min-width: 900px) { .c32-two { grid-template-columns: 1fr 1fr; } }
+  .c32-perk { display: grid; gap: .4rem; padding: 1.25rem; margin: 0 0 1.5rem; background: var(--surface); border: 1px solid var(--line, rgb(255 255 255 / .1)); }
+  .c32-perk h3, .c32-perk p { margin: 0; }
+  .c32-consent a { color: var(--accent); }
   .c32-prizes { list-style: none; margin: 1.5rem 0; padding: 0; display: grid; gap: .75rem; }
   .c32-prizes li { display: flex; gap: 1rem; align-items: baseline; padding: 1rem 1.25rem; background: var(--surface); border-left: 3px solid var(--accent); }
   .c32-prizes li + li { border-left-color: var(--purple); }
