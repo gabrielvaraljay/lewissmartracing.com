@@ -1,0 +1,69 @@
+---
+// Step 1 of the double opt-in: shown right after the signup form is submitted.
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import Icon from '../../components/Icon.astro';
+import { site } from '../../data/site';
+const sender = '32@lewissmartracing.com';
+---
+<Base title="Confirm your subscription" description="One last step: confirm your subscription to news from Lewis Smart #32.">
+  <meta slot="head" name="robots" content="noindex, follow" />
+  <PageHeader kicker="Almost there" title="Check your" accent="inbox" intro="Thanks for subscribing! We've just sent you an email. Please click the button in it to confirm your subscription. Until you do, you won't receive any news from us." />
+  <section class="section">
+    <div class="container"><div class="nl">
+      <ol class="nl__steps">
+        <li class="nl__step">
+          <span class="nl__num">1</span>
+          <div>
+            <h2 class="nl__h">Open the email and confirm</h2>
+            <p>Look for an email from <strong class="accent">Lewis Smart #32</strong> with the subject <em>“Please confirm your subscription to Lewis Smart #32”</em>, then click <strong>Confirm my subscription</strong>.</p>
+          </div>
+        </li>
+        <li class="nl__step">
+          <span class="nl__num">2</span>
+          <div>
+            <h2 class="nl__h">Save our email address</h2>
+            <p>Add <strong class="accent">{sender}</strong> to your contacts or safe senders, so the big announcement and race news land in your inbox, not your spam folder.</p>
+            <button type="button" class="btn btn--ghost nl__copy" data-copy={sender}><Icon name="mail" size={18} /> <span>Copy address</span></button>
+          </div>
+        </li>
+        <li class="nl__step">
+          <span class="nl__num">3</span>
+          <div>
+            <h2 class="nl__h">Can't find it?</h2>
+            <p>It can take a minute or two to arrive. Check your <strong>spam</strong> or <strong>junk</strong> folder, and in Gmail the <strong>Promotions</strong> tab. If it's there, mark it as “Not spam” so future emails arrive safely.</p>
+          </div>
+        </li>
+      </ol>
+      <div class="nl__actions">
+        <a class="btn btn--primary" href="/">Back to home <span class="arrow"><Icon name="arrow" size={18} /></span></a>
+        <a class="btn btn--ghost" href={site.instagram} target="_blank" rel="noopener"><Icon name="instagram" size={18} /> @lewis.smart32</a>
+      </div>
+    </div></div>
+  </section>
+</Base>
+<style>
+  .nl { display: grid; gap: 2.5rem; max-width: 46rem; }
+  .nl__steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.25rem; }
+  .nl__step { display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: start; padding: 1.25rem 1.25rem 1.25rem 1rem; background: rgb(255 255 255 / 0.03); border-left: 4px solid var(--accent, #d6f20a); }
+  .nl__step p { margin: 0.25rem 0 0; line-height: 1.6; }
+  .nl__num { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: 999px; background: var(--accent, #d6f20a); color: #0b0b0d; font-weight: 900; font-style: italic; }
+  .nl__h { margin: 0; font-size: 1.25rem; font-weight: 800; font-style: italic; text-transform: uppercase; letter-spacing: 0.01em; }
+  .nl__copy { margin-top: 0.75rem; }
+  .nl__actions { display: flex; flex-wrap: wrap; gap: 1rem; }
+</style>
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((b) => {
+    b.addEventListener('click', async () => {
+      const label = b.querySelector('span')!;
+      const original = label.textContent;
+      try {
+        await navigator.clipboard.writeText(b.dataset.copy!);
+        label.textContent = 'Copied!';
+      } catch {
+        label.textContent = 'Copy failed: ' + b.dataset.copy!;
+      }
+      setTimeout(() => (label.textContent = original), 2000);
+    });
+  });
+</script>

@@ -1,6 +1,8 @@
 ---
 // Email-only newsletter signup. Posts to the BlueFox "Website Newsletter" signup form,
 // which adds the address to the "Newsletter" subscriber list (lewissmartracing.com is whitelisted).
+// Double opt-in: BlueFox sends "Newsletter - Confirm subscription" from 32@lewissmartracing.com;
+// the visitor lands on /newsletter/check-your-inbox/, then /newsletter/confirmed/ after clicking the link.
 interface Props { id?: string; class?: string }
 const { id = 'newsletter', class: cls } = Astro.props;
 const FORM_ID = '6af3250822a3fca8ec6744ce';
@@ -66,9 +68,12 @@ const FORM_ID = '6af3250822a3fca8ec6744ce';
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(data?.error?.message || 'Something went wrong. Please try again.');
+        // Double opt-in: send them to the "check your inbox" page (BlueFox redirectLink, with a local fallback).
         fields.classList.add('hidden');
         note.classList.add('hidden');
-        show("You're on the list. Thanks for subscribing: you'll be the first to hear the news.", true);
+        show('Thanks! Please check your inbox to confirm your subscription.', true);
+        window.location.href = data?.result?.redirectTo || '/newsletter/check-your-inbox/';
+        return;
       } catch (err) {
         show(err instanceof Error ? err.message : 'Something went wrong. Please try again.', false);
       } finally {
