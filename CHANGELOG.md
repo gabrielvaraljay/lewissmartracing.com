@@ -13,6 +13,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Cookie-free visit counter (`/api/hit.php`) with a Visitors page in the admin.
 - Club32 emails through BlueFox: payment details, reminder, expiry, confirmation, cancellation, new-reservation alert to Lewis, presale invitation and winner.
 - `scripts/setup-club32.sh` for the one-off server setup (database folder, email ids, cron, first admin user).
+- Admin sign-in by email and password, with "Forgot password?" (one-time reset link by email) and an Account page for your own name, email and password.
+- Admin and Developer roles: developers add admins on the Admins page (invite email to set a password), change roles and remove admins.
 - Professional README covering the stack, setup, scripts, project structure, content editing, the design system, hero frames and deployment.
 - This changelog.
 - GitHub Actions deploy workflow: builds the site and rsyncs it to the Hetzner server on every push to `main`, using a dedicated deploy key jailed to the site directory.

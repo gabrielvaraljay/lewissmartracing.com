@@ -1,7 +1,8 @@
 <?php
 // Lewis Smart Racing admin: Club32 reservations, members, presale, draws, visitor stats and settings.
 // Not linked from the site, never indexed, and every page needs a login.
-// Users are created on the server with: php /var/www/lewissmartracing.com/admin/cli.php add-user <name>
+// Users sign in with their email. Developers add admins on the Admins page; the first developer is made on the server:
+//   sudo -u www-data php /var/www/lewissmartracing.com/admin/cli.php add-user you@example.com developer
 declare(strict_types=1);
 require __DIR__ . '/../api/_lib/club32.php';
 
@@ -18,25 +19,93 @@ session_set_cookie_params(['lifetime' => 0, 'path' => '/admin/', 'secure' => $ht
 session_start();
 
 function h(?string $s): string { return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
-function me(): ?string { return $_SESSION['user'] ?? null; }
+function me(): ?string { global $ME; return $ME ? user_label($ME) : null; }
+function is_dev(): bool { global $ME; return ($ME['role'] ?? '') === 'developer'; }
 function csrf(): string { return $_SESSION['csrf'] ??= bin2hex(random_bytes(16)); }
 function csrf_field(): string { return '<input type="hidden" name="csrf" value="' . csrf() . '">'; }
+function csrf_ok(): bool { return hash_equals(csrf(), (string)($_POST['csrf'] ?? '')); }
 function flash(string $msg, string $kind = 'ok'): void { $_SESSION['flash'][] = [$kind, $msg]; }
 function go(string $query = ''): never { header('Location: /admin/' . ($query ? "?$query" : ''), true, 303); exit; }
 function url(array $q): string { return '/admin/?' . http_build_query($q); }
+function sign_in(array $u): never {
+    session_regenerate_id(true);
+    $_SESSION['uid'] = (int)$u['id'];
+    $_SESSION['stamp'] = pass_stamp($u);
+    db()->prepare('UPDATE users SET last_login = ? WHERE id = ?')->execute([time(), $u['id']]);
+    audit(user_label($u), 'login');
+    go();
+}
 
-// ---------------------------------------------------------------- login
+// ---------------------------------------------------------------- sign in, forgot password, set password
 
 $p = (string)($_GET['p'] ?? 'dash');
 
-if ($p === 'logout' && $_SERVER['REQUEST_METHOD'] === 'POST' && hash_equals(csrf(), (string)($_POST['csrf'] ?? ''))) {
+// The signed-in user is loaded on every request: a removed user or a changed password ends the session.
+$ME = null;
+if (isset($_SESSION['uid'])) {
+    $ME = user_by_id((int)$_SESSION['uid']);
+    if (!$ME || !hash_equals(pass_stamp($ME), (string)($_SESSION['stamp'] ?? ''))) { $ME = null; unset($_SESSION['uid'], $_SESSION['stamp']); }
+}
+
+if ($p === 'logout' && $_SERVER['REQUEST_METHOD'] === 'POST' && csrf_ok()) {
     $_SESSION = [];
     session_destroy();
     header('Location: /admin/', true, 303);
     exit;
 }
 
-if (!me()) {
+if ($p === 'reset') {
+    $token = (string)($_POST['t'] ?? $_GET['t'] ?? '');
+    $u = user_by_reset_token($token);
+    $error = '';
+    if ($u && $_SERVER['REQUEST_METHOD'] === 'POST' && csrf_ok()) {
+        $new = (string)($_POST['new'] ?? '');
+        if (strlen($new) < 10) $error = 'The password needs at least 10 characters.';
+        elseif ($new !== (string)($_POST['again'] ?? '')) $error = 'The two passwords are not the same.';
+        else {
+            set_user_password((int)$u['id'], $new);
+            audit(user_label($u), 'password_reset');
+            sign_in(user_by_id((int)$u['id']));
+        }
+    }
+    layout_start('Set password', false);
+    echo '<form method="post" action="/admin/?p=reset" class="box login"><h1>Set your password</h1>';
+    if (!$u) {
+        echo '<p class="flash flash--err">This link has expired or was already used.</p><a class="btn" href="/admin/?p=forgot">Send a new link</a></form>';
+    } else {
+        if ($error) echo '<p class="flash flash--err">' . h($error) . '</p>';
+        echo csrf_field() . '<input type="hidden" name="t" value="' . h($token) . '">
+          <p class="muted">For ' . h($u['email'] ?: $u['username']) . '</p>
+          <input type="email" name="email" value="' . h($u['email']) . '" autocomplete="username" hidden>
+          <label>New password (10+ characters)<input name="new" type="password" autocomplete="new-password" minlength="10" required autofocus></label>
+          <label>New password again<input name="again" type="password" autocomplete="new-password" minlength="10" required></label>
+          <button class="btn">Save and sign in</button></form>';
+    }
+    layout_end();
+    exit;
+}
+
+if (!$ME && $p === 'forgot') {
+    $sent = false;
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrf_ok()) {
+        $email = strtolower(trim((string)($_POST['email'] ?? '')));
+        // Same answer whether or not the email has an account, so the form does not reveal who is an admin.
+        if (rate_ok('forgot:' . ip_hash(), 5, 3600) && rate_ok('forgot:' . $email, 3, 3600)) {
+            $u = filter_var($email, FILTER_VALIDATE_EMAIL) ? user_by_login($email) : null;
+            if ($u && $u['email'] === $email) { send_password_link($u, 'admin_reset'); audit(user_label($u), 'password_link'); }
+        }
+        $sent = true;
+    }
+    layout_start('Forgot password', false);
+    echo '<form method="post" class="box login"><h1>Forgot your password?</h1>' . csrf_field();
+    if ($sent) echo '<p class="flash">If that email belongs to an admin, a link to set a new password is on its way. It works for 1 hour.</p>';
+    echo '<label>Email<input name="email" type="email" autocomplete="username" required autofocus></label>
+          <button class="btn">Email me a link</button><a href="/admin/">Back to sign in</a></form>';
+    layout_end();
+    exit;
+}
+
+if (!$ME) {
     $error = '';
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $key = 'login:' . ip_hash();
@@ -45,27 +114,19 @@ if (!me()) {
         if ((int)$q->fetchColumn() >= 5) {
             $error = 'Too many attempts. Try again in 15 minutes.';
         } else {
-            $q = db()->prepare('SELECT * FROM users WHERE username = ?');
-            $q->execute([strtolower(trim((string)($_POST['username'] ?? '')))]);
-            $u = $q->fetch();
-            if ($u && password_verify((string)($_POST['password'] ?? ''), $u['pass_hash'])) {
-                session_regenerate_id(true);
-                $_SESSION['user'] = $u['username'];
-                db()->prepare('UPDATE users SET last_login = ? WHERE id = ?')->execute([time(), $u['id']]);
-                audit($u['username'], 'login');
-                go();
-            }
+            $u = user_by_login((string)($_POST['email'] ?? ''));
+            if ($u && password_verify((string)($_POST['password'] ?? ''), $u['pass_hash'])) sign_in($u);
             db()->prepare('INSERT INTO hits (key, at) VALUES (?, ?)')->execute([$key, time()]);
             usleep(400000);
-            $error = 'Wrong username or password.';
+            $error = 'Wrong email or password.';
         }
     }
     layout_start('Sign in', false);
     echo '<form method="post" class="box login"><h1>Lewis Smart #32 admin</h1>';
     if ($error) echo '<p class="flash flash--err">' . h($error) . '</p>';
-    echo '<label>Username<input name="username" autocomplete="username" required autofocus></label>
+    echo '<label>Email<input name="email" type="text" inputmode="email" autocomplete="username" value="' . h((string)($_POST['email'] ?? '')) . '" required autofocus></label>
           <label>Password<input name="password" type="password" autocomplete="current-password" required></label>
-          <button class="btn">Sign in</button></form>';
+          <button class="btn">Sign in</button><a href="/admin/?p=forgot">Forgot password?</a></form>';
     layout_end();
     exit;
 }
@@ -73,8 +134,8 @@ if (!me()) {
 // ---------------------------------------------------------------- actions (POST)
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!hash_equals(csrf(), (string)($_POST['csrf'] ?? ''))) { http_response_code(400); exit('Session expired. Go back, reload the page and try again.'); }
-    $_POST += array_fill_keys(['phone', 'note', 'numbers', 'first_name', 'last_name', 'email', 'csv', 'label', 'old', 'new'], '');
+    if (!csrf_ok()) { http_response_code(400); exit('Session expired. Go back, reload the page and try again.'); }
+    $_POST += array_fill_keys(['phone', 'note', 'numbers', 'first_name', 'last_name', 'email', 'csv', 'label', 'old', 'new', 'name', 'role'], '');
     $a = (string)($_POST['a'] ?? '');
     $id = (int)($_POST['id'] ?? 0);
     $back = (string)($_POST['back'] ?? '');
@@ -215,16 +276,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 flash('Settings saved.');
                 go('p=settings');
             case 'password':
-                $q = db()->prepare('SELECT * FROM users WHERE username = ?');
-                $q->execute([me()]);
-                $u = $q->fetch();
                 $new = (string)$_POST['new'];
-                if (!$u || !password_verify((string)$_POST['old'], $u['pass_hash'])) { flash('The current password is wrong.', 'err'); go('p=settings'); }
-                if (strlen($new) < 10) { flash('The new password needs at least 10 characters.', 'err'); go('p=settings'); }
-                db()->prepare('UPDATE users SET pass_hash = ? WHERE id = ?')->execute([password_hash($new, PASSWORD_DEFAULT), $u['id']]);
+                if (!password_verify((string)$_POST['old'], $ME['pass_hash'])) { flash('The current password is wrong.', 'err'); go('p=account'); }
+                if (strlen($new) < 10) { flash('The new password needs at least 10 characters.', 'err'); go('p=account'); }
+                set_user_password((int)$ME['id'], $new);
+                $_SESSION['stamp'] = pass_stamp(user_by_id((int)$ME['id']));
                 audit(me(), 'password');
-                flash('Password changed.');
-                go('p=settings');
+                flash('Password changed. Any other device signed in as you has been signed out.');
+                go('p=account');
+            case 'profile':
+                $email = strtolower(trim((string)$_POST['email']));
+                if (!filter_var($email, FILTER_VALIDATE_EMAIL)) { flash('A valid email address is needed.', 'err'); go('p=account'); }
+                $other = user_by_login($email);
+                if ($other && (int)$other['id'] !== (int)$ME['id']) { flash('Another admin already uses that email.', 'err'); go('p=account'); }
+                db()->prepare('UPDATE users SET name = ?, email = ? WHERE id = ?')->execute([mb_substr(trim((string)$_POST['name']), 0, 60), $email, $ME['id']]);
+                audit(me(), 'profile', $email);
+                flash('Saved. You can sign in with ' . $email . ' from now on.');
+                go('p=account');
+            // Developer only: manage admin users.
+            case 'user_add':
+            case 'user_role':
+            case 'user_link':
+            case 'user_delete':
+                if (!is_dev()) { http_response_code(403); exit('Only a developer can manage admins.'); }
+                $u = $a === 'user_add' ? null : user_by_id($id);
+                if ($a !== 'user_add' && !$u) go('p=admins');
+                $devs = (int)db()->query("SELECT COUNT(*) FROM users WHERE role = 'developer'")->fetchColumn();
+                if ($a === 'user_add') {
+                    try { $newId = create_user((string)$_POST['email'], (string)$_POST['name'], (string)$_POST['role']); }
+                    catch (InvalidArgumentException $e) { flash($e->getMessage(), 'err'); go('p=admins'); }
+                    $u = user_by_id($newId);
+                    $ok = send_password_link($u, 'admin_invite', me());
+                    audit(me(), 'user_add', $u['email'] . ' (' . $u['role'] . ')');
+                    flash($ok ? 'Added. ' . $u['email'] . ' has been emailed a link to set their password.' : 'Added, but the invite email could not be sent. Use "Send password link" later.', $ok ? 'ok' : 'err');
+                } elseif ($a === 'user_role') {
+                    $role = (string)$_POST['role'];
+                    if (!isset(ROLES[$role])) go('p=admins');
+                    if ($u['role'] === 'developer' && $role !== 'developer' && $devs <= 1) { flash('There has to be at least one developer.', 'err'); go('p=admins'); }
+                    db()->prepare('UPDATE users SET role = ? WHERE id = ?')->execute([$role, $id]);
+                    audit(me(), 'user_role', user_label($u) . " → $role");
+                    flash(user_label($u) . ' is now ' . ROLES[$role] . '.');
+                } elseif ($a === 'user_link') {
+                    send_password_link($u, 'admin_reset') ? flash('Password link sent to ' . $u['email'] . '.') : flash('No email on this account, or the email could not be sent.', 'err');
+                    audit(me(), 'user_link', user_label($u));
+                } else {
+                    if ((int)$u['id'] === (int)$ME['id']) { flash('You cannot remove yourself.', 'err'); go('p=admins'); }
+                    if ($u['role'] === 'developer' && $devs <= 1) { flash('There has to be at least one developer.', 'err'); go('p=admins'); }
+                    db()->prepare('DELETE FROM users WHERE id = ?')->execute([$id]);
+                    audit(me(), 'user_delete', user_label($u));
+                    flash(user_label($u) . ' removed. They are signed out.');
+                }
+                go('p=admins');
         }
     } catch (RuntimeException $e) {
         $m = $e->getMessage();
@@ -253,8 +355,9 @@ sweep();
 // ---------------------------------------------------------------- pages
 
 $pages = ['dash' => 'Overview', 'orders' => 'Reservations', 'add' => 'Add', 'members' => 'Members', 'presale' => 'Presale', 'draws' => 'Draws', 'stats' => 'Visitors', 'settings' => 'Settings'];
-if (!isset($pages[$p]) && $p !== 'reveal') $p = 'dash';
-layout_start($pages[$p] ?? 'Draw', true, $p, $pages);
+if (is_dev()) $pages['admins'] = 'Admins';
+if (!isset($pages[$p]) && !in_array($p, ['reveal', 'account'], true)) $p = 'dash';
+layout_start($pages[$p] ?? ($p === 'account' ? 'Your account' : 'Draw'), true, $p, $pages);
 
 $season = season();
 $counts = db()->query("SELECT status, COUNT(*) n FROM orders WHERE season = $season GROUP BY status")->fetchAll(PDO::FETCH_KEY_PAIR);
@@ -494,14 +597,46 @@ case 'settings':
       <label>1st prize<input name="prize1" value="' . $v('prize1') . '"></label>
       <label>2nd prize<input name="prize2" value="' . $v('prize2') . '"></label>
       <button class="btn btn--go">Save settings</button></form>';
-    echo '<form method="post" class="box form">' . csrf_field() . '<input type="hidden" name="a" value="password"><h2>Change your password</h2>
-      <div class="row"><label>Current password<input type="password" name="old" autocomplete="current-password" required></label><label>New password (10+ characters)<input type="password" name="new" autocomplete="new-password" minlength="10" required></label></div>
-      <button class="btn">Change password</button></form>';
     echo '<h2>Recent activity</h2><table class="tbl"><tbody>';
     foreach (db()->query('SELECT * FROM audit ORDER BY id DESC LIMIT 30')->fetchAll() as $r) {
         echo '<tr><td class="nowrap">' . when((int)$r['at']) . '</td><td>' . h($r['user'] ?? 'system') . '</td><td>' . h($r['action']) . '</td><td>' . h($r['detail']) . '</td></tr>';
     }
     echo '</tbody></table>';
+    break;
+
+case 'account':
+    echo '<form method="post" class="box form">' . csrf_field() . '<input type="hidden" name="a" value="profile"><h2>Your details</h2>
+      <p class="muted">You sign in with this email, and password links go to it. Role: <strong>' . ROLES[$ME['role']] . '</strong></p>
+      <div class="row"><label>Name<input name="name" value="' . h($ME['name']) . '" placeholder="e.g. Lewis"></label><label>Email<input name="email" type="email" value="' . h($ME['email']) . '" required></label></div>
+      <button class="btn">Save</button></form>';
+    echo '<form method="post" class="box form">' . csrf_field() . '<input type="hidden" name="a" value="password"><h2>Change your password</h2>
+      <input type="email" value="' . h($ME['email']) . '" autocomplete="username" hidden>
+      <div class="row"><label>Current password<input type="password" name="old" autocomplete="current-password" required></label><label>New password (10+ characters)<input type="password" name="new" autocomplete="new-password" minlength="10" required></label></div>
+      <button class="btn">Change password</button></form>';
+    break;
+
+case 'admins':
+    echo '<form method="post" class="box form">' . csrf_field() . '<input type="hidden" name="a" value="user_add"><h2>Add an admin</h2>
+      <p class="muted">They get an email with a link to set their own password (valid 7 days). <strong>Admin</strong>: Club32, draws, visitors and settings. <strong>Developer</strong>: all of that, plus this page.</p>
+      <div class="row"><label>Name<input name="name" required></label><label>Email<input name="email" type="email" required></label>
+      <label>Role<select name="role"><option value="admin">Admin</option><option value="developer">Developer</option></select></label></div>
+      <button class="btn btn--go">Add and send invite</button></form>';
+    echo '<table class="tbl"><thead><tr><th>Name</th><th>Email (sign-in)</th><th>Role</th><th>Last sign-in</th><th></th></tr></thead><tbody>';
+    foreach (db()->query('SELECT * FROM users ORDER BY role DESC, created_at')->fetchAll() as $u) {
+        $id = (int)$u['id'];
+        $self = $id === (int)$ME['id'];
+        $form = fn(string $a, string $inner, string $confirm = '') => '<form method="post" class="inline"' . ($confirm ? ' onsubmit="return confirm(\'' . h($confirm) . '\')"' : '') . '>' . csrf_field() . '<input type="hidden" name="a" value="' . $a . '"><input type="hidden" name="id" value="' . $id . '">' . $inner . '</form>';
+        $roleSel = '<select name="role" onchange="this.form.submit()" style="width:auto">';
+        foreach (ROLES as $k => $label) $roleSel .= '<option value="' . $k . '"' . ($u['role'] === $k ? ' selected' : '') . '>' . $label . '</option>';
+        $roleSel .= '</select>';
+        echo '<tr><td>' . h($u['name'] !== '' ? $u['name'] : $u['username']) . ($self ? ' <span class="muted">(you)</span>' : '') . '</td>'
+            . '<td>' . ($u['email'] ? h($u['email']) : '<span class="flash--err">no email yet</span>') . '</td>'
+            . '<td>' . $form('user_role', $roleSel) . '</td>'
+            . '<td class="nowrap">' . ($u['last_login'] ? when((int)$u['last_login']) : '<span class="muted">never</span>') . '</td>'
+            . '<td class="nowrap">' . ($u['email'] ? $form('user_link', '<button class="btn btn--ghost">Send password link</button>') : '')
+            . ($self ? '' : ' ' . $form('user_delete', '<button class="btn btn--bad">Remove</button>', 'Remove ' . user_label($u) . ' from the admin?')) . '</td></tr>';
+    }
+    echo '</tbody></table><p class="muted">Accounts without an email still sign in with their old username; add the email on their Account page or ask them to.</p>';
     break;
 }
 layout_end();
@@ -519,7 +654,7 @@ function layout_start(string $title, bool $nav, string $p = '', array $pages = [
         foreach ($pages as $k => $label) {
             echo '<a href="' . url(['p' => $k]) . '"' . ($k === $p ? ' class="on"' : '') . '>' . $label . ($k === 'orders' && $pending ? ' <em>' . $pending . '</em>' : '') . '</a>';
         }
-        echo '</nav><form method="post" action="/admin/?p=logout">' . csrf_field() . '<button class="btn btn--ghost">Sign out ' . h(me()) . '</button></form></header>';
+        echo '</nav><form method="post" action="/admin/?p=logout">' . csrf_field() . '<a class="btn btn--ghost" href="' . url(['p' => 'account']) . '">' . h(me()) . '</a><button class="btn btn--ghost">Sign out</button></form></header>';
     }
     echo '<main>';
     if ($nav) echo '<h1>' . h($title) . '</h1>';
@@ -552,7 +687,8 @@ label.inline { display: inline-flex; align-items: center; gap: .4rem; font-size:
 input, select, textarea { width: 100%; padding: .6rem .7rem; background: var(--bg); color: var(--t); border: 1px solid var(--line); border-radius: 4px; font: inherit; font-size: 16px; }
 label.inline input { width: auto; } input:focus, select:focus, textarea:focus { outline: 2px solid var(--a); outline-offset: 0; }
 .row { display: grid; gap: 1rem; } @media (min-width: 700px) { .row { grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); } }
-.login { max-width: 380px; margin: 12vh auto 0; display: grid; gap: 1rem; } .login h1 { font-size: 1.3rem; margin: 0; }
+.login { max-width: 380px; margin: 12vh auto 0; display: grid; gap: 1rem; } .login > a { color: var(--t2); font-size: 14px; justify-self: center; }
+.top form { display: flex; gap: .5rem; } .login h1 { font-size: 1.3rem; margin: 0; }
 .flash { padding: .7rem 1rem; border-radius: 4px; border-left: 4px solid var(--a); background: rgb(214 242 10 / .08); margin: 0 0 1rem; }
 .flash--err { border-color: var(--bad); background: rgb(255 107 107 / .08); }
 .muted { color: var(--t2); } .nowrap { white-space: nowrap; } form.inline { display: inline; }

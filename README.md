@@ -154,20 +154,26 @@ Last season's members can be imported on the admin **Presale** page and emailed 
 | `public/api/_lib/club32.php` | Shared code: database, rules, BlueFox emails |
 | `public/api/hit.php` | Cookie-free visit counter (daily totals, no IPs stored) |
 | `public/admin/index.php` | The admin panel |
-| `public/admin/cli.php` | Command line only: `add-user`, `set-password`, `list-users`, `sweep` |
+| `public/admin/cli.php` | Command line only: `add-user`, `invite`, `set-role`, `set-email`, `set-password`, `list-users`, `sweep` |
 
-**Data and secrets.** The SQLite database is `/var/lib/lewissmartracing/club32.sqlite`, outside the web root, so deploys never touch it. The BlueFox API key stays in `/etc/lewissmartracing/bluefox.env`; the Club32 email ids are in `/etc/lewissmartracing/club32.env`. Bank details, price, hold time and prizes are set in the admin **Settings** page.
+**Data and secrets.** The SQLite database is `/var/lib/lewissmartracing/club32.sqlite`, outside the web root, so deploys never touch it. The BlueFox API key stays in `/etc/lewissmartracing/bluefox.env`. The BlueFox email ids are in `C32_MAIL_IDS` in `club32.php` (a line in `/etc/lewissmartracing/club32.env` overrides one). Bank details, price, hold time and prizes are set in the admin **Settings** page.
 
 **Server setup (once).** After the first deploy with these files, run `bash scripts/setup-club32.sh`. It creates the data folder, writes the email ids, adds the cron job (`cli.php sweep` every 10 minutes) and creates the first admin user. nginx needs `index.php` in its `index` list for `/admin/` to load.
 
-**Admin security.** Every admin page needs a login (hashed passwords, 5 failed attempts per 15 minutes, `SameSite=Strict` session cookie, CSRF tokens). The panel is not linked from the site and sends `noindex`. It is deliberately *not* listed in `robots.txt`, because that file is public.
+**Admin users.** Admins sign in with their email and password, and can reset a forgotten password by email (a one-time link, valid 1 hour). There are two roles: **Admin** runs Club32, draws, visitors and settings; **Developer** can also add, remove and change admins on the **Admins** page (new admins get an invite email to set their own password, valid 7 days). There is always at least one developer. Accounts made before email sign-in keep working with their username until an email is added on their **Account** page. The first developer is made on the server:
+
+```bash
+sudo -u www-data php /var/www/lewissmartracing.com/admin/cli.php add-user you@example.com developer "Your name"
+```
+
+**Admin security.** Every admin page needs a login (hashed passwords, a changed password or removed user ends their other sessions, 5 failed attempts per 15 minutes, `SameSite=Strict` session cookie, CSRF tokens). The panel is not linked from the site and sends `noindex`. It is deliberately *not* listed in `robots.txt`, because that file is public.
 
 **Local development**
 
 ```bash
 mkdir -p /tmp/lsr/etc /tmp/lsr/data
 export LSR_ETC=/tmp/lsr/etc LSR_DATA=/tmp/lsr/data LSR_MAIL_LOG=/tmp/lsr/mail.log
-LSR_PASSWORD=devpassword123 php public/admin/cli.php add-user dev
+LSR_PASSWORD=devpassword123 php public/admin/cli.php add-user dev@example.com developer Dev
 php -S localhost:8080 -t public   # PHP endpoints and /admin/
 npm run dev                       # proxies /api and /admin to :8080
 ```

@@ -12,6 +12,13 @@ date_default_timezone_set('Europe/London');
 const C32_ALLOWED_HOSTS = ['lewissmartracing.com', 'www.lewissmartracing.com', 'localhost:4321', 'localhost:8080'];
 const C32_CODE_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 const C32_SITE = 'https://lewissmartracing.com';
+// BlueFox transactional email ids (not secret). A BLUEFOX_C32_<KIND>_ID line in club32.env overrides one.
+const C32_MAIL_IDS = [
+    'reserved' => '6af23d4422a3fca8ec0f5992', 'reminder' => '6af23d4422a3fca8ec0f599a', 'expired' => '6af23d4422a3fca8ec0f59a2',
+    'confirmed' => '6af23d4422a3fca8ec0f59aa', 'cancelled' => '6af23d4422a3fca8ec0f59b2', 'admin' => '6af23d4422a3fca8ec0f59ba',
+    'presale' => '6af23d4422a3fca8ec0f59c2', 'winner' => '6af23d4422a3fca8ec0f59ca',
+    'admin_reset' => '6af2daf222a3fca8ec4231f0', 'admin_invite' => '6af2daf222a3fca8ec4231fc',
+];
 
 // ---------------------------------------------------------------- config
 
@@ -43,7 +50,22 @@ function db(): PDO {
 
 function migrate(PDO $db): void {
     $v = (int)$db->query('PRAGMA user_version')->fetchColumn();
-    if ($v >= 1) return;
+    if ($v < 1) migrate_v1($db);
+    if ($v < 2) $db->exec(<<<SQL
+    BEGIN;
+    -- Admin users sign in with their email; roles: admin (runs Club32), developer (also manages admin users).
+    ALTER TABLE users ADD COLUMN email TEXT;
+    ALTER TABLE users ADD COLUMN name TEXT NOT NULL DEFAULT '';
+    ALTER TABLE users ADD COLUMN role TEXT NOT NULL DEFAULT 'admin';
+    ALTER TABLE users ADD COLUMN reset_hash TEXT;
+    ALTER TABLE users ADD COLUMN reset_expires INTEGER;
+    CREATE UNIQUE INDEX users_email ON users (email);
+    PRAGMA user_version = 2;
+    COMMIT;
+    SQL);
+}
+
+function migrate_v1(PDO $db): void {
     $db->exec(<<<SQL
     BEGIN;
     CREATE TABLE settings (key TEXT PRIMARY KEY, value TEXT NOT NULL);
@@ -256,7 +278,7 @@ function send_mail(string $kind, string $to, array $data): bool {
         file_put_contents($log, json_encode(['at' => date('c'), 'kind' => $kind, 'to' => $to, 'data' => $data], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n", FILE_APPEND);
         return true;
     }
-    $id = cfg('BLUEFOX_C32_' . strtoupper($kind) . '_ID');
+    $id = cfg('BLUEFOX_C32_' . strtoupper($kind) . '_ID', C32_MAIL_IDS[$kind] ?? '');
     $project = cfg('BLUEFOX_PROJECT_ID');
     if ($id === '' || $project === '' || cfg('BLUEFOX_API_KEY') === '') { error_log("club32: no BlueFox id for $kind"); return false; }
     [$code, $res] = bluefox("/projectId/$project/send-transactional", ['email' => $to, 'transactionalId' => $id, 'data' => $data]);
@@ -269,6 +291,65 @@ function upsert_contact(string $email, string $name, array $tags): void {
     [$code, $res] = bluefox('/projectId/' . cfg('BLUEFOX_PROJECT_ID') . '/contacts', ['email' => $email, 'name' => $name, 'tags' => $tags]);
     if ($code >= 300) error_log("club32: contact upsert HTTP $code $res");
 }
+
+// ---------------------------------------------------------------- admin users
+
+const ROLES = ['admin' => 'Admin', 'developer' => 'Developer'];
+
+function user_by_id(int $id): ?array {
+    $q = db()->prepare('SELECT * FROM users WHERE id = ?');
+    $q->execute([$id]);
+    return $q->fetch() ?: null;
+}
+
+/** Sign-in accepts the email address, or the old username for accounts made before emails. */
+function user_by_login(string $login): ?array {
+    $login = strtolower(trim($login));
+    if ($login === '') return null;
+    $q = db()->prepare('SELECT * FROM users WHERE email = ? OR username = ? ORDER BY email = ? DESC LIMIT 1');
+    $q->execute([$login, $login, $login]);
+    return $q->fetch() ?: null;
+}
+
+function user_label(array $u): string { return $u['name'] !== '' ? $u['name'] : ($u['email'] ?: $u['username']); }
+
+/** Creates a user. Without a password the account cannot sign in until a set-password link is used. */
+function create_user(string $email, string $name, string $role, ?string $password = null): int {
+    $email = strtolower(trim($email));
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) throw new InvalidArgumentException('A valid email address is needed.');
+    if (!isset(ROLES[$role])) throw new InvalidArgumentException('Unknown role.');
+    if (user_by_login($email)) throw new InvalidArgumentException('There is already an admin with that email.');
+    $hash = password_hash($password ?? bin2hex(random_bytes(32)), PASSWORD_DEFAULT);
+    db()->prepare('INSERT INTO users (username, email, name, role, pass_hash, created_at) VALUES (?, ?, ?, ?, ?, ?)')
+        ->execute([$email, $email, mb_substr(trim($name), 0, 60), $role, $hash, time()]);
+    return (int)db()->lastInsertId();
+}
+
+/** Emails a one-time set-password link: 'admin_reset' (1 hour) or 'admin_invite' (7 days). */
+function send_password_link(array $u, string $kind, string $invitedBy = ''): bool {
+    if (!$u['email']) return false;
+    $ttl = $kind === 'admin_invite' ? 7 * 86400 : 3600;
+    $token = bin2hex(random_bytes(24));
+    db()->prepare('UPDATE users SET reset_hash = ?, reset_expires = ? WHERE id = ?')->execute([hash('sha256', $token), time() + $ttl, $u['id']]);
+    return send_mail($kind, $u['email'], [
+        'name' => $u['name'] !== '' ? $u['name'] : 'there', 'email' => $u['email'], 'invitedBy' => $invitedBy ?: 'Lewis',
+        'link' => site_url() . '/admin/?p=reset&t=' . $token, 'valid' => $ttl > 3600 ? '7 days' : '1 hour',
+    ]);
+}
+
+function user_by_reset_token(string $token): ?array {
+    if (!preg_match('/^[0-9a-f]{48}$/', $token)) return null;
+    $q = db()->prepare('SELECT * FROM users WHERE reset_hash = ? AND reset_expires > ?');
+    $q->execute([hash('sha256', $token), time()]);
+    return $q->fetch() ?: null;
+}
+
+function set_user_password(int $id, string $password): void {
+    db()->prepare('UPDATE users SET pass_hash = ?, reset_hash = NULL, reset_expires = NULL WHERE id = ?')->execute([password_hash($password, PASSWORD_DEFAULT), $id]);
+}
+
+/** Changes whenever the password does, so other signed-in sessions of that user end. */
+function pass_stamp(array $u): string { return substr(hash('sha256', $u['pass_hash']), 0, 16); }
 
 // ---------------------------------------------------------------- orders
 

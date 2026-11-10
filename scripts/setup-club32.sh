@@ -6,13 +6,13 @@
 #   2. creates /var/lib/lewissmartracing (the database lives here, outside the web root)
 #   3. writes /etc/lewissmartracing/club32.env with the BlueFox Club32 email ids
 #   4. adds a cron job every 10 minutes for reminders and releasing expired holds
-#   5. creates the first admin user (asks for the name and a password)
+#   5. creates the first developer (asks for the email and a password)
 #   6. checks that /admin/ is reachable (nginx needs index.php as an index file)
 set -euo pipefail
 SSH="ssh -t -o ControlPath=$HOME/.ssh/cm-hetzner-lsr gabriel@78.47.73.104"
 WEB=/var/www/lewissmartracing.com
 
-read -rp "Admin username [lewis]: " ADMIN; ADMIN=${ADMIN:-lewis}
+read -rp "First developer email: " ADMIN
 
 $SSH "set -e
 php -m | grep -qi pdo_sqlite || { read -rp 'PHP has no SQLite. Install php-sqlite3 and restart php-fpm? [y/N] ' A; [ \"\$A\" = y ] && sudo apt-get install -y php-sqlite3 && sudo systemctl restart \$(systemctl list-units --type=service --no-legend 'php*-fpm*' | awk '{print \$1}' | head -1); }
@@ -35,7 +35,7 @@ sudo chown root:www-data /etc/lewissmartracing/club32.env && sudo chmod 640 /etc
 echo '*/10 * * * * www-data php $WEB/admin/cli.php sweep >/dev/null 2>&1' | sudo tee /etc/cron.d/lewissmartracing-club32 >/dev/null
 sudo chmod 644 /etc/cron.d/lewissmartracing-club32
 
-sudo -u www-data php $WEB/admin/cli.php add-user '$ADMIN'
+sudo -u www-data php $WEB/admin/cli.php add-user '$ADMIN' developer
 "
 
 code=$(curl -s -o /dev/null -w '%{http_code}' https://lewissmartracing.com/admin/)
