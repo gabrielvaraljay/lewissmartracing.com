@@ -21,6 +21,7 @@ A fast, fully static site built with [Astro](https://astro.build) and [Tailwind 
 - [Design system](#design-system)
 - [Hero flip-book frames](#hero-flip-book-frames)
 - [Club32 and admin](#club32-and-admin)
+- [Sponsor logos in emails](#sponsor-logos-in-emails)
 - [Deployment](#deployment)
 - [Still to confirm](#still-to-confirm)
 - [Changelog](#changelog)
@@ -183,6 +184,22 @@ npm run dev                       # proxies /api and /admin to :8080
 ```
 
 With `LSR_MAIL_LOG` set, emails are written to that file instead of being sent.
+
+## Sponsor logos in emails
+
+Emails carry a clickable "Proudly supported by" row of sponsor logos. Each logo opens the sponsor's site in a new window. The block is [`email/sponsor-footer.html`](email/sponsor-footer.html). The logos are 256x128 PNG tiles in the BlueFox gallery folder "Sponsor logos (email)", because email clients cannot show WebP and the site is behind a password while in preview.
+
+| With logos | Without logos (the reader must not be distracted) |
+| --- | --- |
+| Newsletter templates (LSR - Newsletter, LSR - Club32 race weekend update, LSR - Sponsors monthly update) and every campaign made from them | Newsletter - Confirm subscription |
+| Club32 - Payment confirmed, Club32 - Winner, Club32 - Reservation cancelled | Club32 - Reserved (payment details), Payment reminder, Reservation expired, Returning member presale |
+| | Admin - Password reset, Admin - Invite, Website enquiry notification and New reservation (internal) |
+
+When a sponsor is added or removed:
+
+1. Update `sponsors` in `src/data/site.ts` and the list in `scripts/email-sponsor-logos.py`.
+2. Run `python3 scripts/email-sponsor-logos.py <folder>` and upload the new PNGs to the gallery folder.
+3. Update `email/sponsor-footer.html`, then paste the new block into every email and template in the "With logos" column.
 
 ## Results
 

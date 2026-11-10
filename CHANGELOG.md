@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Admin and Developer roles: developers add admins on the Admins page (invite email to set a password), change roles and remove admins.
 - Club32 members' newsletter: paid members are added to the BlueFox "Club32 Members" list unless they tick "No thanks" on the form; the confirmation email mentions it.
 - Privacy notice (`/privacy/`, linked from the footer, the contact form and the newsletter form) and Club32 terms (`/club32/terms/`). Drafts: confirm the prize-claim and refund rules, and whether the draw needs a small society lottery registration with the local council (Gambling Act 2005), before going public.
+- Sponsor logos in emails: a clickable "Proudly supported by" row (each logo opens the sponsor's site in a new window) in the newsletter templates and the Club32 payment confirmed, winner and cancelled emails. Sign-up confirmations, payment details, reminders, presale and password emails stay without it. `email/sponsor-footer.html`, `scripts/email-sponsor-logos.py`.
 - Professional README covering the stack, setup, scripts, project structure, content editing, the design system, hero frames and deployment.
 - This changelog.
 - Home hero: "Big Announcement Coming Soon" panel with an email-only newsletter signup (`NewsletterSignup` component). Sign-ups go to the BlueFox "Website Newsletter" form and the "Newsletter" subscriber list.
