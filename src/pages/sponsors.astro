@@ -16,6 +16,7 @@ const offers = [
   { title: 'Workplace visits', body: 'Visits to your workplace for photos, videos and promotional content.' },
   { title: 'BSB race weekend tickets', body: 'Complimentary tickets to selected BSB race weekends: meet the team and experience the paddock.' },
   { title: 'Bespoke promotion', body: 'Promotional opportunities tailored to help your business gain exposure.' },
+  { title: 'Newsletter features', body: 'Your logo, linked to your website, in every Lewis Smart #32 newsletter and Club32 race update sent to fans and supporters.' },
 ];
 ---
 <Base title="Sponsors" description="2027 sponsorship opportunities with Lewis Smart #32 in the Pirelli British Sportbike Championship.">
@@ -37,7 +38,9 @@ const offers = [
             <h2 class="h-md">{t.name}</h2>
             <div class:list={['tier__logos', `tier__logos--${t.id}`]}>
               {list.length
-                ? list.map((s) => <a class="tier__logo" href={s.url} target="_blank" rel="noopener"><img src={s.logo} alt={s.name} loading="lazy" /></a>)
+                ? list.map((s) => s.url
+                    ? <a class="tier__logo tier__logo--brand" style={`--logo-bg:${s.bg}`} href={s.url} target="_blank" rel="noopener" title={s.name}><img src={s.logo} alt={s.name} loading="lazy" /></a>
+                    : <div class="tier__logo tier__logo--brand" style={`--logo-bg:${s.bg}`} title={s.name}><img src={s.logo} alt={s.name} loading="lazy" /></div>)
                 : <div class="tier__logo tier__logo--empty"><span class="label">Available</span></div>}
             </div>
           </div>
@@ -82,6 +85,12 @@ const offers = [
   .tier__logos--title .tier__logo { aspect-ratio: auto; min-height: 180px; border-color: var(--accent-line); }
   .tier__logo img { max-height: 70px; width: auto; }
   .tier__logo--empty { border-style: dashed; }
+  .tier__logo--brand { background: var(--logo-bg); border-color: transparent; aspect-ratio: 16 / 9; padding: 0; min-width: 0; overflow: hidden; transition: transform .2s ease, box-shadow .2s ease; }
+  a.tier__logo--brand:hover { transform: translateY(-3px); box-shadow: 0 0 0 2px var(--accent, #d6f20a); }
+  .tier__logo--brand img { width: 72%; height: 62%; min-width: 0; max-height: none; object-fit: contain; }
+  .tier__logos--partner { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
+  @media (min-width: 640px) { .tier__logos--partner { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gutter); } }
+  @media (min-width: 1100px) { .tier__logos--partner { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
   .pk { display: grid; gap: var(--gutter); }
   .pk__card { display: grid; gap: 1rem; align-content: start; padding: 2rem; }
   .pk__card p { margin: 0; color: var(--text-2); }

@@ -183,4 +183,15 @@ export const nextRace: { round: string; circuit: string; series: string; date: s
   ? { round: upcoming.round, circuit: upcoming.circuit, series: calendarSeries, date: `${upcoming.start}T08:00:00+01:00` }
   : null;
 
-export const sponsors: { name: string; logo: string; url?: string; tier: 'title' | 'partner' | 'supporter' }[] = [];
+// Logos from Lewis (sponsorlogosclub32.zip, Nov 2026), trimmed into public/images/sponsors/.
+// `bg` is the logo's own background colour, used for its tile. Links from Jean (Nov 2026): Strive Performance and
+// Green Power Motorsports have no website, so they link to Instagram.
+export const sponsors: { name: string; logo: string; bg: string; url?: string; tier: 'title' | 'partner' | 'supporter' }[] = [
+  { name: 'BAS Group', logo: '/images/sponsors/bas-group.webp', bg: '#ffffff', url: 'https://www.basgroup.uk/', tier: 'partner' },
+  { name: 'Amethyst', logo: '/images/sponsors/amethyst.webp', bg: '#ffffff', url: 'https://amethyst-designs.co.uk/', tier: 'partner' },
+  { name: 'Strive Performance', logo: '/images/sponsors/strive-performance.webp', bg: '#231f20', url: 'https://www.instagram.com/striveperformance/', tier: 'partner' },
+  { name: 'Green Power Motorsports', logo: '/images/sponsors/green-power-motorsports.webp', bg: '#18423e', url: 'https://www.instagram.com/greenpowermotorsports/', tier: 'partner' },
+  { name: 'Arai', logo: '/images/sponsors/arai.webp', bg: '#ffffff', url: 'https://www.araihelmet.eu/', tier: 'partner' },
+  { name: 'R&G', logo: '/images/sponsors/rg.webp', bg: '#ffffff', url: 'https://www.rg-racing.com/', tier: 'partner' },
+  { name: 'Uggly & Co', logo: '/images/sponsors/uggly-and-co.webp', bg: '#ffffff', url: 'https://ugglyandco.com/', tier: 'partner' },
+];
