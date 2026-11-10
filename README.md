@@ -212,7 +212,7 @@ The repository secrets it needs are:
 
 ### Staging
 
-<https://staging.lewissmartracing.com> has the full site, including pages that are not live yet. It is password protected (HTTP basic auth), every response carries `X-Robots-Tag: noindex, nofollow`, every page has a `noindex` meta tag, and a "Staging" badge sits in the corner. Nothing about staging is listed in a robots.txt or sitemap.
+<https://staging.lewissmartracing.com> has the full site, including pages that are not live yet. It sits behind the same password gate as the live site (same gate page and password, its own 30-day cookie), every response carries `X-Robots-Tag: noindex, nofollow`, every page has a `noindex` meta tag, and a "Staging" badge sits in the corner. Nothing about staging is listed in a robots.txt or sitemap.
 
 - `npm run build` is the production build. `scripts/prune-staging-only.mjs` removes the pages listed in `stagingOnly` (`src/data/site.ts`: Bike & Team, Gallery, Club32) and fails the build if a live page still links to one. Sponsors stays live for the "Sponsor Lewis" button, but is only in the menu on staging.
 - `npm run build:staging` (`PUBLIC_SITE_ENV=staging`) builds every page.
@@ -220,7 +220,7 @@ The repository secrets it needs are:
 
 The Deploy workflow deploys both: production first, then staging with a second `lsr-deploy` key jailed to `/var/www/staging.lewissmartracing.com` (secret `DEPLOY_STAGING_SSH_KEY`). Staging PHP uses its own config and database (`/etc/lewissmartracing-staging`, `/var/lib/lewissmartracing-staging`), so it never touches live Club32 data.
 
-**Server setup (once).** Add a DNS A record `staging` → `78.47.73.104` in GoDaddy, then run `bash scripts/setup-staging.sh`. It asks for the staging username, password and first admin email, sets up nginx, TLS, the deploy key and the GitHub secret, and runs a deploy.
+**Server setup (once).** Add a DNS A record `staging` → `78.47.73.104` in GoDaddy, then run `LSR_SSH_KEY=~/.ssh/hetzner.tf bash scripts/setup-staging.sh` on the devbox. It asks for the gate password (not stored in the repo), sets up nginx, TLS, the deploy key and the GitHub secret, runs a deploy, and copies the live admin users (same email and password) into the staging database. No orders, members or stats are copied.
 
 The production URL is set by `site` in `astro.config.mjs`, and the canonical and Open Graph URLs are built from it.
 

@@ -61,8 +61,8 @@ jobs:
 
       # ---------------------------------------------------------------- staging
       # staging.lewissmartracing.com gets the full site, including pages that are not
-      # live yet (npm run build:staging). It is password protected and noindex on the
-      # server. Its key is a second `lsr-deploy` key jailed to the staging directory:
+      # live yet (npm run build:staging). On the server it is behind the same password gate
+      # as the live site and noindex. Its key is a second `lsr-deploy` key jailed to the staging directory:
       # restrict,command="rrsync /var/www/staging.lewissmartracing.com".
       # Skipped until scripts/setup-staging.sh has set the DEPLOY_STAGING_SSH_KEY secret.
       - name: Build staging
@@ -80,10 +80,10 @@ jobs:
             -e "ssh -i ~/.ssh/staging_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes" \
             dist/ lsr-deploy@78.47.73.104:/
 
-      # Without the password the staging site must answer 401, never 200.
+      # Without the gate cookie staging must redirect to the password page, never answer 200.
       - name: Staging smoke test
         if: env.HAS_STAGING == 'true'
         run: |
-          code=$(curl -sS -o /dev/null -w "%{http_code}" https://staging.lewissmartracing.com/)
-          echo "HTTP $code"
-          [ "$code" = 401 ]
+          out=$(curl -sS -o /dev/null -w "%{http_code} %{redirect_url}" https://staging.lewissmartracing.com/)
+          echo "$out"
+          case "$out" in "302 "*/__gate.html) ;; *) exit 1;; esac
