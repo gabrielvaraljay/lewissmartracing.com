@@ -3,7 +3,7 @@
 // It describes what the code does (public/api/*, public/admin/*); update it when that changes.
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
-const updated = '10 November 2026';
+const updated = '11 November 2026';
 ---
 <Base title="Privacy notice" description="How lewissmartracing.com uses your personal data: the contact form, the newsletter and Club32.">
   <PageHeader kicker="Privacy" title="Privacy" accent="notice" intro={`What we collect, why, and your rights. Last updated ${updated}.`} />
@@ -20,6 +20,7 @@ const updated = '10 November 2026';
           <tr><td>You sign up to the newsletter</td><td>Your email address, and when you signed up and confirmed</td><td>To send you the newsletter. Your consent, which you give by confirming your address and can withdraw any time with the unsubscribe link.</td></tr>
           <tr><td>You join Club32</td><td>Your first and last name, email, phone (if given), your numbers, payment reference, payment date and the draws you win. We also see your name on our bank statement when you pay.</td><td>To run your membership: hold and confirm your numbers, match your payment, run the draws, send you your prize and the emails about your membership. This is needed for our agreement with you.</td></tr>
           <tr><td>You are a Club32 member</td><td>Your name and email on the members' newsletter list</td><td>To send you the Club32 members' newsletter, which is part of the membership. Our legitimate interest in keeping members up to date. You can say no when you join, and unsubscribe from any issue.</td></tr>
+          <tr><td>You accept analytics cookies</td><td>How you use the site: pages viewed, clicks, the device and browser you use, your rough location and where you came from, linked to a random ID in a cookie</td><td>To understand which pages and content people find useful. Your consent, which you give and can withdraw in the cookie banner at any time. Without it, nothing is measured.</td></tr>
           <tr><td>You visit the site</td><td>Daily totals only: pages viewed and the websites visitors came from. To count unique visitors we use a one-way code made from your connection and browser with a secret that changes every day, so you cannot be recognised from one day to the next. No cookies, and no IP addresses are stored.</td><td>To see how many people use the site. Our legitimate interest. Browsers that send "Do Not Track" or "Global Privacy Control" are not counted.</td></tr>
         </tbody>
       </table>
@@ -33,6 +34,8 @@ const updated = '10 November 2026';
         <li><strong>bluefox.email</strong> sends our emails and keeps our contact and newsletter lists (it uses Amazon Web Services to deliver the email).</li>
         <li><strong>Hetzner Online</strong> (Germany) hosts the website and the Club32 database.</li>
         <li><strong>Google Fonts</strong> serves the website's fonts, so your browser connects to Google when a page loads.</li>
+        <li><strong>Google Analytics</strong>, only if you accept analytics cookies: how the site is used (pages, rough location, device, where you came from). The data goes to Google through our own measurement server, run by Tragly.</li>
+        <li><strong>ConsentKit</strong> shows the cookie banner and keeps an anonymous record of your choice, which the law asks us to be able to show.</li>
       </ul>
       <p>Some of these may process data outside the UK. Where they do, they use safeguards recognised under UK data protection law, such as the UK International Data Transfer Addendum or an adequacy decision.</p>
       <p>Bank transfers go through your bank and ours. We only see what appears on our bank statement.</p>
@@ -46,7 +49,12 @@ const updated = '10 November 2026';
       </ul>
 
       <h2>Cookies</h2>
-      <p>The public website sets no cookies. The only cookie is a sign-in cookie for the people who run the admin area, which visitors never see.</p>
+      <p>When you first visit, a banner asks whether you allow analytics and marketing cookies. Nothing is measured and no such cookie is set until you say yes, and you can change your mind at any time from the banner.</p>
+      <ul>
+        <li><strong>Necessary:</strong> a cookie that remembers your choice in the banner, and a sign-in cookie for the people who run the admin area.</li>
+        <li><strong>Analytics (only with your consent):</strong> Google Analytics cookies (<code>_ga</code>, <code>_ga_*</code>), kept for up to 2 years.</li>
+        <li><strong>Marketing (only with your consent):</strong> not used at the moment. If we add any, they will be listed here first.</li>
+      </ul>
 
       <h2>Your rights</h2>
       <p>You can ask us for a copy of your data, to correct it, to delete it, or to stop using it, and you can object to how we use it. Contact us through the <a href="/contact/">contact form</a> and we will reply within one month. If we cannot delete something yet (for example a payment record), we will tell you why.</p>

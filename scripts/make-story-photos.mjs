@@ -1,17 +1,17 @@
-// Turns a folder of photos into gallery WebPs + src/data/gallery.json.
-// Usage: npm run gallery -- [input-folder=photos-src/gallery]
+// Turns a folder of photos into the My Story timeline photos: WebPs + src/data/story-photos.json.
+// Usage: npm run photos -- [input-folder=photos-src/story]
+// Each photo goes on the timeline under the year its file name starts with.
 // File names become the captions/alt text ("2024 Endurance.jpg" -> "2024 Endurance"),
 // so name them "<year> <what>". Newest first. Every photo gets the site address
 // (scripts/assets/watermark.svg) in the bottom-right corner, and becomes:
-//   public/images/gallery/<slug>.webp      full size for the lightbox (max 2400 px)
-//   public/images/gallery/<slug>-sm.webp   grid thumbnail, cropped to 3:2 (960x640)
-// The Gallery link preview is made by scripts/make-og.mjs (npm run og).
+//   public/images/story/<slug>.webp      full size for the lightbox (max 2400 px)
+//   public/images/story/<slug>-sm.webp   timeline thumbnail, cropped to 3:2 (960x640)
 import { readdir, readFile, mkdir, rm, writeFile } from 'node:fs/promises';
 import { join, extname, basename } from 'node:path';
 import sharp from 'sharp';
 
-const [input = 'photos-src/gallery'] = process.argv.slice(2);
-const out = 'public/images/gallery';
+const [input = 'photos-src/story'] = process.argv.slice(2);
+const out = 'public/images/story';
 const exts = ['.jpg', '.jpeg', '.png', '.webp', '.heic', '.avif'];
 const files = (await readdir(input))
   .filter((f) => exts.includes(extname(f).toLowerCase()))
@@ -40,9 +40,9 @@ for (const f of files) {
     .then((img) => img.webp({ quality: 82, smartSubsample: true }).toFile(join(out, `${s}.webp`)));
   const sm = await watermarked(src.clone().resize(960, 640, { fit: 'cover', position: 'attention' }))
     .then((img) => img.webp({ quality: 76, smartSubsample: true }).toFile(join(out, `${s}-sm.webp`)));
-  photos.push({ src: `/images/gallery/${s}-sm.webp`, full: `/images/gallery/${s}.webp`, alt: `Lewis Smart #32, ${name}`, w: sm.width, h: sm.height });
+  photos.push({ year: name.slice(0, 4), src: `/images/story/${s}-sm.webp`, full: `/images/story/${s}.webp`, alt: `Lewis Smart #32, ${name}`, w: sm.width, h: sm.height });
   console.log(`${f} -> ${s}.webp ${full.width}x${full.height} ${(full.size / 1024).toFixed(0)} KB, -sm ${(sm.size / 1024).toFixed(0)} KB`);
 }
-await writeFile('src/data/gallery.json', JSON.stringify(photos, null, 2) + '\n');
+await writeFile('src/data/story-photos.json', JSON.stringify(photos, null, 2) + '\n');
 
-console.log(`\n${photos.length} photos written, list in src/data/gallery.json`);
+console.log(`\n${photos.length} photos written, list in src/data/story-photos.json`);

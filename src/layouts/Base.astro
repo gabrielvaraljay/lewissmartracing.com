@@ -11,6 +11,7 @@ import '../styles/tailwind.css';
 import '../styles/global.css';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
+import Tracking from '../components/Tracking.astro';
 import { isStaging, site } from '../data/site';
 
 // image: 1200x630 JPG link preview from `npm run og` (public/images/og/). Pages without their own use the home card.
@@ -50,6 +51,7 @@ const icons = ['arrow_forward','calendar_today','check_circle','chevron_left','c
 <html class="dark" lang="en-GB">
   <head>
     <meta charset="utf-8" />
+    <Tracking part="head" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
@@ -86,6 +88,7 @@ const icons = ['arrow_forward','calendar_today','check_circle','chevron_left','c
     <slot name="head" />
   </head>
   <body class="bg-surface-container-lowest text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container min-h-screen flex flex-col">
+    <Tracking part="body" />
     <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-3 focus:bg-primary-container focus:text-on-primary-container">Skip to content</a>
     {isStaging && <div class="fixed bottom-3 left-3 z-[90] px-3 py-1 bg-error text-on-error font-label-xs text-label-xs uppercase tracking-widest font-black pointer-events-none select-none" aria-hidden="true">Staging</div>}
     <SiteHeader />

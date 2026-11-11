@@ -1,6 +1,6 @@
 // Runs after the production build (and after prune-staging-only.mjs): writes dist/sitemap.xml and dist/robots.txt.
-// The sitemap lists every page that is in the build and not marked noindex, with the Gallery photos and reels
-// as image/video entries so they can show up in Google Images and video results.
+// The sitemap lists every page that is in the build and not marked noindex, with the My Story timeline photos
+// and the Gallery reels as image/video entries so they can show up in Google Images and video results.
 // On a staging build it writes nothing: staging must never be crawled or listed anywhere.
 import { readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -30,10 +30,12 @@ for (const file of walk(DIST)) {
   if (file.startsWith(join(DIST, 'admin'))) continue;
   const path = '/' + file.slice(DIST.length + 1).replace(/index\.html$/, '');
   let extra = '';
-  if (path === '/gallery/') {
-    const photos = JSON.parse(readFileSync('src/data/gallery.json', 'utf8'));
-    const reels = JSON.parse(readFileSync('src/data/reels.json', 'utf8'));
+  if (path === '/my-story/') {
+    const photos = JSON.parse(readFileSync('src/data/story-photos.json', 'utf8'));
     extra += photos.map((p) => `\n    <image:image><image:loc>${SITE}${p.full}</image:loc></image:image>`).join('');
+  }
+  if (path === '/gallery/') {
+    const reels = JSON.parse(readFileSync('src/data/reels.json', 'utf8'));
     extra += reels.map((r) => `
     <video:video>
       <video:thumbnail_loc>${SITE}${r.poster}</video:thumbnail_loc>
