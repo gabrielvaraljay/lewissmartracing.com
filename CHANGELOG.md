@@ -13,10 +13,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
-- **Gallery is live** (menu and page), with Lewis's 4 Instagram reels self-hosted at the bottom (newest first, with captions).
-- **SEO**: a branded 1200x630 link preview image for every page (`npm run og`), full Open Graph and Twitter tags (image size and alt, site name, locale), schema.org structured data (WebSite, Person, WebPage, breadcrumb), `sitemap.xml` with the Gallery photos and reels, `robots.txt`, PNG icons and a web manifest. Thin page descriptions (Calendar, Gallery, Bike & Team) rewritten.
-- **Gallery photos**: Lewis's 14 photos from 2020 to 2026 on `/gallery/`, as WebP (a small thumbnail for the grid, full size in the lightbox), with the 2025 Triumph track photo as the link preview image. `npm run gallery` rebuilds them from `photos-src/gallery/`.
-- Gallery photos carry "LEWISSMARTRACING.COM" in the bottom-right corner. In the full-size viewer you can page forwards and backwards in a loop (arrows, keyboard or swipe), with a photo counter and caption. The grid now reads newest to oldest row by row (3:2 tiles) instead of column by column.
+- **Gallery is live** (menu and page) with Lewis's 4 Instagram reels, self-hosted (newest first, with captions).
+- **My Story photos**: Louis's 14 photos from 2020 to 2026 on the timeline, under their year (one big, the rest small), with the site address in the corner, and a full-size viewer that pages through all of them. Photos now show on phones too.
+- **Tracking**: Tragly server-side GTM with GA4 and the ConsentKit cookie banner (Consent Mode v2, nothing measured before consent), production only. Privacy notice updated for Google Analytics, ConsentKit and cookies.
+- **SEO**: a branded 1200x630 link preview image for every page (`npm run og`), full Open Graph and Twitter tags (image size and alt, site name, locale), schema.org structured data (WebSite, Person, WebPage, breadcrumb), `sitemap.xml` with the My Story photos and Gallery reels, `robots.txt`, PNG icons and a web manifest. Thin page descriptions (Calendar, Gallery, Bike & Team) rewritten.
 - **Club32** (`/club32/`): a 1-100 number board for the supporters' draw. Visitors pick numbers, reserve them for 24 hours and pay by bank transfer with their own reference (`C32-XXXXX`). Only first names are shown. Returning members get a personal presale link that holds their old number.
 - **Admin panel** (`/admin/`, login required, not indexed): confirm payments, extend or cancel holds, add cash sales, member board and CSV export, presale invitations, random or manual draws with a reveal screen for the live videos, winner emails, settings (bank details, price, hold time, sales on/off) and an activity log.
 - Cookie-free visit counter (`/api/hit.php`) with a Visitors page in the admin.

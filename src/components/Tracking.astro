@@ -1,0 +1,45 @@
+---
+// Tragly (server-side GTM) + ConsentKit cookie banner. Production only: staging is never measured.
+// Tenant TRG-6mzqy8, web GTM-5WC2G3W7, server GTM-P98Z3P9F, GA4 G-YS289LQJEK (all managed in Tragly).
+// The snippets are copied verbatim from Tragly's signed installation (get_snippet_md); the tagproof markers
+// carry a signature that Tragly checks on the live page, so do not edit them by hand. Order matters:
+// ConsentKit first, then the Consent Mode default, then the GTM loader.
+import { isStaging } from '../data/site';
+interface Props { part: 'head' | 'body' }
+const { part } = Astro.props;
+
+const head = `<!-- ConsentKit: the FIRST script in <head> -->
+<script
+  src="https://consentkit.cc/cdn/consent-kit.js?v=1.11.0"
+  data-sgtm="https://0vl1ndql.sgtm.tragly.com"
+  data-domain="lewissmartracing.com"
+  data-site="TRG-6mzqy8"
+  data-lang="en"
+  data-policy-version="1.0"
+  data-ingest="https://consentkit.cc/consent/log"
+  data-categories="analytics,marketing"
+  data-tcf="off"
+></script>
+<!-- Tragly.com Tag Manager Head Snippet 6mzqy8 -->
+<!-- Consent Mode v2 — default denied until user accepts cookie banner -->
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('consent', 'default', {'analytics_storage': 'denied', 'ad_storage': 'denied', 'ad_user_data': 'denied', 'ad_personalization': 'denied', 'wait_for_update': 500});
+</script>
+<!-- Google Tag Manager -->
+<!-- tagproof:v1 head-loader eyJhcHBfaWQiOiJ0cDFfZjA3YjhjODcxYzM4OGY2M2Q3NjkzMjk1MWI2NTlmNDI1YmVmNGMxZGMyYjhlY2RmY2Q2ZTgwZGE1YjNjMWRhNCIsImNhbm9uaWNhbF9ob3N0IjoibGV3aXNzbWFydHJhY2luZy5jb20iLCJjb21wb25lbnQiOiJoZWFkLWxvYWRlciIsImRlcGxveW1lbnRfaWQiOiJ0cGRfNTJiMzgzYzMwZGI2ODdjN2E0MTUwYWVlZWJhNWRhNzUiLCJlbnZpcm9ubWVudCI6InByb2R1Y3Rpb24iLCJpc3N1ZWRfYXQiOiIyMDI2LTExLTExVDE3OjAwOjQ4WiIsImtleV9pZCI6InRwa18yMDI2YSIsInBheWxvYWRfc2hhMjU2IjoiMWVmZDUyMjQ4NjhiYTZiZGVkZjVlOTRhZjlkYTg2MmNmOWMxNjQyMjBkYmUzNDg5NTA2YzMzODE0NGU1NGU0NCIsInNjaGVtYSI6InRhZ3Byb29mLWluc3RhbGwvdjEiLCJzZXJ2ZXJfY29udGFpbmVyX2lkIjoiR1RNLVA5OFozUDlGIiwic2lnbmF0dXJlX2VkMjU1MTkiOiIwMmEzY2MwMzUxNjNmNjVhNTdhYjc3ZDZlMmFmNDM0ZjEyMTdlMWNiOWQ5NTYyZGM3NjZhYjJjYzBkN2FlYWM5MTc4ZjBjYjU1YTgwNWZkZmMyZjI3MDU3YTZhZDBjMTJhZWUxYjA0OTg0MWUzYzVmNmMyY2VkMGRmMzk2NWMwMiIsInNuaXBwZXRfdmVyc2lvbiI6IjIiLCJ3ZWJfY29udGFpbmVyX2lkIjoiR1RNLTVXQzJHM1c3In0= -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s);j.async=true;j.src='https://0vl1ndql.sgtm.tragly.com/gtm.js?id='+i;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-5WC2G3W7');</script>
+<!-- /tagproof:v1 head-loader -->
+<!-- End Google Tag Manager -->
+<!-- End Tragly.com Tag Manager Head Snippet 6mzqy8 -->`;
+
+const body = `<!-- Tragly.com Tag Manager Body Snippet 6mzqy8 -->
+<!-- Google Tag Manager (noscript) -->
+<!-- tagproof:v1 body-noscript eyJhcHBfaWQiOiJ0cDFfZjA3YjhjODcxYzM4OGY2M2Q3NjkzMjk1MWI2NTlmNDI1YmVmNGMxZGMyYjhlY2RmY2Q2ZTgwZGE1YjNjMWRhNCIsImNhbm9uaWNhbF9ob3N0IjoibGV3aXNzbWFydHJhY2luZy5jb20iLCJjb21wb25lbnQiOiJib2R5LW5vc2NyaXB0IiwiZGVwbG95bWVudF9pZCI6InRwZF81MmIzODNjMzBkYjY4N2M3YTQxNTBhZWVlYmE1ZGE3NSIsImVudmlyb25tZW50IjoicHJvZHVjdGlvbiIsImlzc3VlZF9hdCI6IjIwMjYtMTEtMTFUMTc6MDA6NDhaIiwia2V5X2lkIjoidHBrXzIwMjZhIiwicGF5bG9hZF9zaGEyNTYiOiJmNjBlNWFmZjRmMDEzNzUwMWI2NzU3MWE2OGQxZWFjZTQyMjU4YWMwYWQxZWVkMTY3MjliNThhOWViNDFlNzRmIiwic2NoZW1hIjoidGFncHJvb2YtaW5zdGFsbC92MSIsInNlcnZlcl9jb250YWluZXJfaWQiOiJHVE0tUDk4WjNQOUYiLCJzaWduYXR1cmVfZWQyNTUxOSI6IjYzZjUwYmU1NWFhNzJhNzAwYzYzNDNlOWY4N2UzOTFmZDY4Y2QwNmZjNTRkODY2MmE5ZGE2NTI5Zjc3NDJjZDZmNDA4MTc4MmRlYjQ4NTJiNzM3MjhmZWIyZTIzZjM2OGZlMjFiZTZiMTE0YTI3YWQzOWZhYmEwNGE2MGYzNjAwIiwic25pcHBldF92ZXJzaW9uIjoiMiIsIndlYl9jb250YWluZXJfaWQiOiJHVE0tNVdDMkczVzcifQ== -->
+<noscript><iframe src="https://0vl1ndql.sgtm.tragly.com/ns.html?id=GTM-5WC2G3W7" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- /tagproof:v1 body-noscript -->
+<!-- End Google Tag Manager (noscript) -->
+<!-- End Tragly.com Tag Manager Body Snippet 6mzqy8 -->`;
+---
+{!isStaging && <Fragment set:html={part === 'head' ? head : body} />}

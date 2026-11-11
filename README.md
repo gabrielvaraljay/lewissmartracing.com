@@ -20,7 +20,8 @@ A fast, fully static site built with [Astro](https://astro.build) and [Tailwind 
 - [Editing content](#editing-content)
 - [Design system](#design-system)
 - [Hero flip-book frames](#hero-flip-book-frames)
-- [Gallery photos](#gallery-photos)
+- [My Story photos and Gallery reels](#my-story-photos-and-gallery-reels)
+- [Tracking (Tragly) and cookie banner](#tracking-tragly-and-cookie-banner)
 - [SEO and link previews](#seo-and-link-previews)
 - [Club32 and admin](#club32-and-admin)
 - [Sponsor logos in emails](#sponsor-logos-in-emails)
@@ -72,7 +73,7 @@ The dev server runs at <http://localhost:4321> and reloads when files change.
 | `npm run build` | Builds the static site into `dist/` |
 | `npm run preview` | Serves the built `dist/` locally, to check it before deploying |
 | `npm run frames -- <folder> [width] [quality]` | Turns a folder of photos into hero frames (see [below](#hero-flip-book-frames)) |
-| `npm run gallery -- [folder]` | Turns a folder of photos into Gallery WebPs (see [below](#gallery-photos)) |
+| `npm run photos -- [folder]` | Turns a folder of photos into My Story timeline WebPs (see [below](#my-story-photos-and-gallery-reels)) |
 | `npm run og` | Builds the 1200x630 link preview image of every page (see [below](#seo-and-link-previews)) |
 
 ## Project structure
@@ -138,14 +139,17 @@ Extra CSS for the simpler pages is in `src/styles/global.css`.
 
 The frames play only on screens 768 px and wider, and only when reduced motion is not requested. Everywhere else, frame 1 (or the static hero image) is shown.
 
-## Gallery photos
+## My Story photos and Gallery reels
 
 Claude does this when Louis or Lewis send new photos or reels.
 
-1. The photos go in `photos-src/gallery/` (not committed). The file name becomes the caption and alt text, and the newest year comes first, so they are named `<year> <what>.jpg`, e.g. `2024 Superteens on track.jpg`.
-2. `npm run gallery` adds "LEWISSMARTRACING.COM" (`scripts/assets/watermark.svg`) to the bottom-right corner of every photo and writes two WebPs to `public/images/gallery/`: the full photo for the viewer (max 2400 px, quality 82) and a 3:2 thumbnail for the grid (960x640). The list goes to `src/data/gallery.json`.
+**Photos** go on the My Story timeline, under their year.
 
-The grid reads newest to oldest row by row. In the viewer you can page through every photo in a loop (arrows, keyboard, swipe).
+1. The photos go in `photos-src/story/` (not committed). The file name starts with the year and becomes the caption and alt text, e.g. `2024 Superteens on track.jpg`.
+2. `npm run photos` adds "LEWISSMARTRACING.COM" (`scripts/assets/watermark.svg`) to the bottom-right corner of every photo and writes two WebPs to `public/images/story/`: the full photo for the viewer (max 2400 px, quality 82) and a 3:2 thumbnail (960x640). The list goes to `src/data/story-photos.json`.
+3. On the timeline, one photo per year is the big one (`lead` in `src/pages/my-story.astro`), the others sit small under it. Clicking any opens the viewer (`src/components/Lightbox.astro`), which pages through all of them in a loop (arrows, keyboard, swipe).
+
+The Gallery page has the reels only.
 
 **Reels** are self-hosted, not Instagram embeds, so the page loads no Instagram scripts or cookies. Each one is a 720p H.264 MP4 with a WebP poster in `public/reels/`, listed newest first in `src/data/reels.json`. To make one from an Instagram link: download it with a current `yt-dlp`, then `ffmpeg -i in.mp4 -vf scale=720:-2 -c:v libx264 -preset slow -crf 26 -maxrate 2500k -bufsize 5000k -pix_fmt yuv420p -c:a aac -b:a 96k -movflags +faststart public/reels/<name>.mp4`, and use a frame at 1 s as the poster.
 
@@ -158,6 +162,15 @@ The grid reads newest to oldest row by row. In the viewer you can page through e
 - **Icons.** `favicon.svg`, plus PNGs (`favicon-32.png`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png`) and `site.webmanifest`.
 
 **Google Search Console.** Not set up yet. Add a *Domain* property for `lewissmartracing.com`, put the TXT record it shows into the GoDaddy DNS, verify, then submit `https://lewissmartracing.com/sitemap.xml`. Google cannot see anything while the password gate is on, so do this when the gate comes off.
+
+## Tracking (Tragly) and cookie banner
+
+Measurement runs through Tragly (server-side Google Tag Manager), tenant `TRG-6mzqy8`: web container `GTM-5WC2G3W7`, server container `GTM-P98Z3P9F`, first-party host `0vl1ndql.sgtm.tragly.com`, GA4 `G-YS289LQJEK`. Everything (GA4, later Meta etc.) is managed in Tragly and the containers, not in the site code.
+
+- `src/components/Tracking.astro` holds the snippets, copied verbatim from Tragly's signed installation: the ConsentKit cookie banner first, then the Consent Mode v2 default (all denied), then the GTM loader, plus the `<noscript>` in `<body>`. The `tagproof` markers are signed, so do not edit them by hand; get a new snippet from Tragly instead.
+- Production only. Staging is never measured.
+- Nothing is measured until the visitor accepts analytics cookies. The [privacy notice](/privacy/) lists Google Analytics, ConsentKit and the cookies.
+- The banner text comes from the Tragly/ConsentKit template and has not been legally reviewed.
 
 ## Club32 and admin
 

@@ -1,7 +1,18 @@
 ---
 // My Story / career timeline. Layout ported 1:1 from the Google Stitch design; copy limited to confirmed facts.
 import Base from '../layouts/Base.astro';
+import Lightbox from '../components/Lightbox.astro';
 import { site } from '../data/site';
+// Photos from Lewis (npm run photos), newest first. Each goes under the year its file name starts with;
+// one is the big photo (see `lead`), the rest are small ones under it. Click any to open the viewer.
+import storyPhotos from '../data/story-photos.json';
+// The big photo of each year is the one that tells that year's story (matched on the file name).
+const lead: Record<string, string> = { '2021': 'wildcard', '2022': 'champion', '2023': 'first-win', '2024': 'pit-lane', '2025': 'on-track' };
+const photosOf = (year: string) => {
+  const ph = storyPhotos.filter((p) => p.year === year);
+  const i = lead[year] ? ph.findIndex((p) => p.full.includes(lead[year])) : -1;
+  return i > 0 ? [ph[i], ...ph.slice(0, i), ...ph.slice(i + 1)] : ph;
+};
 
 type Entry = {
   year: string; tag: string; title: string; machine: string; body: string; pills: string[];
@@ -38,7 +49,7 @@ const entries: Entry[] = ([
   {
     year: '2025', tag: 'Triumph', title: 'The Triumph Era', machine: 'Machine: Triumph Daytona 660',
     body: 'A factory ride with Macadam Triumph Factory Racing in the Pirelli National Sportbike Championship, in the fluorescent #32 livery. The debut season closed with a season-best 5th place at the Brands Hatch finale.',
-    pills: ['🏭 Macadam Triumph Factory Racing', '🏁 Season-Best P5, Brands Hatch'], image: { src: '/images/hero-static.webp', alt: 'Lewis Smart cornering on the 2025 number 32 bike' },
+    pills: ['🏭 Macadam Triumph Factory Racing', '🏁 Season-Best P5, Brands Hatch'],
     caption: 'Macadam Triumph // #32', node: 'solid',
   },
   {
@@ -236,16 +247,37 @@ const roadmap = [
                       </div>
                     </div>
                   </div>
-                  <div class:list={['hidden md:block md:w-[45%]', left ? 'pl-space-lg text-left' : 'pr-space-lg']}>
-                    <div class:list={['relative rounded-lg overflow-hidden shadow-lg aspect-video bg-surface-container-low max-w-md', { 'ml-auto': !left }]}>
-                      {e.image
-                        ? <img class="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity" src={e.image.src} alt={e.image.alt} loading="lazy" decoding="async" />
-                        : <div class="w-full h-full flex flex-col items-center justify-center gap-space-xs bg-[repeating-linear-gradient(-60deg,rgba(255,255,255,0.025)_0_2px,transparent_2px_14px)] text-on-surface-variant/60">
-                            <span class="material-symbols-outlined text-[28px]">photo_camera</span>
-                            <span class="font-label-xs text-label-xs uppercase tracking-widest">{e.year} photo coming soon</span>
-                          </div>}
-                      <div class:list={['absolute bottom-2 px-2 py-1 bg-surface-container-lowest/80 backdrop-blur rounded font-label-xs text-label-xs uppercase', left ? 'left-2' : 'right-2', e.active ? 'text-primary font-black' : 'text-on-surface']}>{e.caption}</div>
-                    </div>
+                  <div class:list={['ml-16 md:ml-0 w-[calc(100%-4rem)] md:w-[45%] mt-space-sm md:mt-0', left ? 'md:pl-space-lg text-left' : 'md:pr-space-lg']}>
+                    {(() => {
+                      const ph = photosOf(e.year);
+                      const [main, ...rest] = ph;
+                      return (
+                        <div class:list={['max-w-md', { 'md:ml-auto': !left }]}>
+                          <div class="relative rounded-lg overflow-hidden shadow-lg aspect-[3/2] bg-surface-container-low">
+                            {main
+                              ? <button class="story-photo block w-full h-full" type="button" data-full={main.full} data-alt={main.alt} aria-label={`Open photo: ${main.alt.replace(/^Lewis Smart #32, /, '')}`}>
+                                  <img class="w-full h-full object-cover opacity-95 hover:opacity-100 transition" src={main.src} alt={main.alt} width={main.w} height={main.h} loading="lazy" decoding="async" />
+                                </button>
+                              : e.image
+                                ? <img class="w-full h-full object-cover" src={e.image.src} alt={e.image.alt} loading="lazy" decoding="async" />
+                                : <div class="w-full h-full flex flex-col items-center justify-center gap-space-xs bg-[repeating-linear-gradient(-60deg,rgba(255,255,255,0.025)_0_2px,transparent_2px_14px)] text-on-surface-variant/60">
+                                    <span class="material-symbols-outlined text-[28px]">photo_camera</span>
+                                    <span class="font-label-xs text-label-xs uppercase tracking-widest">{e.year} photo coming soon</span>
+                                  </div>}
+                            <div class:list={['absolute top-2 px-2 py-1 bg-surface-container-lowest/80 backdrop-blur rounded font-label-xs text-label-xs uppercase pointer-events-none', left ? 'left-2' : 'right-2', e.active ? 'text-primary font-black' : 'text-on-surface']}>{e.caption}</div>
+                          </div>
+                          {rest.length > 0 && (
+                            <div class="grid grid-cols-3 gap-2 mt-2">
+                              {rest.map((p) => (
+                                <button class="story-photo block rounded overflow-hidden aspect-[3/2] bg-surface-container-low shadow" type="button" data-full={p.full} data-alt={p.alt} aria-label={`Open photo: ${p.alt.replace(/^Lewis Smart #32, /, '')}`}>
+                                  <img class="w-full h-full object-cover opacity-90 hover:opacity-100 transition" src={p.src} alt={p.alt} width={p.w} height={p.h} loading="lazy" decoding="async" />
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
               );
@@ -255,6 +287,7 @@ const roadmap = [
         </div>
       </div>
     </section>
+    <Lightbox />
 
     <!-- RACING PHILOSOPHY -->
     <section class="w-full py-space-xl bg-surface-container-low">
@@ -311,3 +344,7 @@ const roadmap = [
     </section>
   </div>
 </Base>
+
+<style>
+  .story-photo { padding: 0; border: 0; cursor: zoom-in; }
+</style>

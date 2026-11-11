@@ -7,17 +7,17 @@
 import { mkdir, readFile } from 'node:fs/promises';
 import sharp from 'sharp';
 
-const G = 'photos-src/gallery/'; // originals (not committed); falls back to the site WebP if missing
+const G = 'photos-src/story/'; // originals (not committed); falls back to the site WebP if missing
 const cards = [
   { name: 'home', title: 'Lewis Smart #32', sub: 'British motorcycle road racer', photo: 'public/images/hero-static.webp' },
   { name: 'my-story', title: 'My Story', sub: 'From the Freshman Championship to racing with Triumph', photo: 'public/images/lewis-portrait.webp', pos: 'north' },
-  { name: 'results', title: 'Results', sub: 'Race by race, season by season, from the official timing sheets', photo: `${G}2023 Endurance Champion.jpg`, fallback: 'public/images/gallery/2023-endurance-champion.webp' },
-  { name: 'calendar', title: 'Calendar', sub: 'Every round and race weekend of the season', photo: `${G}2026 Smart Racing Triumph.jpg`, fallback: 'public/images/gallery/2026-smart-racing-triumph.webp' },
+  { name: 'results', title: 'Results', sub: 'Race by race, season by season, from the official timing sheets', photo: `${G}2023 Endurance Champion.jpg`, fallback: 'public/images/story/2023-endurance-champion.webp' },
+  { name: 'calendar', title: 'Calendar', sub: 'Every round and race weekend of the season', photo: `${G}2026 Smart Racing Triumph.jpg`, fallback: 'public/images/story/2026-smart-racing-triumph.webp' },
   { name: 'bike-and-team', title: 'Bike & Team', sub: 'The bike and the people behind #32', photo: 'public/images/bike-livery.webp' },
-  { name: 'gallery', title: 'Gallery', sub: 'Photos and reels, from 2020 to today', photo: `${G}2025 Triumph Factory Team on track.jpg`, fallback: 'public/images/gallery/2025-triumph-factory-team-on-track.webp' },
-  { name: 'sponsors', title: 'Sponsor Lewis', sub: '2027 partnership opportunities', photo: `${G}2025 Triumph Factory Team launch.jpg`, fallback: 'public/images/gallery/2025-triumph-factory-team-launch.webp' },
+  { name: 'gallery', title: 'Gallery', sub: 'Reels from race weekends, onboard and the team', photo: `${G}2025 Triumph Factory Team on track.jpg`, fallback: 'public/images/story/2025-triumph-factory-team-on-track.webp' },
+  { name: 'sponsors', title: 'Sponsor Lewis', sub: '2027 partnership opportunities', photo: `${G}2025 Triumph Factory Team launch.jpg`, fallback: 'public/images/story/2025-triumph-factory-team-launch.webp' },
   { name: 'contact', title: 'Contact', sub: 'Sponsorship, media and general enquiries', photo: 'public/images/lewis-grid.webp', pos: 'north' },
-  { name: 'club32', title: 'Club32', sub: 'Pick your lucky number and win BSB race weekend tickets', photo: `${G}2024 Superteens pit lane.jpg`, fallback: 'public/images/gallery/2024-superteens-pit-lane.webp' },
+  { name: 'club32', title: 'Club32', sub: 'Pick your lucky number and win BSB race weekend tickets', photo: `${G}2024 Superteens pit lane.jpg`, fallback: 'public/images/story/2024-superteens-pit-lane.webp' },
 ];
 
 const W = 1200, H = 630, PHOTO_W = 600, PAD = 72, TEXT_W = 560;
