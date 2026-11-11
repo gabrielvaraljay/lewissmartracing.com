@@ -4,7 +4,7 @@
 // so name them "<year> <what>". Newest first. Every photo gets the site address
 // (scripts/assets/watermark.svg) in the bottom-right corner, and becomes:
 //   public/images/gallery/<slug>.webp      full size for the lightbox (max 2400 px)
-//   public/images/gallery/<slug>-sm.webp   grid thumbnail (960 px wide)
+//   public/images/gallery/<slug>-sm.webp   grid thumbnail, cropped to 3:2 (960x640)
 // The optional og photo is cropped to 1200x630 JPG (public/images/og-gallery.jpg):
 // JPG because not every link preview (LinkedIn, older WhatsApp) shows WebP.
 import { readdir, readFile, mkdir, rm, writeFile } from 'node:fs/promises';
@@ -39,7 +39,7 @@ for (const f of files) {
   const src = sharp(join(input, f)).rotate();
   const full = await watermarked(src.clone().resize(2400, 2400, { fit: 'inside', withoutEnlargement: true }))
     .then((img) => img.webp({ quality: 82, smartSubsample: true }).toFile(join(out, `${s}.webp`)));
-  const sm = await watermarked(src.clone().resize(960, null, { withoutEnlargement: true }))
+  const sm = await watermarked(src.clone().resize(960, 640, { fit: 'cover', position: 'attention' }))
     .then((img) => img.webp({ quality: 76, smartSubsample: true }).toFile(join(out, `${s}-sm.webp`)));
   photos.push({ src: `/images/gallery/${s}-sm.webp`, full: `/images/gallery/${s}.webp`, alt: `Lewis Smart #32, ${name}`, w: sm.width, h: sm.height });
   console.log(`${f} -> ${s}.webp ${full.width}x${full.height} ${(full.size / 1024).toFixed(0)} KB, -sm ${(sm.size / 1024).toFixed(0)} KB`);
