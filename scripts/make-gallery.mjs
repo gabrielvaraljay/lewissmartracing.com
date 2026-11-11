@@ -1,17 +1,16 @@
 // Turns a folder of photos into gallery WebPs + src/data/gallery.json.
-// Usage: npm run gallery -- [input-folder=photos-src/gallery] [og-photo-file-name]
+// Usage: npm run gallery -- [input-folder=photos-src/gallery]
 // File names become the captions/alt text ("2024 Endurance.jpg" -> "2024 Endurance"),
 // so name them "<year> <what>". Newest first. Every photo gets the site address
 // (scripts/assets/watermark.svg) in the bottom-right corner, and becomes:
 //   public/images/gallery/<slug>.webp      full size for the lightbox (max 2400 px)
 //   public/images/gallery/<slug>-sm.webp   grid thumbnail, cropped to 3:2 (960x640)
-// The optional og photo is cropped to 1200x630 JPG (public/images/og-gallery.jpg):
-// JPG because not every link preview (LinkedIn, older WhatsApp) shows WebP.
+// The Gallery link preview is made by scripts/make-og.mjs (npm run og).
 import { readdir, readFile, mkdir, rm, writeFile } from 'node:fs/promises';
 import { join, extname, basename } from 'node:path';
 import sharp from 'sharp';
 
-const [input = 'photos-src/gallery', og] = process.argv.slice(2);
+const [input = 'photos-src/gallery'] = process.argv.slice(2);
 const out = 'public/images/gallery';
 const exts = ['.jpg', '.jpeg', '.png', '.webp', '.heic', '.avif'];
 const files = (await readdir(input))
@@ -46,9 +45,4 @@ for (const f of files) {
 }
 await writeFile('src/data/gallery.json', JSON.stringify(photos, null, 2) + '\n');
 
-if (og) {
-  await sharp(join(input, og)).rotate().resize(1200, 630, { fit: 'cover', position: 'attention' })
-    .jpeg({ quality: 84, mozjpeg: true }).toFile('public/images/og-gallery.jpg');
-  console.log(`OG: ${og} -> public/images/og-gallery.jpg`);
-}
 console.log(`\n${photos.length} photos written, list in src/data/gallery.json`);
