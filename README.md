@@ -145,7 +145,7 @@ The frames play only on screens 768 px and wider, and only when reduced motion i
    npm run gallery -- photos-src/gallery "2025 Triumph Factory Team on track.jpg"
    ```
 
-   Each photo becomes a full-size WebP for the lightbox (max 2400 px, quality 82) and a 960 px thumbnail for the grid in `public/images/gallery/`. The list goes to `src/data/gallery.json`. The second argument is the photo used for the link preview: it is cropped to 1200x630 and saved as `public/images/og-gallery.jpg`. That one stays JPG because not every link preview shows WebP.
+   Every photo gets the site address (`scripts/assets/watermark.svg`, Barlow Condensed as outlines) in the bottom-right corner. Each photo becomes a full-size WebP for the lightbox (max 2400 px, quality 82) and a 960 px thumbnail for the grid in `public/images/gallery/`. The list goes to `src/data/gallery.json`. The second argument is the photo used for the link preview: it is cropped to 1200x630 and saved as `public/images/og-gallery.jpg`. That one stays JPG because not every link preview shows WebP.
 
 ## Club32 and admin
 
