@@ -20,7 +20,9 @@ A fast, fully static site built with [Astro](https://astro.build) and [Tailwind 
 - [Editing content](#editing-content)
 - [Design system](#design-system)
 - [Hero flip-book frames](#hero-flip-book-frames)
+- [Gallery photos](#gallery-photos)
 - [Club32 and admin](#club32-and-admin)
+- [Sponsor logos in emails](#sponsor-logos-in-emails)
 - [Deployment](#deployment)
 - [Still to confirm](#still-to-confirm)
 - [Changelog](#changelog)
@@ -69,6 +71,7 @@ The dev server runs at <http://localhost:4321> and reloads when files change.
 | `npm run build` | Builds the static site into `dist/` |
 | `npm run preview` | Serves the built `dist/` locally, to check it before deploying |
 | `npm run frames -- <folder> [width] [quality]` | Turns a folder of photos into hero frames (see [below](#hero-flip-book-frames)) |
+| `npm run gallery -- [folder] [og-photo]` | Turns a folder of photos into Gallery WebPs (see [below](#gallery-photos)) |
 
 ## Project structure
 
@@ -79,7 +82,8 @@ The dev server runs at <http://localhost:4321> and reloads when files change.
 │   ├── frames/            # Hero flip-book frames (frame-01.webp …)
 │   └── images/            # Portrait, bike livery, hero fallback, grid shot
 ├── scripts/
-│   └── make-frames.mjs    # Photo → 16:9 WebP frame converter
+│   ├── make-frames.mjs    # Photo → 16:9 WebP frame converter
+│   └── make-gallery.mjs   # Photo → Gallery WebPs + src/data/gallery.json
 ├── src/
 │   ├── components/        # Header, footer, page header, next race, enquiry form, icons …
 │   ├── data/site.ts       # All copy and data: the one place to edit content
@@ -132,6 +136,17 @@ Extra CSS for the simpler pages is in `src/styles/global.css`.
 
 The frames play only on screens 768 px and wider, and only when reduced motion is not requested. Everywhere else, frame 1 (or the static hero image) is shown.
 
+## Gallery photos
+
+1. Put the photos in `photos-src/gallery/`. This folder is not committed. The file name becomes the caption and alt text, and the newest year comes first, so name them `<year> <what>.jpg`, e.g. `2024 Superteens on track.jpg`.
+2. Run:
+
+   ```bash
+   npm run gallery -- photos-src/gallery "2025 Triumph Factory Team on track.jpg"
+   ```
+
+   Each photo becomes a full-size WebP for the lightbox (max 2400 px, quality 82) and a 960 px thumbnail for the grid in `public/images/gallery/`. The list goes to `src/data/gallery.json`. The second argument is the photo used for the link preview: it is cropped to 1200x630 and saved as `public/images/og-gallery.jpg`. That one stays JPG because not every link preview shows WebP.
+
 ## Club32 and admin
 
 Club32 is the supporters' draw: 100 numbers at £32, each valid for the whole season and in the draw before every BSB race weekend.
@@ -183,6 +198,34 @@ npm run dev                       # proxies /api and /admin to :8080
 ```
 
 With `LSR_MAIL_LOG` set, emails are written to that file instead of being sent.
+
+## Sponsor logos in emails
+
+Emails carry a clickable "Proudly supported by" row of sponsor logos. Each logo opens the sponsor's site in a new window. The block is [`email/sponsor-footer.html`](email/sponsor-footer.html). The logos are 256x128 PNG tiles in the BlueFox gallery folder "Sponsor logos (email)", because email clients cannot show WebP and the site is behind a password while in preview.
+
+| With logos | Without logos (the reader must not be distracted) |
+| --- | --- |
+| Newsletter templates (LSR - Newsletter, LSR - Club32 race weekend update, LSR - Sponsors monthly update) and every campaign made from them | Newsletter - Confirm subscription |
+| Club32 - Payment confirmed, Club32 - Winner, Club32 - Reservation cancelled | Club32 - Reserved (payment details), Payment reminder, Reservation expired, Returning member presale |
+| | Admin - Password reset, Admin - Invite, Website enquiry notification and New reservation (internal) |
+
+### Email sources and Gmail dark mode
+
+Every BlueFox transactional email has its source in `email/*.html`. Run `python3 scripts/email-build.py` and paste the result from `email/dist/` (git-ignored) into BlueFox. The build fills in two placeholders: `<!-- @darkmode -->` and `<!-- @sponsors -->`.
+
+The Gmail apps recolour dark emails in dark mode: black turns light grey and #d6f20a turns dark green. The emails keep their look in three ways:
+
+- Every background colour is also set as a `linear-gradient` image.
+- Text is wrapped in `<div class="gb-s"><div class="gb-d">`, and only Gmail applies the blend-mode rules to it.
+- Buttons are PNG images in the site's button style. To make a new one, run `python3 scripts/email-button.py "LABEL" email/buttons/x.png` and upload it to the "Sponsor logos (email)" gallery folder.
+
+The 3 newsletter templates are built in the visual editor. They have the logo grid, but not the dark-mode fix.
+
+When a sponsor is added or removed:
+
+1. Update `sponsors` in `src/data/site.ts` and the list in `scripts/email-sponsor-logos.py`.
+2. Run `python3 scripts/email-sponsor-logos.py <folder>` and upload the new PNGs to the gallery folder.
+3. Update `email/sponsor-footer.html`, then paste the new block into every email and template in the "With logos" column.
 
 ## Results
 

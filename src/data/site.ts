@@ -193,5 +193,5 @@ export const sponsors: { name: string; logo: string; bg: string; url?: string; t
   { name: 'Green Power Motorsports', logo: '/images/sponsors/green-power-motorsports.webp', bg: '#18423e', url: 'https://www.instagram.com/greenpowermotorsports/', tier: 'partner' },
   { name: 'Arai', logo: '/images/sponsors/arai.webp', bg: '#ffffff', url: 'https://www.araihelmet.eu/', tier: 'partner' },
   { name: 'R&G', logo: '/images/sponsors/rg.webp', bg: '#ffffff', url: 'https://www.rg-racing.com/', tier: 'partner' },
-  { name: 'Uggly & Co', logo: '/images/sponsors/uggly-and-co.webp', bg: '#ffffff', url: 'https://ugglyandco.com/', tier: 'partner' },
+  { name: 'Uggly & Co', logo: '/images/sponsors/uggly-and-co.webp', bg: '#ffffff', url: 'https://ugglyandco.com/products/grey-black-two-stroke-smoker-trucker-cap?variant=52811934597442', tier: 'partner' },
 ];

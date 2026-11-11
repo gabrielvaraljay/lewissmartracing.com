@@ -8,6 +8,7 @@
     "build": "astro build && node scripts/prune-staging-only.mjs",
     "preview": "astro preview",
     "frames": "node scripts/make-frames.mjs",
+    "gallery": "node scripts/make-gallery.mjs",
     "build:staging": "PUBLIC_SITE_ENV=staging astro build && PUBLIC_SITE_ENV=staging node scripts/prune-staging-only.mjs"
   },
   "dependencies": {

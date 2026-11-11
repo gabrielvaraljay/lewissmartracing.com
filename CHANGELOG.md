@@ -8,10 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- The Uggly & Co logo (Sponsors page and the email sponsor row) now links straight to Lewis's cap in their shop, as Jean asked.
 - Production now shows only the finished pages: Home, My Story, Results, Calendar and Contact in the menu, plus Sponsors through the "Sponsor Lewis" button. Bike & Team, Gallery and Club32 are on staging only.
 
 ### Added
 
+- **Gallery photos**: Lewis's 14 photos from 2020 to 2026 on `/gallery/`, as WebP (a small thumbnail for the grid, full size in the lightbox), with the 2025 Triumph track photo as the link preview image. `npm run gallery` rebuilds them from `photos-src/gallery/`.
 - **Club32** (`/club32/`): a 1-100 number board for the supporters' draw. Visitors pick numbers, reserve them for 24 hours and pay by bank transfer with their own reference (`C32-XXXXX`). Only first names are shown. Returning members get a personal presale link that holds their old number.
 - **Admin panel** (`/admin/`, login required, not indexed): confirm payments, extend or cancel holds, add cash sales, member board and CSV export, presale invitations, random or manual draws with a reveal screen for the live videos, winner emails, settings (bank details, price, hold time, sales on/off) and an activity log.
 - Cookie-free visit counter (`/api/hit.php`) with a Visitors page in the admin.
@@ -21,6 +23,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Admin and Developer roles: developers add admins on the Admins page (invite email to set a password), change roles and remove admins.
 - Club32 members' newsletter: paid members are added to the BlueFox "Club32 Members" list unless they tick "No thanks" on the form; the confirmation email mentions it.
 - Privacy notice (`/privacy/`, linked from the footer, the contact form and the newsletter form) and Club32 terms (`/club32/terms/`). Drafts: confirm the prize-claim and refund rules, and whether the draw needs a small society lottery registration with the local council (Gambling Act 2005), before going public.
+- Emails keep the black and #d6f20a look in Gmail's dark mode: backgrounds are also set as gradient images, text gets a Gmail-only blend fix, and buttons are images in the site's style. Sources are in `email/*.html` (`scripts/email-build.py`, `scripts/email-button.py`).
+- Sponsor logos in emails: a clickable "Proudly supported by" row (each logo opens the sponsor's site in a new window) in the newsletter templates and the Club32 payment confirmed, winner and cancelled emails. Sign-up confirmations, payment details, reminders, presale and password emails stay without it. `email/sponsor-footer.html`, `scripts/email-sponsor-logos.py`.
 - Professional README covering the stack, setup, scripts, project structure, content editing, the design system, hero frames and deployment.
 - This changelog.
 - Home hero: "Big Announcement Coming Soon" panel with an email-only newsletter signup (`NewsletterSignup` component). Sign-ups go to the BlueFox "Website Newsletter" form and the "Newsletter" subscriber list.

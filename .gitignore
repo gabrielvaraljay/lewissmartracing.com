@@ -3,3 +3,4 @@ dist/
 .astro/
 .DS_Store
 photos-src/
+email/dist/
