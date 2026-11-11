@@ -19,7 +19,7 @@ export const site = {
 export const isStaging = import.meta.env.PUBLIC_SITE_ENV === 'staging';
 // Pages only on staging until they are ready. scripts/prune-staging-only.mjs removes them from the production build
 // and fails the build if a production page still links to one.
-export const stagingOnly = ['/bike-and-team/', '/gallery/', '/club32/'];
+export const stagingOnly = ['/bike-and-team/', '/club32/'];
 // Sponsors stays live (the "Sponsor Lewis" button links to it) but is only in the menu on staging.
 const stagingOnlyNav = [...stagingOnly, '/sponsors/'];
 export const isLive = (href: string) => isStaging || !stagingOnly.some((p) => href.startsWith(p));

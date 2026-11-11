@@ -21,6 +21,7 @@ A fast, fully static site built with [Astro](https://astro.build) and [Tailwind 
 - [Design system](#design-system)
 - [Hero flip-book frames](#hero-flip-book-frames)
 - [Gallery photos](#gallery-photos)
+- [SEO and link previews](#seo-and-link-previews)
 - [Club32 and admin](#club32-and-admin)
 - [Sponsor logos in emails](#sponsor-logos-in-emails)
 - [Deployment](#deployment)
@@ -71,7 +72,8 @@ The dev server runs at <http://localhost:4321> and reloads when files change.
 | `npm run build` | Builds the static site into `dist/` |
 | `npm run preview` | Serves the built `dist/` locally, to check it before deploying |
 | `npm run frames -- <folder> [width] [quality]` | Turns a folder of photos into hero frames (see [below](#hero-flip-book-frames)) |
-| `npm run gallery -- [folder] [og-photo]` | Turns a folder of photos into Gallery WebPs (see [below](#gallery-photos)) |
+| `npm run gallery -- [folder]` | Turns a folder of photos into Gallery WebPs (see [below](#gallery-photos)) |
+| `npm run og` | Builds the 1200x630 link preview image of every page (see [below](#seo-and-link-previews)) |
 
 ## Project structure
 
@@ -138,14 +140,24 @@ The frames play only on screens 768 px and wider, and only when reduced motion i
 
 ## Gallery photos
 
-1. Put the photos in `photos-src/gallery/`. This folder is not committed. The file name becomes the caption and alt text, and the newest year comes first, so name them `<year> <what>.jpg`, e.g. `2024 Superteens on track.jpg`.
-2. Run:
+Claude does this when Louis or Lewis send new photos or reels.
 
-   ```bash
-   npm run gallery -- photos-src/gallery "2025 Triumph Factory Team on track.jpg"
-   ```
+1. The photos go in `photos-src/gallery/` (not committed). The file name becomes the caption and alt text, and the newest year comes first, so they are named `<year> <what>.jpg`, e.g. `2024 Superteens on track.jpg`.
+2. `npm run gallery` adds "LEWISSMARTRACING.COM" (`scripts/assets/watermark.svg`) to the bottom-right corner of every photo and writes two WebPs to `public/images/gallery/`: the full photo for the viewer (max 2400 px, quality 82) and a 3:2 thumbnail for the grid (960x640). The list goes to `src/data/gallery.json`.
 
-   Each photo becomes a full-size WebP for the lightbox (max 2400 px, quality 82) and a 960 px thumbnail for the grid in `public/images/gallery/`. The list goes to `src/data/gallery.json`. The second argument is the photo used for the link preview: it is cropped to 1200x630 and saved as `public/images/og-gallery.jpg`. That one stays JPG because not every link preview shows WebP.
+The grid reads newest to oldest row by row. In the viewer you can page through every photo in a loop (arrows, keyboard, swipe).
+
+**Reels** are self-hosted, not Instagram embeds, so the page loads no Instagram scripts or cookies. Each one is a 720p H.264 MP4 with a WebP poster in `public/reels/`, listed newest first in `src/data/reels.json`. To make one from an Instagram link: download it with a current `yt-dlp`, then `ffmpeg -i in.mp4 -vf scale=720:-2 -c:v libx264 -preset slow -crf 26 -maxrate 2500k -bufsize 5000k -pix_fmt yuv420p -c:a aac -b:a 96k -movflags +faststart public/reels/<name>.mp4`, and use a frame at 1 s as the poster.
+
+## SEO and link previews
+
+- **Link previews (Open Graph).** Every page has its own 1200x630 card in `public/images/og/`: the page title in Barlow Condensed on the dark background, with a photo on the right. `npm run og` rebuilds them from the list in `scripts/make-og.mjs`. The text is drawn from glyph outlines (`scripts/assets/barlow-glyphs.json`), so no font needs installing. Pages pass `image="/images/og/<name>.jpg"` to `<Base>`; pages without one use the home card. They are JPG because not every preview (LinkedIn, older WhatsApp) shows WebP.
+- **Meta tags.** `src/layouts/Base.astro` sets the title, description, canonical URL, `robots`, Open Graph (with image size and alt) and Twitter card tags. Thank-you and confirmation pages pass `noindex`.
+- **Structured data.** Every page carries schema.org JSON-LD: the WebSite, Lewis as a Person (with Instagram and Facebook), the page itself and a breadcrumb.
+- **Sitemap and robots.txt.** `scripts/seo-files.mjs` runs after the production build. It writes `sitemap.xml` (every live page that is not noindex, with the Gallery photos and reels as image and video entries) and `robots.txt`. Staging gets neither.
+- **Icons.** `favicon.svg`, plus PNGs (`favicon-32.png`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png`) and `site.webmanifest`.
+
+**Google Search Console.** Not set up yet. Add a *Domain* property for `lewissmartracing.com`, put the TXT record it shows into the GoDaddy DNS, verify, then submit `https://lewissmartracing.com/sitemap.xml`. Google cannot see anything while the password gate is on, so do this when the gate comes off.
 
 ## Club32 and admin
 

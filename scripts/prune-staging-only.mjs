@@ -6,7 +6,7 @@ import { join } from 'node:path';
 
 const DIST = 'dist';
 // Keep in sync with `stagingOnly` in src/data/site.ts.
-const STAGING_ONLY = ['/bike-and-team/', '/gallery/', '/club32/'];
+const STAGING_ONLY = ['/bike-and-team/', '/club32/'];
 
 if (process.env.PUBLIC_SITE_ENV === 'staging') {
   console.log('[prune] staging build: keeping every page');
