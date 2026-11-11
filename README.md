@@ -20,6 +20,7 @@ A fast, fully static site built with [Astro](https://astro.build) and [Tailwind 
 - [Editing content](#editing-content)
 - [Design system](#design-system)
 - [Hero flip-book frames](#hero-flip-book-frames)
+- [Gallery photos](#gallery-photos)
 - [Club32 and admin](#club32-and-admin)
 - [Sponsor logos in emails](#sponsor-logos-in-emails)
 - [Deployment](#deployment)
@@ -70,6 +71,7 @@ The dev server runs at <http://localhost:4321> and reloads when files change.
 | `npm run build` | Builds the static site into `dist/` |
 | `npm run preview` | Serves the built `dist/` locally, to check it before deploying |
 | `npm run frames -- <folder> [width] [quality]` | Turns a folder of photos into hero frames (see [below](#hero-flip-book-frames)) |
+| `npm run gallery -- [folder] [og-photo]` | Turns a folder of photos into Gallery WebPs (see [below](#gallery-photos)) |
 
 ## Project structure
 
@@ -80,7 +82,8 @@ The dev server runs at <http://localhost:4321> and reloads when files change.
 │   ├── frames/            # Hero flip-book frames (frame-01.webp …)
 │   └── images/            # Portrait, bike livery, hero fallback, grid shot
 ├── scripts/
-│   └── make-frames.mjs    # Photo → 16:9 WebP frame converter
+│   ├── make-frames.mjs    # Photo → 16:9 WebP frame converter
+│   └── make-gallery.mjs   # Photo → Gallery WebPs + src/data/gallery.json
 ├── src/
 │   ├── components/        # Header, footer, page header, next race, enquiry form, icons …
 │   ├── data/site.ts       # All copy and data: the one place to edit content
@@ -132,6 +135,17 @@ Extra CSS for the simpler pages is in `src/styles/global.css`.
 3. Set `heroFrameCount` in `src/data/site.ts` to the number the script prints.
 
 The frames play only on screens 768 px and wider, and only when reduced motion is not requested. Everywhere else, frame 1 (or the static hero image) is shown.
+
+## Gallery photos
+
+1. Put the photos in `photos-src/gallery/`. This folder is not committed. The file name becomes the caption and alt text, and the newest year comes first, so name them `<year> <what>.jpg`, e.g. `2024 Superteens on track.jpg`.
+2. Run:
+
+   ```bash
+   npm run gallery -- photos-src/gallery "2025 Triumph Factory Team on track.jpg"
+   ```
+
+   Each photo becomes a full-size WebP for the lightbox (max 2400 px, quality 82) and a 960 px thumbnail for the grid in `public/images/gallery/`. The list goes to `src/data/gallery.json`. The second argument is the photo used for the link preview: it is cropped to 1200x630 and saved as `public/images/og-gallery.jpg`. That one stays JPG because not every link preview shows WebP.
 
 ## Club32 and admin
 

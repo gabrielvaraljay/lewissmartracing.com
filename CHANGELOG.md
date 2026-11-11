@@ -8,10 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- The Uggly & Co logo (Sponsors page and the email sponsor row) now links straight to Lewis's cap in their shop, as Jean asked.
 - Production now shows only the finished pages: Home, My Story, Results, Calendar and Contact in the menu, plus Sponsors through the "Sponsor Lewis" button. Bike & Team, Gallery and Club32 are on staging only.
 
 ### Added
 
+- **Gallery photos**: Lewis's 14 photos from 2020 to 2026 on `/gallery/`, as WebP (a small thumbnail for the grid, full size in the lightbox), with the 2025 Triumph track photo as the link preview image. `npm run gallery` rebuilds them from `photos-src/gallery/`.
 - **Club32** (`/club32/`): a 1-100 number board for the supporters' draw. Visitors pick numbers, reserve them for 24 hours and pay by bank transfer with their own reference (`C32-XXXXX`). Only first names are shown. Returning members get a personal presale link that holds their old number.
 - **Admin panel** (`/admin/`, login required, not indexed): confirm payments, extend or cancel holds, add cash sales, member board and CSV export, presale invitations, random or manual draws with a reveal screen for the live videos, winner emails, settings (bank details, price, hold time, sales on/off) and an activity log.
 - Cookie-free visit counter (`/api/hit.php`) with a Visitors page in the admin.
