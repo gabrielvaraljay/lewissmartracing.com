@@ -268,19 +268,25 @@ python3 scripts/results/build.py /tmp/tsl/results.json
 
 The site runs on the Hetzner server (nginx), served from `/var/www/lewissmartracing.com`.
 
-Deploys are automatic. A push to `main` (or a manual run of the **Deploy** workflow) builds the site in GitHub Actions and rsyncs `dist/` to the server. See [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml).
+Deploys run from the devbox with [`deploy/deploy.sh`](deploy/deploy.sh). GitHub Actions is switched off (since 13 November 2026, after a stolen GitHub token pushed a workflow that read repository secrets), and GitHub holds no secrets: the deploy key lives only on the devbox.
 
-**Deploy access is locked down.** Actions logs in as the dedicated `lsr-deploy` user with its own SSH key. On the server that key is limited to `restrict,command="/usr/bin/rrsync /var/www/lewissmartracing.com"`, which means:
+```bash
+deploy/deploy.sh --dry-run
+```
 
-- no shell and no port, agent or X11 forwarding;
-- rsync only, jailed to the site directory, so the key cannot write anywhere else on the server.
+```bash
+deploy/deploy.sh
+```
 
-The repository secrets it needs are:
+- It builds the **last commit** (`git archive HEAD`, then `npm ci` and the build in a temporary folder), never uncommitted files, and stops if there are uncommitted changes, if you are not on `main`, or if GitHub has commits on `main` that are not on the devbox.
+- With no argument it deploys live and staging, like the old workflow. `deploy/deploy.sh live` or `deploy/deploy.sh staging` does only one. Live needs the confirmation word `deploy-live`.
+- It first shows what would be uploaded and deleted (full lists in `~/.cache/lewissmartracing-deploy/`). `--dry-run` stops there.
+- It logs in once as `devbox` on 78.47.73.104: the key's passphrase, then the `devbox` user's server password, both typed by Gabriel. Every later step reuses that one connection.
+- Checks after the upload: live `/` answers 200 (or 302 while the password gate is on), staging `/` redirects (302) to `/__gate.html`.
 
-| Secret | Value |
-| --- | --- |
-| `DEPLOY_SSH_KEY` | Private key of `lsr-deploy` |
-| `DEPLOY_KNOWN_HOSTS` | Output of `ssh-keyscan -t ed25519 78.47.73.104` |
+Settings, outside the repository, in `~/.config/lewissmartracing/deploy.env`: `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_KEY` (the same `devbox` key as trendfingers.com, which lives on the same server).
+
+**Server setup (once).** Run [`deploy/server-setup.sh`](deploy/server-setup.sh) on the server with `sudo`. It gives `/var/www/lewissmartracing.com` and `/var/www/staging.lewissmartracing.com` to the `devbox` user and locks the old GitHub Actions user `lsr-deploy` (its keys were repository secrets).
 
 ### Staging
 
@@ -290,9 +296,9 @@ The repository secrets it needs are:
 - `npm run build:staging` (`PUBLIC_SITE_ENV=staging`) builds every page.
 - To put a page live, remove it from `stagingOnly` in both `src/data/site.ts` and `scripts/prune-staging-only.mjs`.
 
-The Deploy workflow deploys both: production first, then staging with a second `lsr-deploy` key jailed to `/var/www/staging.lewissmartracing.com` (secret `DEPLOY_STAGING_SSH_KEY`). Staging PHP uses its own config and database (`/etc/lewissmartracing-staging`, `/var/lib/lewissmartracing-staging`), so it never touches live Club32 data.
+`deploy/deploy.sh` deploys both: production first, then staging. Staging PHP uses its own config and database (`/etc/lewissmartracing-staging`, `/var/lib/lewissmartracing-staging`), so it never touches live Club32 data.
 
-**Server setup (once).** Add a DNS A record `staging` → `78.47.73.104` in GoDaddy, then run `LSR_SSH_KEY=~/.ssh/hetzner.tf bash scripts/setup-staging.sh` on the devbox. It asks for the gate password (not stored in the repo), sets up nginx, TLS, the deploy key and the GitHub secret, runs a deploy, and copies the live admin users (same email and password) into the staging database. No orders, members or stats are copied.
+**Server setup (once).** Add a DNS A record `staging` → `78.47.73.104` in GoDaddy, then run `LSR_SSH_KEY=~/.ssh/hetzner.tf bash scripts/setup-staging.sh` on the devbox. It was run once (it asked for the gate password, not stored in the repo), set up nginx and TLS, and copied the live admin users (same email and password) into the staging database. No orders, members or stats were copied. Its deploy-key and GitHub-secret steps belong to the old Actions deploy, so the script now stops before doing anything.
 
 The production URL is set by `site` in `astro.config.mjs`, and the canonical and Open Graph URLs are built from it.
 

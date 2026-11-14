@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- **Deploys run from the devbox** with `deploy/deploy.sh` (live + staging, builds the last commit, key passphrase and server password typed each time). The GitHub Actions deploy workflow is removed and GitHub holds no secrets; `deploy/server-setup.sh` gives the web folders to the `devbox` user and locks the old `lsr-deploy` keys.
+- Text changes from Lewis: 2022 milestone "Crowned Thundersport CB500 Sportsman Champion"; 2021 "first taste of the British paddock"; roadmap "British Sportbike Podiums / Championship Challenge"; empty Title partner slot says "Coming soon".
 - The Uggly & Co logo (Sponsors page and the email sponsor row) now links straight to Lewis's cap in their shop, as Jean asked.
 - Production now shows only the finished pages: Home, My Story, Results, Calendar and Contact in the menu, plus Sponsors through the "Sponsor Lewis" button. Bike & Team, Gallery and Club32 are on staging only.
 

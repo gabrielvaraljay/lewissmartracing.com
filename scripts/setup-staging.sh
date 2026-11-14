@@ -22,6 +22,10 @@
 #      no orders, members or stats are copied
 set -euo pipefail
 
+# Retired (14 Nov 2026): steps 5-6 add an lsr-deploy key and a GitHub secret, which the GitHub Actions shutdown
+# rules out. Staging is already set up; deploys run with deploy/deploy.sh.
+echo "Retired: staging is already set up. Deploy with deploy/deploy.sh."; exit 1
+
 HOST=78.47.73.104
 SSH="ssh -t -o ControlPath=$HOME/.ssh/cm-hetzner-lsr ${LSR_SSH_KEY:+-i $LSR_SSH_KEY -o IdentitiesOnly=yes} gabriel@$HOST"
 DOMAIN=staging.lewissmartracing.com

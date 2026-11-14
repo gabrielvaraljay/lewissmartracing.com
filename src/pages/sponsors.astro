@@ -41,7 +41,7 @@ const offers = [
                 ? list.map((s) => s.url
                     ? <a class="tier__logo tier__logo--brand" style={`--logo-bg:${s.bg}`} href={s.url} target="_blank" rel="noopener" title={s.name}><img src={s.logo} alt={s.name} loading="lazy" /></a>
                     : <div class="tier__logo tier__logo--brand" style={`--logo-bg:${s.bg}`} title={s.name}><img src={s.logo} alt={s.name} loading="lazy" /></div>)
-                : <div class="tier__logo tier__logo--empty"><span class="label">Available</span></div>}
+                : <div class="tier__logo tier__logo--empty"><span class="label">{t.id === 'title' ? 'Coming soon' : 'Available'}</span></div>}
             </div>
           </div>
         );

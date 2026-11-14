@@ -89,7 +89,7 @@ export const timeline: TimelineEntry[] = [
     series: 'Sportsman Championship',
     result: 'Podiums + BSB wildcard',
     body:
-      'A move up to the Sportsman Championship brought regular podiums, and a late-season wildcard in British Superbikes Junior Supersport gave him his first taste of the national paddock.',
+      'A move up to the Sportsman Championship brought regular podiums, and a late-season wildcard in British Superbikes Junior Supersport gave him his first taste of the British paddock.',
   },
   {
     year: '2022',
